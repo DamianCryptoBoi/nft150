@@ -1,0 +1,11 @@
+node_modules/
+build/
+.env
+package-lock.json
+.idea/
+.idea
+.vscode/extensions.json
+.DS_Store
+.csv
+
+script/
