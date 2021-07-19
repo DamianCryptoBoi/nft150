@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 /**
  * @dev ERC-1155 interface for accepting safe transfers.

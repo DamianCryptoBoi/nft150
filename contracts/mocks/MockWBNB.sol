@@ -1,4 +1,4 @@
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 contract MockWBNB {
 	string public name = 'Wrapped BNB';
@@ -15,19 +15,19 @@ contract MockWBNB {
 
 	function deposit() public payable {
 		balanceOf[msg.sender] += msg.value;
-		Deposit(msg.sender, msg.value);
+		emit Deposit(msg.sender, msg.value);
 	}
 
-	function withdraw(uint256 wad) public {
+	function withdraw(uint256 wad) public payable {
 		require(balanceOf[msg.sender] >= wad);
 		balanceOf[msg.sender] -= wad;
-		msg.sender.transfer(wad);
-		Withdrawal(msg.sender, wad);
+		payable(msg.sender).transfer(wad);
+		emit Withdrawal(msg.sender, wad);
 	}
 
 	function approve(address guy, uint256 wad) public returns (bool) {
 		allowance[msg.sender][guy] = wad;
-		Approval(msg.sender, guy, wad);
+		emit Approval(msg.sender, guy, wad);
 		return true;
 	}
 
@@ -42,7 +42,8 @@ contract MockWBNB {
 	) public returns (bool) {
 		require(balanceOf[src] >= wad);
 
-		if (src != msg.sender && allowance[src][msg.sender] != uint256(-1)) {
+		//if (src != msg.sender && allowance[src][msg.sender] != uint256(-1)) {
+		if (src != msg.sender && allowance[src][msg.sender] != (2**256 - 1)) {
 			require(allowance[src][msg.sender] >= wad);
 			allowance[src][msg.sender] -= wad;
 		}
@@ -50,7 +51,7 @@ contract MockWBNB {
 		balanceOf[src] -= wad;
 		balanceOf[dst] += wad;
 
-		Transfer(src, dst, wad);
+		emit Transfer(src, dst, wad);
 
 		return true;
 	}

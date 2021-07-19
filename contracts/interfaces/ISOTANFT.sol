@@ -1,4 +1,4 @@
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 interface ISOTANFT {
 	function getCreator(uint256 _id) external view returns (address);

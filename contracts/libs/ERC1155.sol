@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
-import '@openzeppelin/contracts/math/SafeMath.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts/utils/Address.sol';
 
 import './IERC1155TokenReceiver.sol';
@@ -33,7 +33,7 @@ contract ERC1155 is IERC165 {
 	event TransferSingle(address indexed _operator, address indexed _from, address indexed _to, uint256 _id, uint256 _amount);
 	event TransferBatch(address indexed _operator, address indexed _from, address indexed _to, uint256[] _ids, uint256[] _amounts);
 	event ApprovalForAll(address indexed _owner, address indexed _operator, bool _approved);
-	event URI(string _uri, uint256 indexed _id);
+	event URI_ERC1155(string _uri, uint256 indexed _id);
 
 	/***********************************|
   |     Public Transfer Functions     |

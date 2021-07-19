@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 
 import './ERC1155.sol';
 import './ERC1155Metadata.sol';
@@ -20,6 +21,7 @@ import './WhitelistAdminRole.sol';
  */
 contract ERC1155Tradable is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, MinterRole, WhitelistAdminRole {
 	using Strings for string;
+	using SafeMath for uint256;
 
 	address proxyRegistryAddress;
 	uint256 private _currentTokenID = 0;

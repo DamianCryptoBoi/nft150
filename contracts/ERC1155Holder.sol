@@ -1,4 +1,4 @@
-import { ERC1155Receiver } from '@openzeppelin/contracts/token/ERC1155/ERC1155Receiver.sol';
+import { ERC1155Receiver } from '@openzeppelin/contracts/token/ERC1155/utils/ERC1155Receiver.sol';
 
 contract ERC1155Holder is ERC1155Receiver {
 	function onERC1155Received(

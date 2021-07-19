@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
-import '@openzeppelin/contracts/GSN/Context.sol';
+import '@openzeppelin/contracts/utils/Context.sol';
 
 import './Roles.sol';
 
@@ -14,7 +14,7 @@ contract MinterRole is Context {
 
 	Roles.Role private _minters;
 
-	constructor() internal {
+	constructor() public {
 		_addMinter(_msgSender());
 	}
 

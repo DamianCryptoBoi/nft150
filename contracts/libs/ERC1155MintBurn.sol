@@ -1,14 +1,17 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 import './ERC1155.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 
 /**
  * @dev Multi-Fungible Tokens with minting and burning methods. These methods assume
  *      a parent contract to be executed as they are `internal` functions
  */
 contract ERC1155MintBurn is ERC1155 {
+
+	using SafeMath for uint256;
 	/****************************************|
   |            Minting Functions           |
   |_______________________________________*/

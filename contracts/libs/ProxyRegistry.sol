@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -34,7 +34,7 @@ contract ProxyRegistry is Ownable {
 	 */
 	function startGrantAuthentication(address addr) public onlyOwner {
 		require(!contracts[addr] && pending[addr] == 0);
-		pending[addr] = now;
+		pending[addr] = block.timestamp;
 	}
 
 	/**
@@ -44,7 +44,7 @@ contract ProxyRegistry is Ownable {
 	 * @param addr Address to which to grant permissions
 	 */
 	function endGrantAuthentication(address addr) public onlyOwner {
-		require(!contracts[addr] && pending[addr] != 0 && ((pending[addr] + DELAY_PERIOD) < now));
+		require(!contracts[addr] && pending[addr] != 0 && ((pending[addr] + DELAY_PERIOD) < block.timestamp));
 		pending[addr] = 0;
 		contracts[addr] = true;
 	}

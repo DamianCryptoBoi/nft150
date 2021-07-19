@@ -1,0 +1,77 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "OwnedUpgradeabilityStorage",
+  "sourceName": "contracts/libs/OwnedUpgradeabilityStorage.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "ReceivedEther",
+      "type": "event"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
+      "inputs": [],
+      "name": "implementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "proxyType",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "upgradeabilityOwner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5061029d806100206000396000f3fe6080604052600436106100385760003560e01c80634555d5c9146100fa5780635c60da1b146101255780636fde8202146101505761008d565b3661008d573373ffffffffffffffffffffffffffffffffffffffff167fa419615bc8fda4c87663805ee2a3597a6d71c1d476911d9892f340d965bc7bf1346040516100839190610210565b60405180910390a2005b600061009761017b565b9050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614156100d357600080fd5b60405136600082376000803683855af43d806000843e81600081146100f6578184f35b8184fd5b34801561010657600080fd5b5061010f6101a4565b60405161011c9190610210565b60405180910390f35b34801561013157600080fd5b5061013a61017b565b60405161014791906101f5565b60405180910390f35b34801561015c57600080fd5b506101656101ad565b60405161017291906101f5565b60405180910390f35b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60006002905090565b6000600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b6101e08161022b565b82525050565b6101ef8161025d565b82525050565b600060208201905061020a60008301846101d7565b92915050565b600060208201905061022560008301846101e6565b92915050565b60006102368261023d565b9050919050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b600081905091905056fea2646970667358221220e0caec3a816094e1e5d17231bdd7aea25490d0d921d49d1636e2288134f3d96d64736f6c63430008040033",
+  "deployedBytecode": "0x6080604052600436106100385760003560e01c80634555d5c9146100fa5780635c60da1b146101255780636fde8202146101505761008d565b3661008d573373ffffffffffffffffffffffffffffffffffffffff167fa419615bc8fda4c87663805ee2a3597a6d71c1d476911d9892f340d965bc7bf1346040516100839190610210565b60405180910390a2005b600061009761017b565b9050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614156100d357600080fd5b60405136600082376000803683855af43d806000843e81600081146100f6578184f35b8184fd5b34801561010657600080fd5b5061010f6101a4565b60405161011c9190610210565b60405180910390f35b34801561013157600080fd5b5061013a61017b565b60405161014791906101f5565b60405180910390f35b34801561015c57600080fd5b506101656101ad565b60405161017291906101f5565b60405180910390f35b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60006002905090565b6000600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b6101e08161022b565b82525050565b6101ef8161025d565b82525050565b600060208201905061020a60008301846101d7565b92915050565b600060208201905061022560008301846101e6565b92915050565b60006102368261023d565b9050919050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b600081905091905056fea2646970667358221220e0caec3a816094e1e5d17231bdd7aea25490d0d921d49d1636e2288134f3d96d64736f6c63430008040033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

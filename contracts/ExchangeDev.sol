@@ -1,4 +1,4 @@
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 contract ExchangeDev {
 	address public SOTA = 0xaA4c85035F71E579833f0ec37a767eDbAA5C05bF;
