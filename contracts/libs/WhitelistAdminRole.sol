@@ -18,7 +18,7 @@ contract WhitelistAdminRole is Context {
 
 	Roles.Role private _whitelistAdmins;
 
-	constructor() public {
+	constructor() {
 		_addWhitelistAdmin(_msgSender());
 	}
 
