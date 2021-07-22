@@ -8,8 +8,15 @@ require("hardhat-abi-exporter");
 require("dotenv").config();
 
 module.exports = {
-  solidity: "0.8.4",
+  solidity: "0.8.6",
+  defaultNetwork: 'hardhat',
   networks: {
+    hardhat: {
+        gas: 12000000,
+        blockGasLimit: 0x1fffffffffffff,
+        allowUnlimitedContractSize: true,
+        timeout: 1800000
+    },
     testnet: {
       //url: "https://data-seed-prebsc-2-s1.binance.org:8545",
       //accounts: [process.env.PRIVATE_KEY],
