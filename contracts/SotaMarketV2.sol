@@ -47,7 +47,7 @@ contract Manager is Ownable, Pausable {
 		_;
 	}
 
-	constructor(address _oldMarket) public {
+	constructor(address _oldMarket) {
 		isOperator[msg.sender] = true;
 		oldMarket = _oldMarket;
 	}
@@ -214,7 +214,7 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		_;
 	}
 
-	constructor(address _oldMarket) public Manager(_oldMarket) {}
+	constructor(address _oldMarket) Manager(_oldMarket) {}
 
 	function getRefData(address _user) private view returns (address payable) {
 		address payable userRef = IReferral(referralContract).getReferral(_user);

@@ -10,18 +10,21 @@ contract Sota721General is ERC721, Ownable, ERC721URIStorage {
 	using SafeMath for uint256;
 
 	uint256 public _currentTokenId = 0;
+	string public baseURI = "https://storage.sota.finance/"; //TODO waiting Customer supply
+
 	mapping(uint256 => address) public creators;
 	mapping(uint256 => uint256) public loyaltyFee;
 
-	constructor() public ERC721('Sota Platform ERC721 NFTs', 'SOTA721GENERAL') {
+	constructor() ERC721('Sota Platform ERC721 NFTs', 'SOTA721GENERAL') { //TODO change
 		//_setBaseURI('https://storage.sota.finance');
 	}
 
 	function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) virtual{
+		super._burn(tokenId);
     }
 
-	function _baseURI() internal pure override returns (string memory) {
-        return "https://storage.sota.finance";
+	function _baseURI() internal view override returns (string memory) {
+        return baseURI; //TODO waiting Customer supply
     }
 
 	function tokenURI(uint256 tokenId)
@@ -32,18 +35,21 @@ contract Sota721General is ERC721, Ownable, ERC721URIStorage {
     {
         return super.tokenURI(tokenId);
     }
+
+
 	/**
 	 * @dev Create new NFT
-	 * @param _tokenURI _tokenURI of tokenID
+	 * @param _loyaltyFee of tokenID
 	 */
 
-	function create(string calldata _tokenURI, uint256 _loyaltyFee) external {
+//	function create(string calldata _tokenURI, uint256 _loyaltyFee) external {
+	function create(uint256 _loyaltyFee) external {
 		uint256 newTokenId = _getNextTokenId();
 		_mint(msg.sender, newTokenId);
 		creators[newTokenId] = msg.sender;
 		loyaltyFee[newTokenId] = _loyaltyFee;
 //		_setTokenURI(newTokenId, _tokenURI); //deprecation solidity 4.x
-		tokenURI(newTokenId); //change for deprecation solidity 4.x
+//		tokenURI(newTokenId); //change for deprecation solidity 4.x
 		_incrementTokenId();
 	}
 
@@ -63,8 +69,7 @@ contract Sota721General is ERC721, Ownable, ERC721URIStorage {
 	}
 
 	function setBaseURI(string calldata baseURI_) external onlyOwner() {
-		//_setBaseURI(baseURI_);
-		_baseURI();
+		baseURI = baseURI_;
 	}
 
 	function getCreator(uint256 _id) public view returns (address) {
