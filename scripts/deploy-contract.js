@@ -23,9 +23,13 @@ const main = async () => {
       const sota721General = await Sota721General.deploy();
       await sota721General.deployed();
       console.log("Sota721General deployed at: ", sota721General.address);
+      //1155
+      const NFT150 = await hre.ethers.getContractFactory("NFT150");
+      const nft150 = await NFT150.deploy();
+      await nft150.deployed();
+      console.log("NFT150 deployed at: ", nft150.address);
 
-
-      const contracOld = '0xD5513cbe97986e7D366B8979D887CB76e441b148';// TODO change Address (deprcation)
+      const contracOld = '0x7f61befffa9a8e584dd8d6d07b2d1e5ed16dd100';// TODO change Address (deprcation)
       const SotaMarketV2 = await hre.ethers.getContractFactory("SotaMarketV2");
       const sotaMarketV2 = await SotaMarketV2.deploy(contracOld);
       await sotaMarketV2.deployed();
@@ -51,8 +55,11 @@ const main = async () => {
 
       // sotaMarket.whiteListOperator //TODO
       // sotaMarket.addSOTANFTs //TODO
+      //0xa0e7fe8176135C12657f54F41DF5851F22C868B3 sota721General.address
 
       await sotaMarketV2.setReferralContract(sotaReferral.address);
+      await sotaMarketV2.addSOTANFTs(sota721General.address, true, true);
+      await sotaMarketV2.addSOTANFTs(nft150.address, true, false);
 
 //      await sotaMarketV2.setPaymentMethod(
 //            "0x55d398326f99059ff775485246999027b3197955", // usdt
