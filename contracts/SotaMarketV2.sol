@@ -22,7 +22,7 @@ import '@openzeppelin/contracts/utils/Address.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 
 contract Manager is Ownable, Pausable {
-	address public immutable oldMarket;
+//	address public immutable oldMarket;
 	address public sota;
 	address public WBNB = 0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd;
 	address public referralContract;
@@ -47,9 +47,9 @@ contract Manager is Ownable, Pausable {
 		_;
 	}
 
-	constructor(address _oldMarket) {
+	constructor() {
 		isOperator[msg.sender] = true;
-		oldMarket = _oldMarket;
+//		oldMarket = _oldMarket;
 	}
 
 	function whiteListOperator(address _operator, bool _whitelist) external onlyOwner() {
@@ -95,7 +95,7 @@ contract Manager is Ownable, Pausable {
 		discountForSota = _discountForSota;
 	}
 
-	function setSotaContract(address _sota) public onlyOwner returns (bool) {
+	function setSotaContract(address _sota) public onlyOwner returns (bool) { //TODO confirm deprecate
 		sota = _sota;
 		return true;
 	}
@@ -214,7 +214,7 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		_;
 	}
 
-	constructor(address _oldMarket) Manager(_oldMarket) {}
+	constructor() Manager() {}
 
 	function getRefData(address _user) private view returns (address payable) {
 		address payable userRef = IReferral(referralContract).getReferral(_user);
@@ -644,36 +644,36 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		emit BidUpdated(_bidId);
 	}
 
-	function adminMigrateData(uint256 _fromOrderId, uint256 _toOrderId) external onlyOwner() {
-		for (uint256 i = _fromOrderId; i <= _toOrderId; i++) {
-			(	address owner,
-				address tokenAddress,
-				address paymentToken,
-				,
-				uint256 tokenId,
-				uint256 quantity,
-				uint256 price, 
-				,
-				,
-				) = ISotaMarket(oldMarket).orders(i);
-			if (quantity > 0) {
-				IERC1155(tokenAddress).safeTransferFrom(oldMarket, address(this), tokenId, quantity, '0x');
-				Order memory newOrder;
-				newOrder.isOnsale = true;
-				newOrder.owner = owner;
-				newOrder.price = price.div(quantity).mul(10000).div(10250);
-				newOrder.quantity = quantity;
-				newOrder.tokenId = tokenId;
-				newOrder.tokenAddress = tokenAddress;
-				newOrder.paymentToken = paymentToken;
-				orders[totalOrders] = newOrder;
-				uint256 _orderId = totalOrders;
-				bytes32 _id = keccak256(abi.encodePacked(tokenAddress, tokenId, owner));
-				orderID[_id] = _orderId;
-			}
-			totalOrders = totalOrders.add(1);
-		}
-	}
+//	function adminMigrateData(uint256 _fromOrderId, uint256 _toOrderId) external onlyOwner() {
+//		for (uint256 i = _fromOrderId; i <= _toOrderId; i++) {
+//			(	address owner,
+//				address tokenAddress,
+//				address paymentToken,
+//				,
+//				uint256 tokenId,
+//				uint256 quantity,
+//				uint256 price,
+//				,
+//				,
+//				) = ISotaMarket(oldMarket).orders(i);
+//			if (quantity > 0) {
+//				IERC1155(tokenAddress).safeTransferFrom(oldMarket, address(this), tokenId, quantity, '0x');
+//				Order memory newOrder;
+//				newOrder.isOnsale = true;
+//				newOrder.owner = owner;
+//				newOrder.price = price.div(quantity).mul(10000).div(10250);
+//				newOrder.quantity = quantity;
+//				newOrder.tokenId = tokenId;
+//				newOrder.tokenAddress = tokenAddress;
+//				newOrder.paymentToken = paymentToken;
+//				orders[totalOrders] = newOrder;
+//				uint256 _orderId = totalOrders;
+//				bytes32 _id = keccak256(abi.encodePacked(tokenAddress, tokenId, owner));
+//				orderID[_id] = _orderId;
+//			}
+//			totalOrders = totalOrders.add(1);
+//		}
+//	}
 
 	function setApproveForAll(address _token, address _spender) external onlyOwner() {
 		IERC1155(_token).setApprovalForAll(_spender, true);

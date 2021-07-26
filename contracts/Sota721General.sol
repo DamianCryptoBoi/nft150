@@ -18,7 +18,12 @@ contract Sota721General is ERC721, Ownable, ERC721URIStorage {
 	constructor() ERC721('Sota Platform ERC721 NFTs', 'SOTA721GENERAL') { //TODO change
 		//_setBaseURI('https://storage.sota.finance');
 	}
-
+    function name1() public view returns (string memory) {
+        return baseURI;
+    }
+	function own() public view returns (address) {
+        return msg.sender;
+    }
 	function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) virtual{
 		super._burn(tokenId);
     }

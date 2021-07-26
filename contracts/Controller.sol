@@ -11,7 +11,7 @@ contract Controller is Ownable {
 		_;
 	}
 
-	constructor() public {
+	constructor() {
 		operator[msg.sender] = true;
 	}
 
