@@ -19,15 +19,15 @@ const main = async () => {
        //TODO BSotaToken missing code?
 
       //Sota721General
-      const Sota721General = await hre.ethers.getContractFactory("Sota721General");
-      const sota721General = await Sota721General.deploy();
-      await sota721General.deployed();
-      console.log("Sota721General deployed at: ", sota721General.address);
-      //1155
-      const NFT150 = await hre.ethers.getContractFactory("NFT150");
-      const nft150 = await NFT150.deploy();
-      await nft150.deployed();
-      console.log("NFT150 deployed at: ", nft150.address);
+//      const Sota721General = await hre.ethers.getContractFactory("Sota721General");
+//      const sota721General = await Sota721General.deploy();
+//      await sota721General.deployed();
+//      console.log("Sota721General deployed at: ", sota721General.address);
+//      //1155
+//      const NFT150 = await hre.ethers.getContractFactory("NFT150");
+//      const nft150 = await NFT150.deploy();
+//      await nft150.deployed();
+//      console.log("NFT150 deployed at: ", nft150.address);
 
       const contracOld = '0x7f61befffa9a8e584dd8d6d07b2d1e5ed16dd100';// TODO change Address (deprcation)
       const SotaMarketV2 = await hre.ethers.getContractFactory("SotaMarketV2");
