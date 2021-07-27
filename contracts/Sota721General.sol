@@ -10,7 +10,7 @@ contract Sota721General is ERC721, Ownable, ERC721URIStorage {
 	using SafeMath for uint256;
 
 	uint256 public _currentTokenId = 0;
-	string public baseURI = "https://storage.sota.finance/"; //TODO waiting Customer supply
+	string public baseURI = "https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/"; //TODO waiting Customer supply
 
 	mapping(uint256 => address) public creators;
 	mapping(uint256 => uint256) public loyaltyFee;
