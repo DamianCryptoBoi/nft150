@@ -23,17 +23,17 @@ describe("Unit testing - Sota721General", function() {
     });
     describe("Transactions", function () {
         it("Create New NFT", async function() {
-            await sota721General.create(100);
+            await sota721General.create('urltest', 100);
 
             expect(await sota721General.getCreator(1)).to.equal(owner.address);
             expect( (await sota721General.getLoyaltyFee(1)).toNumber()).to.equal(100);
 
             expect(await sota721General.getCreator(1)).to.equal(owner.address);
 
-            expect(await sota721General.tokenURI(1)).to.equal('https://storage.sota.finance/1'); //TODO
+            expect(await sota721General.tokenURI(1)).to.equal('https://storage.sota.finance/urltest'); //TODO
 
             await sota721General.setBaseURI('https://storage.sota.finance-change/');
-            expect(await sota721General.tokenURI(1)).to.equal('https://storage.sota.finance-change/1'); //TODO
+            expect(await sota721General.tokenURI(1)).to.equal('https://storage.sota.finance-change/urltest'); //TODO
         });
     });
 
