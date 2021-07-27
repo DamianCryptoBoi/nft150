@@ -14,16 +14,12 @@ contract Sota721General is ERC721, Ownable, ERC721URIStorage {
 
 	mapping(uint256 => address) public creators;
 	mapping(uint256 => uint256) public loyaltyFee;
+	mapping(uint256 => string) public tokenURIs;
 
 	constructor() ERC721('Sota Platform ERC721 NFTs', 'SOTA721GENERAL') { //TODO change
 		//_setBaseURI('https://storage.sota.finance');
 	}
-    function name1() public view returns (string memory) {
-        return baseURI;
-    }
-	function own() public view returns (address) {
-        return msg.sender;
-    }
+
 	function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) virtual{
 		super._burn(tokenId);
     }
@@ -38,7 +34,7 @@ contract Sota721General is ERC721, Ownable, ERC721URIStorage {
         override(ERC721, ERC721URIStorage)
         returns (string memory)
     {
-        return super.tokenURI(tokenId);
+        return string(abi.encodePacked(_baseURI(), tokenURIs[tokenId]));
     }
 
 
@@ -46,15 +42,13 @@ contract Sota721General is ERC721, Ownable, ERC721URIStorage {
 	 * @dev Create new NFT
 	 * @param _loyaltyFee of tokenID
 	 */
-
-//	function create(string calldata _tokenURI, uint256 _loyaltyFee) external {
-	function create(uint256 _loyaltyFee) external {
+	function create(string calldata _tokenURI, uint256 _loyaltyFee) external {
 		uint256 newTokenId = _getNextTokenId();
 		_mint(msg.sender, newTokenId);
 		creators[newTokenId] = msg.sender;
 		loyaltyFee[newTokenId] = _loyaltyFee;
+		tokenURIs[newTokenId] = _tokenURI;// change for deprecation solidity 4.x
 //		_setTokenURI(newTokenId, _tokenURI); //deprecation solidity 4.x
-//		tokenURI(newTokenId); //change for deprecation solidity 4.x
 		_incrementTokenId();
 	}
 
