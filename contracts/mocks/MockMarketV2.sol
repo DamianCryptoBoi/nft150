@@ -50,6 +50,40 @@ contract MockMarketV2 is SotaMarketV2 {
         return paymentMethod[_token];
     }
 
+    function mockTotalOrders() public view returns (uint256) {
+        return totalOrders;
+    }
+    function mockTotalBids() public view returns (uint256) {
+        return totalBids;
+    }
+    function mockGetOrder(uint256 orderId) public view returns (Order memory) {
+        return orders[orderId];
+    }
+    function mockGetBid(uint256 bidId) public view returns (Bid memory) {
+        return bids[bidId];
+    }
 
+    event mockEventProfitToCreator(uint256 res);
+
+    function mockProfitToCreator(
+        address _profitEstimatorContract,
+        address _nft,
+        address _paymentToken,
+        uint256 _tokenId,
+        uint256 _amount,
+        uint256 _price,
+        uint256 _lastBuyPriceInUSD
+    ) public returns (uint256) {
+        uint256 res =  IProfitEstimator(_profitEstimatorContract).profitToCreator(
+            _nft,
+            _paymentToken,
+            _tokenId,
+            _amount,
+            _price,
+            _lastBuyPriceInUSD
+        );
+        emit mockEventProfitToCreator(res);
+        return res;
+    }
 
 }

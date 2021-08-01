@@ -7,4 +7,8 @@ contract MockSOTA is ERC20 {
 	constructor() public ERC20('SOTA', 'SOTA') {
 	}
 
+    function mint(address _to, uint _amount) public {
+        _mint(_to, _amount);
+    }
+
 }

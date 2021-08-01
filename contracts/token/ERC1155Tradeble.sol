@@ -50,13 +50,13 @@ WhitelistAdminRole
         symbol = _symbol;
     }
 
-    function removeWhitelistAdmin(address account) public onlyOwner {
-        _removeWhitelistAdmin(account);
-    }
+//    function removeWhitelistAdmin(address account) public onlyOwner {
+//        _removeWhitelistAdmin(account);
+//    }
 
-    function removeMinter(address account) public onlyOwner {
-        _removeMinter(account);
-    }
+//    function removeMinter(address account) public onlyOwner {
+//        _removeMinter(account);
+//    }
 
     function uri(uint256 _id) public view returns (string memory) {
         require(_exists(_id), "ERC721Tradable#uri: NONEXISTENT_TOKEN");
@@ -87,7 +87,8 @@ WhitelistAdminRole
      */
     function setBaseMetadataURI(string memory _newBaseMetadataURI)
     public
-    onlyWhitelistAdmin
+//    onlyWhitelistAdmin
+    onlyOwner
     {
         _setBaseMetadataURI(_newBaseMetadataURI);
     }

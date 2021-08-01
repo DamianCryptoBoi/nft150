@@ -1,4 +1,3 @@
-  
 // SPDX-License-Identifier: UNLICENSED
 
 pragma solidity ^0.8.0;
@@ -12,7 +11,7 @@ interface IBSCswapRouter {
     external view returns (uint[] memory amounts);
 }
 
-contract SOTAV2Exchange is Ownable {
+contract SOTAExchangeV2 is Ownable {
     address public bnbRouter; // 0x9ac64cc6e4415144c455bd8e4837fea55603e5c3
     address public usdt; // 0x7ef95a0fee0dd31b22626fa2e10ee6a223f8a684 => get price
     address public usdtMarket; // 0x14ec6ee23dd1589ea147deb6c41d5ae3d6544893 => compare with payment token market
@@ -104,7 +103,10 @@ contract SOTAV2Exchange is Ownable {
                     amountIn,
                     path
                 );
-                result = amounts[2];            }
+//                result = amounts[2]
+                result = amounts[1];// path leng = 2
+
+            }
         } else {
             result = _paymentAmount;
         }
@@ -130,7 +132,8 @@ contract SOTAV2Exchange is Ownable {
                     amountIn,
                     path
                 );
-                result = amounts[2];
+//                result = amounts[2];
+                result = amounts[1];
             }
         } else {
             result = _usdtAmount;

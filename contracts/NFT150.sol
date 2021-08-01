@@ -10,6 +10,6 @@ import "./token/ERC1155Tradeble.sol";
 contract NFT150 is ERC1155Tradeble {
     constructor() ERC1155Tradeble("NFT150 General", "NFT150")
     {
-        _setBaseMetadataURI("https://hodooi-meta.sotatek.work/"); //TODO
+        _setBaseMetadataURI("https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/"); //TODO
     }
 }

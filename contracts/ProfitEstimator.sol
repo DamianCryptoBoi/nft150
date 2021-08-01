@@ -28,6 +28,10 @@ contract ProfitEstimator is Ownable {
 		sotaMarket = _sotaMarket;
 	}
 
+	function setSotaExchange(address _sotaExchangeContract) external onlyOwner() {
+		sotaExchangeContract = _sotaExchangeContract;
+	}
+
 	function setFee(uint256 _xUser) external onlyOwner() {
 		xUser = _xUser;
 	}

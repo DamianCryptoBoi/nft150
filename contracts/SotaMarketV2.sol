@@ -429,6 +429,7 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	 * @param _quantity is total amount for sale
 	 * @param _price is price per item in payment method (example 50 USDT)
 	 * @param _paymentToken is payment method (USDT, SOTA, BNB, ...)
+	 * @return _orderId uint256 for _orderId
 	 */
 	function createOrder(
 		address _tokenAddress,
