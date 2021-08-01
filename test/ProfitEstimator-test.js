@@ -2,58 +2,74 @@ const { expect, assert, use } = require("chai");
 const { solidity } = require("ethereum-waffle");
 use(solidity);  //to user revertedWith
 
-describe("Unit testing - NFT150", function() {
-    let nft150;
+describe("Unit testing - ProfitEstimator", function() {
+    let mockSotaExchange;
+    let mockMarketV2;
+    let sota721General;
+    let mockSOTA;
 
     beforeEach(async function () {
         [owner, addr, addr2] = await ethers.getSigners();
-        const NFT150 = await ethers.getContractFactory("NFT150");
-        nft150 = await NFT150.deploy();
-        nft150.deployed();
+
+        const MockSotaExchange = await ethers.getContractFactory("MockSotaExchange");
+        mockSotaExchange = await MockSotaExchange.deploy();
+        await mockSotaExchange.deployed();
+
+        const MockSOTA = await hre.ethers.getContractFactory("MockSOTA");
+        mockSOTA = await MockSOTA.deploy();
+        await mockSOTA.deployed();
+
+        const MockMarketV2 = await hre.ethers.getContractFactory("MockMarketV2");
+        mockMarketV2 = await MockMarketV2.deploy();
+        await mockMarketV2.deployed();
+
+        const Sota721General = await ethers.getContractFactory("Sota721General");
+        sota721General = await Sota721General.deploy();
+        await sota721General.deployed();
+
+        const ProfitEstimator = await ethers.getContractFactory("ProfitEstimator");
+        profitEstimator = await ProfitEstimator.deploy(mockMarketV2.address, mockSotaExchange.address);
+        profitEstimator.deployed();
     });
 
     describe("Deployment", function () {
         it("Should set the right owner", async function () {
-            expect(await nft150.owner()).to.equal(owner.address);
-        });
-
-        it("Contractor", async function () {
-            expect(await nft150.name()).to.equal("NFT150 General");
-            expect(await nft150.symbol()).to.equal("NFT150");
+            expect(await profitEstimator.owner()).to.equal(owner.address);
         });
     });
     describe("Transactions", function () {
+        it("ProfitToCreator", async function () {
+            // function profitToCreator(
+            //     address _nft,
+            //     address _paymentToken,
+            //     uint256 _tokenId,
+            //     uint256 _amount,
+            //     uint256 _price,
+            //     uint256 _lastBuyPriceInUSD
+            // )
 
-        // any function is open source of opensea => don't to test
-        // removeWhitelistAdmin ==> remove
-        // removeMinter         ==> remove
-        // Create               ==> to test
-        // mint                 ==> to test
-        // setProxyAddress      ==> to test ==> TODO request Proxy Address
-        // getCreator           ==> to test
-        // getLoyaltyFee        ==> to test
-        // maxSupply            ==> to test
-        // totalSupply            ==> to test
+            await sota721General.create('urltest', 100);
+            await expect(profitEstimator.profitToCreator(
+                sota721General.address,
+                mockSOTA.address,
+                1,
+                1,
+                3000,
+                150
+            )).to.be.revertedWith("Invalid-sender");
 
+            await expect(mockMarketV2.mockProfitToCreator(
+                profitEstimator.address,
+                sota721General.address,
+                mockSOTA.address,
+                1,
+                1,
+                3000,
+                150
 
-        it("create - maxSupply - totalSupply - getLoyaltyFee - getCreator", async function () {
-            await expect(nft150.create(1000, 1001, 200, '_uritest', 1)).to.be.revertedWith("Initial supply cannot be more than max supply");
-            await expect(nft150.create(1000, 100, 10001, '_uritest', 1)).to.be.revertedWith("Invalid-loyalty-fee");
-            await nft150.create(1000, 100, 200, '_uritest', 1);
-
-
-            expect(await nft150.maxSupply(1)).to.equal(1000);
-            expect(await nft150.totalSupply(1)).to.equal(100);
-            expect(await nft150.getLoyaltyFee(1)).to.equal(200);
-
-            await nft150.mint(owner.address, 1, 9, 1);
-            expect(await nft150.totalSupply(1)).to.equal(109);
-
-            expect(await nft150.getCreator(1)).to.equal(owner.address);
+            )).to.emit(mockMarketV2, 'mockEventProfitToCreator').withArgs(26);
 
         });
-
-
     });
 
     after(async function () {

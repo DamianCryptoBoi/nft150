@@ -2,63 +2,72 @@ const { expect, assert, use } = require("chai");
 const { solidity } = require("ethereum-waffle");
 use(solidity);  //to user revertedWith
 
-describe("Unit testing - Sota1155", function() {
-    let sota1155;
+describe("Unit testing - SotaExchangeV2", function() {
+    let sotaExchangeV2;
+
+    let bnbRouter;
+    let usdt;
+    let usdtMarket;
+    let busd;
+    let bnb;
+
+    let mockBSCswapRouter;
 
     beforeEach(async function () {
         [owner, addr, addr2] = await ethers.getSigners();
-        const Sota1155 = await ethers.getContractFactory("Sota1155");
-        sota1155 = await Sota1155.deploy();
-        sota1155.deployed();
+
+        // address public bnbRouter; // 0x9ac64cc6e4415144c455bd8e4837fea55603e5c3
+        // address public usdt; // 0x7ef95a0fee0dd31b22626fa2e10ee6a223f8a684 => get price
+        // address public usdtMarket; // 0x14ec6ee23dd1589ea147deb6c41d5ae3d6544893 => compare with payment token market
+        // address public busd; // 0x78867bbeef44f2326bf8ddd1941a4439382ef2a7
+        // address public bnb; // 0xae13d989dac2f0debff460ac112a837c89baa7cd
+
+        const MockERCFactory = await ethers.getContractFactory("MockERC20");
+        const Usdt = await ethers.getContractFactory("MockERC20");
+        const UsdtMarket = await ethers.getContractFactory("MockERC20");
+        const Busd = await ethers.getContractFactory("MockERC20");
+        const Bnb = await ethers.getContractFactory("MockERC20");
+
+
+        usdt = await Usdt.deploy();
+        usdtMarket = await UsdtMarket.deploy();
+        busd = await Busd.deploy();
+        bnb = await Bnb.deploy();
+
+        usdt.deployed();
+        usdtMarket.deployed();
+        busd.deployed();
+        bnb.deployed();
+
+        let MockBSCswapRouter = await ethers.getContractFactory("MockBSCswapRouter");
+        mockBSCswapRouter = await MockBSCswapRouter.deploy();
+        mockBSCswapRouter.deployed();
+
+        const SotaExchangeV2 = await ethers.getContractFactory("SOTAExchangeV2");
+        sotaExchangeV2 = await SotaExchangeV2.deploy(
+            mockBSCswapRouter.address,
+            usdt.address,
+            busd.address,
+            bnb.address
+        );
+        sotaExchangeV2.deployed();
     });
 
     describe("Deployment", function () {
         it("Should set the right owner", async function () {
-            expect(await sota1155.owner()).to.equal(owner.address);
+            expect(await sotaExchangeV2.owner()).to.equal(owner.address);
         });
 
         it("Contractor", async function () {
-            expect(await sota1155.name()).to.equal("SOTA1155");
-            expect(await sota1155.symbol()).to.equal("SOTA1155");
         });
     });
     describe("Transactions", function () {
 
-        // onlyWhiteListCreator
-        // removeWhitelistAdmin
-        // adminWhiteListCreators
-        // totalSupply
-        // maxSupply
-        // setBaseMetadataURI
-        // create
-        // removeMinter         ==> remove
-        // Create               ==> to test
-        // mint                 ==> to test
-        // setProxyAddress      ==> to test ==> TODO request Proxy Address
-        // getCreator           ==> to test
-        // getLoyaltyFee        ==> to test
-        // maxSupply            ==> to test
-        // totalSupply            ==> to test
-
-
-        it("create - maxSupply - totalSupply - getLoyaltyFee - getCreator", async function () {
-            await expect(sota1155.create(1000, 1001, 200, '_uritest', 1)).to.be.revertedWith("Initial supply cannot be more than max supply");
-            await expect(sota1155.create(1000, 100, 10001, '_uritest', 1)).to.be.revertedWith("Invalid-loyalty-fee");
-
-            // Only-white-list-can-create
-            await expect(sota1155.connect(addr).create(1000, 100, 10001, '_uritest', 1)).to.be.revertedWith("Only-white-list-can-create");
-
-            await sota1155.create(1000, 100, 200, '_uritest', 1);
-
-
-            expect(await sota1155.maxSupply(1)).to.equal(1000);
-            expect(await sota1155.totalSupply(1)).to.equal(100);
-            expect(await sota1155.getLoyaltyFee(1)).to.equal(200);
-
-            await sota1155.mint(owner.address, 1, 9, 1);
-            expect(await sota1155.totalSupply(1)).to.equal(109);
-
-            expect(await sota1155.getCreator(1)).to.equal(owner.address);
+        it("estimateToUSDT", async function () {
+            expect(await sotaExchangeV2.estimateToUSDT(busd.address, 1000)).to.be.equal(1000);
+        });
+        it("estimateFromUSDT", async function () {
+            expect(await sotaExchangeV2.estimateFromUSDT(busd.address, 1000)).to.be.equal(1000);
         });
     });
 

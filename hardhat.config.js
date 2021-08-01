@@ -42,10 +42,11 @@ module.exports = {
     testbnb: {
       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
       accounts: ['2a7b162564c6ca43e6289d48757bc12261339baa0b7a96271f0e0f99ed52e7a0'],
+      apiKey: "9E36GDSJK15GYXXN85186T5GDQI32B29MF"
     }
   },
 
   etherscan: {
-    apiKey: process.env.BSC_API_KEY
+    apiKey: "9E36GDSJK15GYXXN85186T5GDQI32B29MF"
   }
 };

@@ -2,55 +2,58 @@ const { expect, assert, use } = require("chai");
 const { solidity } = require("ethereum-waffle");
 use(solidity);  //to user revertedWith
 
-describe("Unit testing - Market", function() {
-    let bSotaToken;
+describe("Unit testing - NFT150", function() {
+    let nft150;
 
     beforeEach(async function () {
         [owner, addr, addr2] = await ethers.getSigners();
-        const BSotaToken = await ethers.getContractFactory("BSotaToken");
-        bSotaToken = await BSotaToken.deploy();
-        bSotaToken.deployed();
+        const NFT150 = await ethers.getContractFactory("NFT150");
+        nft150 = await NFT150.deploy();
+        nft150.deployed();
     });
 
     describe("Deployment", function () {
         it("Should set the right owner", async function () {
-            expect(await bSotaToken.owner()).to.equal(owner.address);
+            expect(await nft150.owner()).to.equal(owner.address);
         });
 
         it("Contractor", async function () {
-            expect(await bSotaToken.name()).to.equal("SOTA");
-            expect(await bSotaToken.symbol()).to.equal("SOTA");
+            expect(await nft150.name()).to.equal("NFT150 General");
+            expect(await nft150.symbol()).to.equal("NFT150");
         });
     });
     describe("Transactions", function () {
-        it("modifier onlyWhiteList", async function () {
-            await expect(bSotaToken.connect(addr).mint(owner.address, 1000)).to.be.revertedWith("Only-whitelist-minter");
-            await expect(bSotaToken.mint(owner.address, 1000));
-            expect(await bSotaToken.balanceOf(owner.address)).to.equal(1000);
 
-            await bSotaToken.adminWhiteList(addr.address, true); // not reverted
-            await bSotaToken.connect(addr).mint(addr.address, 2000);
-            expect(await bSotaToken.balanceOf(addr.address)).to.equal(2000);
+        // any function is open source of opensea => don't to test
+        // removeWhitelistAdmin ==> remove
+        // removeMinter         ==> remove
+        // Create               ==> to test
+        // mint                 ==> to test
+        // setProxyAddress      ==> to test ==> TODO request Proxy Address
+        // getCreator           ==> to test
+        // getLoyaltyFee        ==> to test
+        // maxSupply            ==> to test
+        // totalSupply            ==> to test
+
+
+        it("create - maxSupply - totalSupply - getLoyaltyFee - getCreator", async function () {
+            await expect(nft150.create(1000, 1001, 200, '_uritest', 1)).to.be.revertedWith("Initial supply cannot be more than max supply");
+            await expect(nft150.create(1000, 100, 10001, '_uritest', 1)).to.be.revertedWith("Invalid-loyalty-fee");
+            await nft150.create(1000, 100, 200, '_uritest', 1);
+
+
+            expect(await nft150.maxSupply(1)).to.equal(1000);
+            expect(await nft150.totalSupply(1)).to.equal(100);
+            expect(await nft150.getLoyaltyFee(1)).to.equal(200);
+
+            await nft150.mint(owner.address, 1, 9, 1);
+            expect(await nft150.totalSupply(1)).to.equal(109);
+
+            expect(await nft150.getCreator(1)).to.equal(owner.address);
 
         });
 
-        it("swap and adminWithdrawFee", async function () {
-            //case reverted
-            await expect(bSotaToken.swap(addr.address, 9)).to.be.revertedWith("Invalid-amount");
-            // feeCollected = feeCollected.add(FEE);
-            // _burn(msg.sender, swapAmount);
-            // _transfer(msg.sender, address(this), FEE);
-            await expect(bSotaToken.mint(owner.address, 1000));
-            await expect(bSotaToken.swap(addr.address, 100))
-                .to.emit(bSotaToken, 'Swap')
-                .withArgs(owner.address, addr.address, 90);
 
-            await bSotaToken.adminWithdrawFee(addr2.address);
-
-            expect(await bSotaToken.balanceOf(owner.address)).to.equal(900);
-            expect(await bSotaToken.balanceOf(addr2.address)).to.equal(10);
-
-        });
     });
 
     after(async function () {

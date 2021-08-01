@@ -30,10 +30,10 @@ describe("Unit testing - Sota721General", function() {
 
             expect(await sota721General.getCreator(1)).to.equal(owner.address);
 
-            expect(await sota721General.tokenURI(1)).to.equal('https://storage.sota.finance/urltest'); //TODO
+            expect(await sota721General.tokenURI(1)).to.equal('https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/urltest'); //TODO
 
-            await sota721General.setBaseURI('https://storage.sota.finance-change/');
-            expect(await sota721General.tokenURI(1)).to.equal('https://storage.sota.finance-change/urltest'); //TODO
+            await sota721General.setBaseURI('https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/change/');
+            expect(await sota721General.tokenURI(1)).to.equal('https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/change/urltest'); //TODO
         });
     });
 
