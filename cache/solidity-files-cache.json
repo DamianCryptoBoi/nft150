@@ -1,9 +1,9 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/ERC1155.sol": {
-      "lastModificationDate": 1627034237230,
-      "contentHash": "152cee9f1c40b4f894d73caf141a4ad6",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\ERC1155.sol": {
+      "lastModificationDate": 1626972978447,
+      "contentHash": "0319a1b0c7496b7ee4e88d6bfd37cac5",
       "sourceName": "contracts/libs/ERC1155.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -31,9 +31,9 @@
       "versionPragmas": [],
       "artifacts": []
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/ERC1155MintBurn.sol": {
-      "lastModificationDate": 1627034237231,
-      "contentHash": "55afc2c9b11308367010d9d6f7b76812",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\ERC1155MintBurn.sol": {
+      "lastModificationDate": 1626970412187,
+      "contentHash": "c9609c5aa017a751726d16d9e4ad3bcb",
       "sourceName": "contracts/libs/ERC1155MintBurn.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -61,9 +61,9 @@
       "versionPragmas": [],
       "artifacts": []
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/ERC1155Tradable.sol": {
-      "lastModificationDate": 1627034237231,
-      "contentHash": "746f02523b6e04a5fc5ed5f8759e4645",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\ERC1155Tradable.sol": {
+      "lastModificationDate": 1626970408690,
+      "contentHash": "fa641bbc4bb0e82f21c7e7b9a28ac3f8",
       "sourceName": "contracts/libs/ERC1155Tradable.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -91,9 +91,9 @@
       "versionPragmas": [],
       "artifacts": []
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/Migrations.sol": {
-      "lastModificationDate": 1626764962853,
-      "contentHash": "94ca4868fb915427d78b605b0506d2e2",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\Migrations.sol": {
+      "lastModificationDate": 1626660117097,
+      "contentHash": "a88a9949d481ed0f0eddcc5cd31cf5c9",
       "sourceName": "contracts/Migrations.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -121,9 +121,9 @@
       "versionPragmas": [],
       "artifacts": []
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/mocks/MockERC721.sol": {
-      "lastModificationDate": 1627034237232,
-      "contentHash": "a66a228417e5b768da64fd62ff6cac79",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\mocks\\MockERC721.sol": {
+      "lastModificationDate": 1626970538947,
+      "contentHash": "2c85055ac6856bb08b7df1342be09ce6",
       "sourceName": "contracts/mocks/MockERC721.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -151,45 +151,9 @@
       "versionPragmas": [],
       "artifacts": []
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/mocks/MockSOTA.sol": {
-      "lastModificationDate": 1627224499341,
-      "contentHash": "5a5a9e476b19ac97205feb91e0663059",
-      "sourceName": "contracts/mocks/MockSOTA.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "MockSOTA"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/mocks/MockSOTA1155.sol": {
-      "lastModificationDate": 1627034237233,
-      "contentHash": "ff5eeba9621ebbf87dee66d0cc16d7da",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\mocks\\MockSOTA1155.sol": {
+      "lastModificationDate": 1626970546547,
+      "contentHash": "15c1f0f505a24fcda808893fa7a34e96",
       "sourceName": "contracts/mocks/MockSOTA1155.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -217,9 +181,9 @@
       "versionPragmas": [],
       "artifacts": []
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/mocks/MockSotaExchange.sol": {
-      "lastModificationDate": 1627034237233,
-      "contentHash": "302aef3da0b8b665281592c6cfcd5fde",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\mocks\\MockSotaExchange.sol": {
+      "lastModificationDate": 1627578824009,
+      "contentHash": "204f0b65aa57a47a6380ddef21b7a7ac",
       "sourceName": "contracts/mocks/MockSotaExchange.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -244,12 +208,16 @@
         }
       },
       "imports": [],
-      "versionPragmas": [],
-      "artifacts": []
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "MockSotaExchange"
+      ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/mocks/MockUSDT.sol": {
-      "lastModificationDate": 1627034237234,
-      "contentHash": "b4e473ce5b5cc8b512ef70c6b7956ce8",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\mocks\\MockUSDT.sol": {
+      "lastModificationDate": 1627790320347,
+      "contentHash": "9748060781efb574614fff84965a3495",
       "sourceName": "contracts/mocks/MockUSDT.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -277,9 +245,9 @@
       "versionPragmas": [],
       "artifacts": []
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/mocks/MockWBNB.sol": {
-      "lastModificationDate": 1627034237234,
-      "contentHash": "a7281acd3f8b14b22919c053a7a8d1c7",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\mocks\\MockWBNB.sol": {
+      "lastModificationDate": 1626970564605,
+      "contentHash": "696a8f53b196b43ee34350f14b9b7d92",
       "sourceName": "contracts/mocks/MockWBNB.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -307,9 +275,9 @@
       "versionPragmas": [],
       "artifacts": []
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/mocks/ProxyRegistry.sol": {
-      "lastModificationDate": 1627034237234,
-      "contentHash": "5a7ec7be923e20f7343054446971a1a6",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\mocks\\ProxyRegistry.sol": {
+      "lastModificationDate": 1626970568088,
+      "contentHash": "205a1f2cad4f6a0558a9abee321f621e",
       "sourceName": "contracts/mocks/ProxyRegistry.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -337,40 +305,10 @@
       "versionPragmas": [],
       "artifacts": []
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/SotaMarket.sol": {
-      "lastModificationDate": 1627034237226,
-      "contentHash": "a1ef0ee62cd52f7f7baaf9e7901bd18b",
-      "sourceName": "contracts/SotaMarket.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [],
-      "artifacts": []
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/Controller.sol": {
-      "lastModificationDate": 1627058941861,
-      "contentHash": "4a2f63cd0c5a39d0e654f37a92c0b1ee",
-      "sourceName": "contracts/Controller.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\BSotaToken.sol": {
+      "lastModificationDate": 1627826461415,
+      "contentHash": "cf6c1b4fcd49293815df807c28b671e9",
+      "sourceName": "contracts/BSotaToken.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -394,17 +332,206 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol"
+        "@openzeppelin/contracts/utils/Context.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/utils/math/SafeMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0",
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "BSotaToken",
+        "ERC20",
+        "ERC20Burnable",
+        "Ownable"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
+      "lastModificationDate": 1626660208463,
+      "contentHash": "07f148e0d44b2ffc23b3ae6dd6e38cfb",
+      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Context"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
+      "lastModificationDate": 1626660208574,
+      "contentHash": "0eac3e1a83ee62326ca007811285b274",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\utils\\math\\SafeMath.sol": {
+      "lastModificationDate": 1626660208627,
+      "contentHash": "5365090efc586b728719e562ebfed0d6",
+      "sourceName": "@openzeppelin/contracts/utils/math/SafeMath.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "SafeMath"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\Sota721General.sol": {
+      "lastModificationDate": 1627374246070,
+      "contentHash": "88c020aa7a7644fe1c2a751c75da3fb3",
+      "sourceName": "contracts/Sota721General.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/utils/math/SafeMath.sol",
+        "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "Controller"
+        "Sota721General"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1626765173590,
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\ERC721.sol": {
+      "lastModificationDate": 1626660208536,
+      "contentHash": "68557a95c05dac5415ccbeb0a389ccaf",
+      "sourceName": "@openzeppelin/contracts/token/ERC721/ERC721.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC721.sol",
+        "./IERC721Receiver.sol",
+        "./extensions/IERC721Metadata.sol",
+        "../../utils/Address.sol",
+        "../../utils/Context.sol",
+        "../../utils/Strings.sol",
+        "../../utils/introspection/ERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC721"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
+      "lastModificationDate": 1626660208611,
       "contentHash": "4fe56b59ced59d87df6b796758f62895",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
@@ -439,10 +566,82 @@
         "Ownable"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1626765171264,
-      "contentHash": "07f148e0d44b2ffc23b3ae6dd6e38cfb",
-      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721URIStorage.sol": {
+      "lastModificationDate": 1626660208550,
+      "contentHash": "94da923c22e9773af388607307182c80",
+      "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../ERC721.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC721URIStorage"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\IERC721.sol": {
+      "lastModificationDate": 1626660208583,
+      "contentHash": "53919d6975f2c0f3dffee5e3a1064116",
+      "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../utils/introspection/IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC721"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\IERC721Receiver.sol": {
+      "lastModificationDate": 1626660208594,
+      "contentHash": "9a367cecca6fed80a3e975b7e6b3bd5c",
+      "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -470,13 +669,13 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "Context"
+        "IERC721Receiver"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/SOTAReferral.sol": {
-      "lastModificationDate": 1626764962854,
-      "contentHash": "c2a93bffe79661d787c2246749e04b0a",
-      "sourceName": "contracts/SOTAReferral.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\extensions\\IERC721Metadata.sol": {
+      "lastModificationDate": 1626660208592,
+      "contentHash": "8aa69ca8424167555baaaa9f607801db",
+      "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -500,18 +699,156 @@
         }
       },
       "imports": [
-        "./Controller.sol"
+        "../IERC721.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "SOTAReferral"
+        "IERC721Metadata"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/SotaMarketV2.sol": {
-      "lastModificationDate": 1627223723810,
-      "contentHash": "cef331c1c28c87a0094f3535c2fe5a3a",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\utils\\Address.sol": {
+      "lastModificationDate": 1626660208452,
+      "contentHash": "1ea1589528625ace210951bc8cd186c9",
+      "sourceName": "@openzeppelin/contracts/utils/Address.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Address"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\utils\\Strings.sol": {
+      "lastModificationDate": 1626660208633,
+      "contentHash": "62142442bed149f965c5ed971fae4182",
+      "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Strings"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol": {
+      "lastModificationDate": 1626660208502,
+      "contentHash": "a9a5319dff9088c6ffe757ea1c2a6729",
+      "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC165"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol": {
+      "lastModificationDate": 1626660208567,
+      "contentHash": "9a04322bb8f6b8f2767d8358d1d2537b",
+      "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC165"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\SotaMarketV2.sol": {
+      "lastModificationDate": 1627541731654,
+      "contentHash": "7d0a432f340b51dd3958974a10407e33",
       "sourceName": "contracts/SotaMarketV2.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -562,9 +899,9 @@
         "SotaMarketV2"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/interfaces/IReferral.sol": {
-      "lastModificationDate": 1626764962858,
-      "contentHash": "91dc4a3addb12e9f656bec48dc00bb02",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\interfaces\\IReferral.sol": {
+      "lastModificationDate": 1626660117105,
+      "contentHash": "c6f6290fe510299cf74e1199cf98778b",
       "sourceName": "contracts/interfaces/IReferral.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -596,9 +933,9 @@
         "IReferral"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/interfaces/ISotaExchange.sol": {
-      "lastModificationDate": 1626764962859,
-      "contentHash": "db7cc32f0a98a1323c44f3cd18fbd881",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\interfaces\\ISotaExchange.sol": {
+      "lastModificationDate": 1626660117105,
+      "contentHash": "4239d659dda735d29aa476a057f387be",
       "sourceName": "contracts/interfaces/ISotaExchange.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -630,9 +967,9 @@
         "ISotaExchange"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/interfaces/ISOTANFT.sol": {
-      "lastModificationDate": 1626764962858,
-      "contentHash": "2fc9b5ae8c5de0ba6f7859b706f579d4",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\interfaces\\ISOTANFT.sol": {
+      "lastModificationDate": 1626660117105,
+      "contentHash": "b4d4b23b44183177f6b61d71b01e9bc5",
       "sourceName": "contracts/interfaces/ISOTANFT.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -664,9 +1001,9 @@
         "ISOTANFT"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/interfaces/IWBNB.sol": {
-      "lastModificationDate": 1626764962859,
-      "contentHash": "40c42a6f3c5f00a5c3a36cc61783156b",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\interfaces\\IWBNB.sol": {
+      "lastModificationDate": 1626660117106,
+      "contentHash": "7ba91e8dc888470c6ba55556f5002eb7",
       "sourceName": "contracts/interfaces/IWBNB.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -698,9 +1035,9 @@
         "IWBNB"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/interfaces/IProfitEstimator.sol": {
-      "lastModificationDate": 1626764962858,
-      "contentHash": "3b91595839c28cf03977d0138d331a11",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\interfaces\\IProfitEstimator.sol": {
+      "lastModificationDate": 1626660117104,
+      "contentHash": "627524c2055d5bb6f5f20a92e04e423a",
       "sourceName": "contracts/interfaces/IProfitEstimator.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -732,9 +1069,9 @@
         "IProfitEstimator"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/interfaces/ISotaMarket.sol": {
-      "lastModificationDate": 1626764962859,
-      "contentHash": "53d3f7ba1ec58826b99a323ef64b5131",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\interfaces\\ISotaMarket.sol": {
+      "lastModificationDate": 1626660117106,
+      "contentHash": "990b9cf402cd0cf1d96695f6988ac02e",
       "sourceName": "contracts/interfaces/ISotaMarket.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -766,42 +1103,8 @@
         "ISotaMarket"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1626765173238,
-      "contentHash": "0eac3e1a83ee62326ca007811285b274",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC20"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC1155/IERC1155.sol": {
-      "lastModificationDate": 1626765173048,
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\IERC1155.sol": {
+      "lastModificationDate": 1626660208559,
       "contentHash": "bcbcd549c9bfc2da42e5426780ce4e4e",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/IERC1155.sol",
       "solcConfig": {
@@ -836,8 +1139,8 @@
         "IERC1155"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol": {
-      "lastModificationDate": 1626765171894,
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\utils\\ERC1155Holder.sol": {
+      "lastModificationDate": 1626660208490,
       "contentHash": "b3de7ea2002899c2c64ec69ca8c74ff5",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
       "solcConfig": {
@@ -872,44 +1175,8 @@
         "ERC1155Holder"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol": {
-      "lastModificationDate": 1626765173305,
-      "contentHash": "53919d6975f2c0f3dffee5e3a1064116",
-      "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "../../utils/introspection/IERC165.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC721"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol": {
-      "lastModificationDate": 1626765172797,
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\utils\\ERC721Holder.sol": {
+      "lastModificationDate": 1626660208544,
       "contentHash": "40c7a8a65c915b35f29a010df93b123e",
       "sourceName": "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol",
       "solcConfig": {
@@ -944,8 +1211,8 @@
         "ERC721Holder"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
-      "lastModificationDate": 1626765173908,
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\utils\\SafeERC20.sol": {
+      "lastModificationDate": 1626660208626,
       "contentHash": "d37406082a74a9b6b114de522fcb6349",
       "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
       "solcConfig": {
@@ -981,8 +1248,8 @@
         "SafeERC20"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/security/Pausable.sol": {
-      "lastModificationDate": 1626765173604,
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\security\\Pausable.sol": {
+      "lastModificationDate": 1626660208613,
       "contentHash": "662437c05ba6f3706097c8d5ca68a52a",
       "sourceName": "@openzeppelin/contracts/security/Pausable.sol",
       "solcConfig": {
@@ -1017,76 +1284,8 @@
         "Pausable"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol": {
-      "lastModificationDate": 1626765173919,
-      "contentHash": "5365090efc586b728719e562ebfed0d6",
-      "sourceName": "@openzeppelin/contracts/utils/math/SafeMath.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "SafeMath"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/utils/Address.sol": {
-      "lastModificationDate": 1626765171004,
-      "contentHash": "1ea1589528625ace210951bc8cd186c9",
-      "sourceName": "@openzeppelin/contracts/utils/Address.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Address"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol": {
-      "lastModificationDate": 1626765173732,
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\security\\ReentrancyGuard.sol": {
+      "lastModificationDate": 1626660208621,
       "contentHash": "53fbff678f378956efcb207fa748eaa6",
       "sourceName": "@openzeppelin/contracts/security/ReentrancyGuard.sol",
       "solcConfig": {
@@ -1119,42 +1318,8 @@
         "ReentrancyGuard"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1626765173121,
-      "contentHash": "9a04322bb8f6b8f2767d8358d1d2537b",
-      "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC165"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC1155/utils/ERC1155Receiver.sol": {
-      "lastModificationDate": 1626765172065,
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\utils\\ERC1155Receiver.sol": {
+      "lastModificationDate": 1626660208498,
       "contentHash": "de467e2231a0f5a8ec4c03d572a853d7",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Receiver.sol",
       "solcConfig": {
@@ -1190,8 +1355,8 @@
         "ERC1155Receiver"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol": {
-      "lastModificationDate": 1626765173065,
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC1155\\IERC1155Receiver.sol": {
+      "lastModificationDate": 1626660208563,
       "contentHash": "82e386b6255dba9eb011192f66eb78b6",
       "sourceName": "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol",
       "solcConfig": {
@@ -1226,79 +1391,9 @@
         "IERC1155Receiver"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
-      "lastModificationDate": 1626765172136,
-      "contentHash": "a9a5319dff9088c6ffe757ea1c2a6729",
-      "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./IERC165.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "ERC165"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol": {
-      "lastModificationDate": 1626765173391,
-      "contentHash": "9a367cecca6fed80a3e975b7e6b3bd5c",
-      "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC721Receiver"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/ProfitEstimator.sol": {
-      "lastModificationDate": 1626764962854,
-      "contentHash": "2e1da369cf0944c80cf26089cb3e4dd1",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\ProfitEstimator.sol": {
+      "lastModificationDate": 1627787652026,
+      "contentHash": "3f0ecc0711e1a2e4931b33616d2395c8",
       "sourceName": "contracts/ProfitEstimator.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1336,10 +1431,10 @@
         "ProfitEstimator"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/Sota721General.sol": {
-      "lastModificationDate": 1627185091380,
-      "contentHash": "13e01718dd1092f0d74b445f37cab2e5",
-      "sourceName": "contracts/Sota721General.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\ProxyRegistry.sol": {
+      "lastModificationDate": 1626660117113,
+      "contentHash": "ea568eebff4b18ab8550f5eb613a9819",
+      "sourceName": "contracts/libs/ProxyRegistry.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -1363,22 +1458,20 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
         "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/utils/math/SafeMath.sol",
-        "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol"
+        "./OwnableDelegateProxy.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "Sota721General"
+        "ProxyRegistry"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol": {
-      "lastModificationDate": 1626765172595,
-      "contentHash": "68557a95c05dac5415ccbeb0a389ccaf",
-      "sourceName": "@openzeppelin/contracts/token/ERC721/ERC721.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\OwnableDelegateProxy.sol": {
+      "lastModificationDate": 1626660117110,
+      "contentHash": "c80e1f5f3872e707219caac0e31bab9e",
+      "sourceName": "contracts/libs/OwnableDelegateProxy.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -1402,25 +1495,19 @@
         }
       },
       "imports": [
-        "./IERC721.sol",
-        "./IERC721Receiver.sol",
-        "./extensions/IERC721Metadata.sol",
-        "../../utils/Address.sol",
-        "../../utils/Context.sol",
-        "../../utils/Strings.sol",
-        "../../utils/introspection/ERC165.sol"
+        "./OwnedUpgradeabilityProxy.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "ERC721"
+        "OwnableDelegateProxy"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol": {
-      "lastModificationDate": 1626765172887,
-      "contentHash": "94da923c22e9773af388607307182c80",
-      "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\OwnedUpgradeabilityProxy.sol": {
+      "lastModificationDate": 1626660117111,
+      "contentHash": "1bba5e8fd8c7118fafd6b95cb229b38c",
+      "sourceName": "contracts/libs/OwnedUpgradeabilityProxy.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -1444,19 +1531,19 @@
         }
       },
       "imports": [
-        "../ERC721.sol"
+        "./OwnedUpgradeabilityStorage.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "ERC721URIStorage"
+        "OwnedUpgradeabilityProxy"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
-      "lastModificationDate": 1626765173376,
-      "contentHash": "8aa69ca8424167555baaaa9f607801db",
-      "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\OwnedUpgradeabilityStorage.sol": {
+      "lastModificationDate": 1626660117111,
+      "contentHash": "909483c52049f98b5ecb1ae06d0fbcfe",
+      "sourceName": "contracts/libs/OwnedUpgradeabilityStorage.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -1480,19 +1567,19 @@
         }
       },
       "imports": [
-        "../IERC721.sol"
+        "./Proxy.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "IERC721Metadata"
+        "OwnedUpgradeabilityStorage"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
-      "lastModificationDate": 1626765174003,
-      "contentHash": "62142442bed149f965c5ed971fae4182",
-      "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\Proxy.sol": {
+      "lastModificationDate": 1626660117112,
+      "contentHash": "621f6c371a83f8e01cbd1050942e5483",
+      "sourceName": "contracts/libs/Proxy.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -1520,13 +1607,13 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "Strings"
+        "Proxy"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/ERC1155Holder.sol": {
-      "lastModificationDate": 1626764962853,
-      "contentHash": "46f96e184bc58b2bb0aa7bb9ae2d2a04",
-      "sourceName": "contracts/ERC1155Holder.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
+      "lastModificationDate": 1626660208514,
+      "contentHash": "acad756301f0fb200ecc66138e8cd5c5",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -1550,16 +1637,92 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Receiver.sol"
+        "./IERC20.sol",
+        "./extensions/IERC20Metadata.sol",
+        "../../utils/Context.sol"
       ],
-      "versionPragmas": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
       "artifacts": [
-        "ERC1155Holder"
+        "ERC20"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/WhitelistAdminRole.sol": {
-      "lastModificationDate": 1627034237232,
-      "contentHash": "674bcf460b9c248aee66c5ed91233d9a",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
+      "lastModificationDate": 1626660208578,
+      "contentHash": "aa1be06992a99bb7393b26a6af3c4dfb",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20Metadata"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\mocks\\MockSOTA.sol": {
+      "lastModificationDate": 1627577689488,
+      "contentHash": "632b5e4e5129b01b3805d7ea77780e9f",
+      "sourceName": "contracts/mocks/MockSOTA.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "MockSOTA"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\WhitelistAdminRole.sol": {
+      "lastModificationDate": 1626970729829,
+      "contentHash": "7c57cbe7b9dbda7e2819c457cd8b1714",
       "sourceName": "contracts/libs/WhitelistAdminRole.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1594,9 +1757,9 @@
         "WhitelistAdminRole"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/Roles.sol": {
-      "lastModificationDate": 1626764962865,
-      "contentHash": "e24a1b7d7f85820b5c353d7bfe716ec2",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\Roles.sol": {
+      "lastModificationDate": 1626660117114,
+      "contentHash": "1cccab7bdd8f2eaef8e73747a3301e61",
       "sourceName": "contracts/libs/Roles.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1628,9 +1791,9 @@
         "Roles"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/PauserRole.sol": {
-      "lastModificationDate": 1626764962864,
-      "contentHash": "e589c3558d59efeb3c43e338b115d11f",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\PauserRole.sol": {
+      "lastModificationDate": 1626660117112,
+      "contentHash": "c1a4d299ce671dee3b0a3f64326ecb4b",
       "sourceName": "contracts/libs/PauserRole.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1665,9 +1828,9 @@
         "PauserRole"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/Pausable.sol": {
-      "lastModificationDate": 1626764962863,
-      "contentHash": "5ef413f78c1909db89c6b84edc9ec25d",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\Pausable.sol": {
+      "lastModificationDate": 1626660117112,
+      "contentHash": "f900af68a8d30e590431336f1b8c7319",
       "sourceName": "contracts/libs/Pausable.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1702,9 +1865,9 @@
         "Pausable"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/MinterRole.sol": {
-      "lastModificationDate": 1626764962862,
-      "contentHash": "32261dbd03e204233b5cd6c2fc4c562d",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\MinterRole.sol": {
+      "lastModificationDate": 1626660117110,
+      "contentHash": "0369c9ab5136b182678451cd99883e9e",
       "sourceName": "contracts/libs/MinterRole.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1739,9 +1902,9 @@
         "MinterRole"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/dependencies/WhitelistAdminRole.sol": {
-      "lastModificationDate": 1627034237228,
-      "contentHash": "39d9b99cd05b3c7f1f0e32ea854450e7",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\dependencies\\WhitelistAdminRole.sol": {
+      "lastModificationDate": 1626972755736,
+      "contentHash": "0cce0290e0cc794a6648a2348df62fb1",
       "sourceName": "contracts/dependencies/WhitelistAdminRole.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1776,9 +1939,9 @@
         "WhitelistAdminRole"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/dependencies/Context.sol": {
-      "lastModificationDate": 1627034237227,
-      "contentHash": "4723f4784626625a81852a21c3f97e52",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\dependencies\\Context.sol": {
+      "lastModificationDate": 1626972736460,
+      "contentHash": "e49c19f68f7cfcd79d72fad1bde0dab2",
       "sourceName": "contracts/dependencies/Context.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1810,9 +1973,9 @@
         "Context"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/token/ERC1155Tradeble.sol": {
-      "lastModificationDate": 1627034237236,
-      "contentHash": "34240fd6e3a60a9682b6db46e0e8d31e",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\token\\ERC1155Tradeble.sol": {
+      "lastModificationDate": 1627751005065,
+      "contentHash": "0ab2b7af163072a535e95aa8adb399c3",
       "sourceName": "contracts/token/ERC1155Tradeble.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1853,9 +2016,9 @@
         "ERC1155Tradeble"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/Strings.sol": {
-      "lastModificationDate": 1626764962866,
-      "contentHash": "5357cc61cb7100f49738557651eed2c1",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\Strings.sol": {
+      "lastModificationDate": 1626660117114,
+      "contentHash": "66b5d1515b987f937bec952a4e0eeeb0",
       "sourceName": "contracts/libs/Strings.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1887,9 +2050,9 @@
         "Strings"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/dependencies/Ownable.sol": {
-      "lastModificationDate": 1627034237228,
-      "contentHash": "52b5761446a4af5c7933c45da8662ca9",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\dependencies\\Ownable.sol": {
+      "lastModificationDate": 1626972747116,
+      "contentHash": "3a0eeb36b52b9750ea1deb6d7bc7319e",
       "sourceName": "contracts/dependencies/Ownable.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1923,9 +2086,9 @@
         "Ownable"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/dependencies/MinterRole.sol": {
-      "lastModificationDate": 1627034237228,
-      "contentHash": "560ce9e9d98efb491702dd9c8c3a65ce",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\dependencies\\MinterRole.sol": {
+      "lastModificationDate": 1626972742971,
+      "contentHash": "5588e8b14ec3dbbfea518bd094babd23",
       "sourceName": "contracts/dependencies/MinterRole.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1960,9 +2123,9 @@
         "MinterRole"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/dependencies/ProxyRegistry.sol": {
-      "lastModificationDate": 1627034237228,
-      "contentHash": "1bee93f4dc6b217e1a012ad1082e78a5",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\dependencies\\ProxyRegistry.sol": {
+      "lastModificationDate": 1626972751000,
+      "contentHash": "59667214839c2818812bcf70dff7ef7a",
       "sourceName": "contracts/dependencies/ProxyRegistry.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -1995,9 +2158,9 @@
         "ProxyRegistry"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/token/ERC1155.sol": {
-      "lastModificationDate": 1627034237235,
-      "contentHash": "28272a015b9c0a1f6d840dcabc62da57",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\token\\ERC1155.sol": {
+      "lastModificationDate": 1626976399858,
+      "contentHash": "155d9481a03343898b6eb5833d5e814b",
       "sourceName": "contracts/token/ERC1155.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -2034,9 +2197,9 @@
         "ERC1155"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/token/ERC1155MintBurn.sol": {
-      "lastModificationDate": 1627034237235,
-      "contentHash": "3544a0f8e3316aa91a4972b945f4e93d",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\token\\ERC1155MintBurn.sol": {
+      "lastModificationDate": 1626972692627,
+      "contentHash": "50069d356fcf702d4b19b4f4b2e1b0c8",
       "sourceName": "contracts/token/ERC1155MintBurn.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -2070,9 +2233,9 @@
         "ERC1155MintBurn"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/token/ERC1155Metadata.sol": {
-      "lastModificationDate": 1627034237235,
-      "contentHash": "b0c56ee76b77e5e26439da95fee1d25a",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\token\\ERC1155Metadata.sol": {
+      "lastModificationDate": 1626972703670,
+      "contentHash": "94a00731e9e102a9eda9f34ae8d19b38",
       "sourceName": "contracts/token/ERC1155Metadata.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -2104,9 +2267,9 @@
         "ERC1155Metadata"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/interfaces/IERC165.sol": {
-      "lastModificationDate": 1627034237229,
-      "contentHash": "30e550aaec6023b1fc50cbfedb2c67af",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\interfaces\\IERC165.sol": {
+      "lastModificationDate": 1626976563799,
+      "contentHash": "b4ce5c671c978bbe7940e107734356d1",
       "sourceName": "contracts/interfaces/IERC165.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -2138,9 +2301,9 @@
         "IERC165"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/SafeMath.sol": {
-      "lastModificationDate": 1627034237231,
-      "contentHash": "c585ad65fcdce0b50cd0fa37c38248c5",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\SafeMath.sol": {
+      "lastModificationDate": 1626972729418,
+      "contentHash": "ee11e06d02cb456ee9b31590c15f04ed",
       "sourceName": "contracts/libs/SafeMath.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -2172,9 +2335,9 @@
         "SafeMath"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/Address.sol": {
-      "lastModificationDate": 1627034237230,
-      "contentHash": "4085fba064a4a471914ac694553e24c9",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\Address.sol": {
+      "lastModificationDate": 1626976508047,
+      "contentHash": "ab7d645fe6f5f74be095853d15c7d106",
       "sourceName": "contracts/libs/Address.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -2206,9 +2369,9 @@
         "Address"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/interfaces/IERC1155TokenReceiver.sol": {
-      "lastModificationDate": 1627034237229,
-      "contentHash": "64802ef8bc3b1933dc9d350bb9cedc02",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\interfaces\\IERC1155TokenReceiver.sol": {
+      "lastModificationDate": 1626976533987,
+      "contentHash": "ba9b24bccd43787c72cf36e4256f0344",
       "sourceName": "contracts/interfaces/IERC1155TokenReceiver.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -2240,9 +2403,9 @@
         "IERC1155TokenReceiver"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/interfaces/IERC1155.sol": {
-      "lastModificationDate": 1627034237229,
-      "contentHash": "034c7ab351b83586072dc352999c5b8c",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\interfaces\\IERC1155.sol": {
+      "lastModificationDate": 1626976554452,
+      "contentHash": "005a70fc5670a70cec82822eb48ba4b2",
       "sourceName": "contracts/interfaces/IERC1155.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -2276,9 +2439,9 @@
         "IERC1155"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/NFT150.sol": {
-      "lastModificationDate": 1627034237225,
-      "contentHash": "29569bc6ad28402475c8e838c939e002",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\NFT150.sol": {
+      "lastModificationDate": 1627543458490,
+      "contentHash": "e77018c8453247413d10dff604503da8",
       "sourceName": "contracts/NFT150.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -2312,10 +2475,10 @@
         "NFT150"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/SOTAExchange.sol": {
-      "lastModificationDate": 1627054937002,
-      "contentHash": "ff2bd3f02102ebcb4b924f7708cf22eb",
-      "sourceName": "contracts/SOTAExchange.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\Controller.sol": {
+      "lastModificationDate": 1627359299380,
+      "contentHash": "d7c3dc42198ea9911929b5b3a2b339c2",
+      "sourceName": "contracts/Controller.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -2345,14 +2508,13 @@
         "^0.8.0"
       ],
       "artifacts": [
-        "IPancakeSwapRouter",
-        "SOTAExchange"
+        "Controller"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/ProxyRegistry.sol": {
-      "lastModificationDate": 1626764962864,
-      "contentHash": "0e8f451d0118ef1a955f7487142810ea",
-      "sourceName": "contracts/libs/ProxyRegistry.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\SOTAReferral.sol": {
+      "lastModificationDate": 1626660117099,
+      "contentHash": "d893dfa5b97f6a6b00a31e434dab63f7",
+      "sourceName": "contracts/SOTAReferral.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -2376,502 +2538,19 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "./OwnableDelegateProxy.sol"
+        "./Controller.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "ProxyRegistry"
+        "SOTAReferral"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/OwnableDelegateProxy.sol": {
-      "lastModificationDate": 1626764962862,
-      "contentHash": "b9616eae4dc50b663b577c26bbd0afa9",
-      "sourceName": "contracts/libs/OwnableDelegateProxy.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./OwnedUpgradeabilityProxy.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "OwnableDelegateProxy"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/OwnedUpgradeabilityProxy.sol": {
-      "lastModificationDate": 1626764962862,
-      "contentHash": "25cc2af8f2ac52e25fa3037afe340241",
-      "sourceName": "contracts/libs/OwnedUpgradeabilityProxy.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./OwnedUpgradeabilityStorage.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "OwnedUpgradeabilityProxy"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/OwnedUpgradeabilityStorage.sol": {
-      "lastModificationDate": 1626764962863,
-      "contentHash": "9e566553717929910795f9851d1dfbfc",
-      "sourceName": "contracts/libs/OwnedUpgradeabilityStorage.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./Proxy.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "OwnedUpgradeabilityStorage"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/Proxy.sol": {
-      "lastModificationDate": 1626764962864,
-      "contentHash": "81f694f09c8854b022ba9be98185f9b8",
-      "sourceName": "contracts/libs/Proxy.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Proxy"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/dependencies/Migrations.sol": {
-      "lastModificationDate": 1627034237227,
-      "contentHash": "dca04644d5044ab1b56860492280b57a",
-      "sourceName": "contracts/dependencies/Migrations.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "Migrations"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/ExchangeDev.sol": {
-      "lastModificationDate": 1626764962853,
-      "contentHash": "2146d60b0f45b27c33b45233f433dc65",
-      "sourceName": "contracts/ExchangeDev.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "ExchangeDev"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/interfaces/IERC20.sol": {
-      "lastModificationDate": 1626764962856,
-      "contentHash": "c22d13f70463eb01a9ed93102a657aaf",
-      "sourceName": "contracts/interfaces/IERC20.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC20"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/interfaces/IOldMarket.sol": {
-      "lastModificationDate": 1626764962857,
-      "contentHash": "ecfcbfac0121f881000aac6947002f98",
-      "sourceName": "contracts/interfaces/IOldMarket.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IOldMarket"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/interfaces/IPancakeSwapRouter.sol": {
-      "lastModificationDate": 1626764962857,
-      "contentHash": "5fd752110ae11be6c841f8646c1b2ecb",
-      "sourceName": "contracts/interfaces/IPancakeSwapRouter.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IPancakeSwapRouter"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/ERC1155Metadata.sol": {
-      "lastModificationDate": 1626764962860,
-      "contentHash": "024ce76d791539108122f71f516a5911",
-      "sourceName": "contracts/libs/ERC1155Metadata.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "ERC1155Metadata"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/IERC1155.sol": {
-      "lastModificationDate": 1626764962861,
-      "contentHash": "36a4459ffbb8866601efdb7f1b4979c4",
-      "sourceName": "contracts/libs/IERC1155.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC1155"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/IERC1155TokenReceiver.sol": {
-      "lastModificationDate": 1626764962861,
-      "contentHash": "6a8817c201f0661e380b270165f1ff23",
-      "sourceName": "contracts/libs/IERC1155TokenReceiver.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC1155TokenReceiver"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/IERC165.sol": {
-      "lastModificationDate": 1626764962861,
-      "contentHash": "a52a9a1203cff638b63acbddca9f30a2",
-      "sourceName": "contracts/libs/IERC165.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "IERC165"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/libs/ReentrancyGuard.sol": {
-      "lastModificationDate": 1626764962865,
-      "contentHash": "e9086f5c36061c63cdd6dc2b831aa296",
-      "sourceName": "contracts/libs/ReentrancyGuard.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "ReentrancyGuard"
-      ]
-    },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/SotaMarketV2-bk.sol": {
-      "lastModificationDate": 1627123296251,
-      "contentHash": "8a874cb4816931866e49411ef14e6f77",
-      "sourceName": "contracts/SotaMarketV2-bk.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\ERC1155Holder.sol": {
+      "lastModificationDate": 1627745450397,
+      "contentHash": "284f1242b388b50f018fe5df296e8100",
+      "sourceName": "contracts/ERC1155Holder.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -2898,9 +2577,9 @@
       "versionPragmas": [],
       "artifacts": []
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/contracts/mocks/MockMarketV2.sol": {
-      "lastModificationDate": 1627224936984,
-      "contentHash": "e351991c6fdd02178aa5d2eff8f8d1b4",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\mocks\\MockMarketV2.sol": {
+      "lastModificationDate": 1627804837875,
+      "contentHash": "e07652a015f9c8803166bdcc970e77ff",
       "sourceName": "contracts/mocks/MockMarketV2.sol",
       "solcConfig": {
         "version": "0.8.6",
@@ -2934,10 +2613,10 @@
         "MockMarketV2"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
-      "lastModificationDate": 1626765173270,
-      "contentHash": "aa1be06992a99bb7393b26a6af3c4dfb",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\dependencies\\Migrations.sol": {
+      "lastModificationDate": 1626968766253,
+      "contentHash": "67c982e763c749f0b44f21bd4ebf3991",
+      "sourceName": "contracts/dependencies/Migrations.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -2960,20 +2639,458 @@
           }
         }
       },
-      "imports": [
-        "../IERC20.sol"
-      ],
+      "imports": [],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "IERC20Metadata"
+        "Migrations"
       ]
     },
-    "/Users/sotatek/Documents/NFT150/3nft-smartcontract/node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
-      "lastModificationDate": 1626765172304,
-      "contentHash": "acad756301f0fb200ecc66138e8cd5c5",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\ExchangeDev.sol": {
+      "lastModificationDate": 1626660117097,
+      "contentHash": "8cbafd1830c74ef3fff06f68f031aa6d",
+      "sourceName": "contracts/ExchangeDev.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ExchangeDev"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\interfaces\\IERC20.sol": {
+      "lastModificationDate": 1626660117103,
+      "contentHash": "ced131c754815daab44992935fb1fa92",
+      "sourceName": "contracts/interfaces/IERC20.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\interfaces\\IOldMarket.sol": {
+      "lastModificationDate": 1626660117103,
+      "contentHash": "438d04770f5b942665cf9170ae153259",
+      "sourceName": "contracts/interfaces/IOldMarket.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IOldMarket"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\interfaces\\IPancakeSwapRouter.sol": {
+      "lastModificationDate": 1626660117104,
+      "contentHash": "dbf374aabf0af0bf36150766c909289a",
+      "sourceName": "contracts/interfaces/IPancakeSwapRouter.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IPancakeSwapRouter"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\ERC1155Metadata.sol": {
+      "lastModificationDate": 1626970435838,
+      "contentHash": "cb72a6525cbbb78c0af2ed665f8fb618",
+      "sourceName": "contracts/libs/ERC1155Metadata.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC1155Metadata"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\IERC1155.sol": {
+      "lastModificationDate": 1626660117108,
+      "contentHash": "4be8cace858ce7bab669ea99b3571112",
+      "sourceName": "contracts/libs/IERC1155.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC1155"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\IERC1155TokenReceiver.sol": {
+      "lastModificationDate": 1626660117109,
+      "contentHash": "6b907aec03b503148c32c2500e404ed2",
+      "sourceName": "contracts/libs/IERC1155TokenReceiver.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC1155TokenReceiver"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\IERC165.sol": {
+      "lastModificationDate": 1626660117109,
+      "contentHash": "6dddd8ebbb9b17b89da43f2e2ad3190f",
+      "sourceName": "contracts/libs/IERC165.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC165"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\libs\\ReentrancyGuard.sol": {
+      "lastModificationDate": 1626660117113,
+      "contentHash": "b8f8c9d15f03de9cef5e5aab7b5b726a",
+      "sourceName": "contracts/libs/ReentrancyGuard.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ReentrancyGuard"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\StakingPool.sol": {
+      "lastModificationDate": 1627400170453,
+      "contentHash": "c75a9ba62a8a34fb72a2a22162d44d85",
+      "sourceName": "contracts/StakingPool.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Address",
+        "Constant",
+        "Context",
+        "ERC1155",
+        "ERC1155Metadata",
+        "ERC1155MintBurn",
+        "ERC1155Tradable",
+        "IERC1155TokenReceiver",
+        "IERC165",
+        "IERC20",
+        "IStakingPool",
+        "MinterRole",
+        "Ownable",
+        "OwnableDelegateProxy",
+        "ProxyRegistry",
+        "Roles",
+        "SafeMath",
+        "SotaTokenWrapper",
+        "StakingPool",
+        "Strings",
+        "WhitelistAdminRole"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\Sota1155.sol": {
+      "lastModificationDate": 1627826512739,
+      "contentHash": "963401f3ea4d3f11807836bf3f39ba5e",
+      "sourceName": "contracts/Sota1155.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Address",
+        "Context",
+        "ERC1155",
+        "ERC1155Metadata",
+        "ERC1155MintBurn",
+        "ERC1155Tradable",
+        "IERC1155TokenReceiver",
+        "IERC165",
+        "MinterRole",
+        "Ownable",
+        "OwnableDelegateProxy",
+        "ProxyRegistry",
+        "Roles",
+        "SafeMath",
+        "Sota1155",
+        "Strings",
+        "WhitelistAdminRole"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\SOTAExchangeV2.sol": {
+      "lastModificationDate": 1627819654890,
+      "contentHash": "bab2909ad346e770b6cb8182950df183",
+      "sourceName": "contracts/SOTAExchangeV2.sol",
       "solcConfig": {
         "version": "0.8.6",
         "settings": {
@@ -2997,15 +3114,162 @@
         }
       },
       "imports": [
-        "./IERC20.sol",
-        "./extensions/IERC20Metadata.sol",
-        "../../utils/Context.sol"
+        "@openzeppelin/contracts/access/Ownable.sol"
       ],
       "versionPragmas": [
         "^0.8.0"
       ],
       "artifacts": [
-        "ERC20"
+        "IBSCswapRouter",
+        "SOTAExchangeV2"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\mocks\\MockBEPUSDT.sol": {
+      "lastModificationDate": 1627790298419,
+      "contentHash": "43f7474f847b85fcb4ee22474e0342d6",
+      "sourceName": "contracts/mocks/MockBEPUSDT.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0",
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Context",
+        "IBEP20",
+        "MockBEP20USDT",
+        "Ownable",
+        "SafeMath"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\mocks\\MockERC20.sol": {
+      "lastModificationDate": 1627807375181,
+      "contentHash": "1d3fc0dc590a0eb2833019283ddc9eb5",
+      "sourceName": "contracts/mocks/MockERC20.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "MockERC20"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\contracts\\mocks\\MockBSCswapRouter.sol": {
+      "lastModificationDate": 1627817955723,
+      "contentHash": "2bf529f9bbd629d7dded107240ed0710",
+      "sourceName": "contracts/mocks/MockBSCswapRouter.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "MockBSCswapRouter"
+      ]
+    },
+    "D:\\Projects\\NFT150\\3nft-smartcontract\\node_modules\\hardhat\\console.sol": {
+      "lastModificationDate": 1627737243577,
+      "contentHash": "cc4777addd464ea56fa35b1c45df0591",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
       ]
     }
   }
