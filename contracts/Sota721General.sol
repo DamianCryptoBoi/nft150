@@ -1,32 +1,54 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/math/SafeMath.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract Sota721General is ERC721, Ownable {
+contract Sota721General is ERC721, Ownable, ERC721URIStorage {
 	using SafeMath for uint256;
 
 	uint256 public _currentTokenId = 0;
+	string public baseURI = "https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/"; //TODO waiting Customer supply
+
 	mapping(uint256 => address) public creators;
 	mapping(uint256 => uint256) public loyaltyFee;
+	mapping(uint256 => string) public tokenURIs;
 
-	constructor() public ERC721('Sota Platform ERC721 NFTs', 'SOTA721GENERAL') {
-		_setBaseURI('https://storage.sota.finance');
+	constructor() ERC721('Sota Platform ERC721 NFTs', 'SOTA721GENERAL') { //TODO change
+		//_setBaseURI('https://storage.sota.finance');
 	}
+
+	function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) virtual{
+		super._burn(tokenId);
+    }
+
+	function _baseURI() internal view override returns (string memory) {
+        return baseURI; //TODO waiting Customer supply
+    }
+
+	function tokenURI(uint256 tokenId)
+        public
+        view
+        override(ERC721, ERC721URIStorage)
+        returns (string memory)
+    {
+        return string(abi.encodePacked(_baseURI(), tokenURIs[tokenId]));
+    }
+
 
 	/**
 	 * @dev Create new NFT
-	 * @param _tokenURI _tokenURI of tokenID
+	 * @param _loyaltyFee of tokenID
 	 */
-
 	function create(string calldata _tokenURI, uint256 _loyaltyFee) external {
 		uint256 newTokenId = _getNextTokenId();
 		_mint(msg.sender, newTokenId);
 		creators[newTokenId] = msg.sender;
 		loyaltyFee[newTokenId] = _loyaltyFee;
-		_setTokenURI(newTokenId, _tokenURI);
+		tokenURIs[newTokenId] = _tokenURI;// change for deprecation solidity 4.x
+//		_setTokenURI(newTokenId, _tokenURI); //deprecation solidity 4.x
 		_incrementTokenId();
 	}
 
@@ -46,7 +68,7 @@ contract Sota721General is ERC721, Ownable {
 	}
 
 	function setBaseURI(string calldata baseURI_) external onlyOwner() {
-		_setBaseURI(baseURI_);
+		baseURI = baseURI_;
 	}
 
 	function getCreator(uint256 _id) public view returns (address) {

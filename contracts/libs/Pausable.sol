@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
-import '@openzeppelin/contracts/GSN/Context.sol';
+import '@openzeppelin/contracts/utils/Context.sol';
 
 import './PauserRole.sol';
 
@@ -32,7 +32,7 @@ contract Pausable is Context, PauserRole {
 	 * @dev Initializes the contract in unpaused state. Assigns the Pauser role
 	 * to the deployer.
 	 */
-	constructor() internal {
+	constructor() public {
 		_paused = false;
 	}
 

@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-
-pragma solidity >=0.6.0 <0.8.0;
+pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -12,7 +11,7 @@ contract Controller is Ownable {
 		_;
 	}
 
-	constructor() public {
+	constructor() {
 		operator[msg.sender] = true;
 	}
 

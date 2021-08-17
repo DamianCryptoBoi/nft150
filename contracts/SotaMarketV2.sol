@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 // import './ERC1155Holder.sol';
 import './interfaces/IReferral.sol';
@@ -11,18 +11,18 @@ import './interfaces/ISotaMarket.sol';
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
-import '@openzeppelin/contracts/token/ERC1155/ERC1155Holder.sol';
+import '@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol';
 import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
-import '@openzeppelin/contracts/token/ERC721/ERC721Holder.sol';
-import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
+import '@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol';
+import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/utils/Pausable.sol';
-import '@openzeppelin/contracts/math/SafeMath.sol';
+import '@openzeppelin/contracts/security/Pausable.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts/utils/Address.sol';
-import '@openzeppelin/contracts/utils/ReentrancyGuard.sol';
+import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 
 contract Manager is Ownable, Pausable {
-	address public immutable oldMarket;
+//	address public immutable oldMarket;
 	address public sota;
 	address public WBNB = 0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd;
 	address public referralContract;
@@ -47,9 +47,9 @@ contract Manager is Ownable, Pausable {
 		_;
 	}
 
-	constructor(address _oldMarket) public {
+	constructor() {
 		isOperator[msg.sender] = true;
-		oldMarket = _oldMarket;
+//		oldMarket = _oldMarket;
 	}
 
 	function whiteListOperator(address _operator, bool _whitelist) external onlyOwner() {
@@ -95,7 +95,7 @@ contract Manager is Ownable, Pausable {
 		discountForSota = _discountForSota;
 	}
 
-	function setSotaContract(address _sota) public onlyOwner returns (bool) {
+	function setSotaContract(address _sota) public onlyOwner returns (bool) { //TODO confirm deprecate
 		sota = _sota;
 		return true;
 	}
@@ -130,8 +130,8 @@ contract Manager is Ownable, Pausable {
 	function setPaymentMethod(address _token, bool _status) public onlyOwner returns (bool) {
 		paymentMethod[_token] = _status;
 		if (_token != address(0)) {
-			IERC20(_token).approve(msg.sender, uint256(-1));
-			IERC20(_token).approve(address(this), uint256(-1));
+			IERC20(_token).approve(msg.sender, (2**256 - 1));
+			IERC20(_token).approve(address(this), (2**256 - 1));
 		}
 		return true;
 	}
@@ -214,7 +214,7 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		_;
 	}
 
-	constructor(address _oldMarket) public Manager(_oldMarket) {}
+	constructor() Manager() {}
 
 	function getRefData(address _user) private view returns (address payable) {
 		address payable userRef = IReferral(referralContract).getReferral(_user);
@@ -429,6 +429,7 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	 * @param _quantity is total amount for sale
 	 * @param _price is price per item in payment method (example 50 USDT)
 	 * @param _paymentToken is payment method (USDT, SOTA, BNB, ...)
+	 * @return _orderId uint256 for _orderId
 	 */
 	function createOrder(
 		address _tokenAddress,
@@ -644,36 +645,36 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		emit BidUpdated(_bidId);
 	}
 
-	function adminMigrateData(uint256 _fromOrderId, uint256 _toOrderId) external onlyOwner() {
-		for (uint256 i = _fromOrderId; i <= _toOrderId; i++) {
-			(	address owner,
-				address tokenAddress,
-				address paymentToken,
-				,
-				uint256 tokenId,
-				uint256 quantity,
-				uint256 price, 
-				,
-				,
-				) = ISotaMarket(oldMarket).orders(i);
-			if (quantity > 0) {
-				IERC1155(tokenAddress).safeTransferFrom(oldMarket, address(this), tokenId, quantity, '0x');
-				Order memory newOrder;
-				newOrder.isOnsale = true;
-				newOrder.owner = owner;
-				newOrder.price = price.div(quantity).mul(10000).div(10250);
-				newOrder.quantity = quantity;
-				newOrder.tokenId = tokenId;
-				newOrder.tokenAddress = tokenAddress;
-				newOrder.paymentToken = paymentToken;
-				orders[totalOrders] = newOrder;
-				uint256 _orderId = totalOrders;
-				bytes32 _id = keccak256(abi.encodePacked(tokenAddress, tokenId, owner));
-				orderID[_id] = _orderId;
-			}
-			totalOrders = totalOrders.add(1);
-		}
-	}
+//	function adminMigrateData(uint256 _fromOrderId, uint256 _toOrderId) external onlyOwner() {
+//		for (uint256 i = _fromOrderId; i <= _toOrderId; i++) {
+//			(	address owner,
+//				address tokenAddress,
+//				address paymentToken,
+//				,
+//				uint256 tokenId,
+//				uint256 quantity,
+//				uint256 price,
+//				,
+//				,
+//				) = ISotaMarket(oldMarket).orders(i);
+//			if (quantity > 0) {
+//				IERC1155(tokenAddress).safeTransferFrom(oldMarket, address(this), tokenId, quantity, '0x');
+//				Order memory newOrder;
+//				newOrder.isOnsale = true;
+//				newOrder.owner = owner;
+//				newOrder.price = price.div(quantity).mul(10000).div(10250);
+//				newOrder.quantity = quantity;
+//				newOrder.tokenId = tokenId;
+//				newOrder.tokenAddress = tokenAddress;
+//				newOrder.paymentToken = paymentToken;
+//				orders[totalOrders] = newOrder;
+//				uint256 _orderId = totalOrders;
+//				bytes32 _id = keccak256(abi.encodePacked(tokenAddress, tokenId, owner));
+//				orderID[_id] = _orderId;
+//			}
+//			totalOrders = totalOrders.add(1);
+//		}
+//	}
 
 	function setApproveForAll(address _token, address _spender) external onlyOwner() {
 		IERC1155(_token).setApprovalForAll(_spender, true);

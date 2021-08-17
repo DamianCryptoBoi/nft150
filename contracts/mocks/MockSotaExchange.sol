@@ -1,4 +1,4 @@
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 contract MockSotaExchange {
 	function estimateToUSDT(address _paymentToken, uint256 _paymentAmount) external returns (uint256) {

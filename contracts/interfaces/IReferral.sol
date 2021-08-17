@@ -1,4 +1,4 @@
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.0;
 
 interface IReferral {
 	function getReferral(address user) external view returns (address payable);
