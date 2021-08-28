@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-contract MockSotaExchange {
+contract MockPolkaExchange {
 	function estimateToUSDT(address _paymentToken, uint256 _paymentAmount) external returns (uint256) {
 		return _paymentAmount / 2;
 	}

@@ -40,7 +40,11 @@ module.exports = {
     },
     rinkeby: {
       url: 'https://rinkeby.infura.io/v3/fca5c00ba9a04c7c934d026632ed868e',
-      accounts: [`9b1a1461a714724dbf4e8d2345cf5008545e1140f54914a0c1a62eb1bf1c88a0`]
+      accounts: [`9b1a1461a714724dbf4e8d2345cf5008545e1140f54914a0c1a62eb1bf1c88a0`],
+      gas: 12000000,
+      blockGasLimit: 0x1fffffffffffff,
+      allowUnlimitedContractSize: true,
+      timeout: 1800000
     },
 
     testbnb: {

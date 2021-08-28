@@ -3,33 +3,33 @@ pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import './interfaces/ISOTANFT.sol';
-import './interfaces/ISotaExchange.sol';
+import './interfaces/IPOLKANFT.sol';
+import './interfaces/IPolkaExchange.sol';
 import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 
 contract ProfitEstimator is Ownable {
 	using SafeMath for uint256;
 
-	address public sotaMarket;
-	address public sotaExchangeContract;
+	address public polkaMarket;
+	address public polkaExchangeContract;
 	uint256 public xUser = 250; // 2.5%
 	uint256 public constant ZOOM_FEE = 10**4;
 	modifier onlyMarket() {
-		require(msg.sender == sotaMarket, 'Invalid-sender');
+		require(msg.sender == polkaMarket, 'Invalid-sender');
 		_;
 	}
 
-	constructor(address _sotaMarket, address _sotaExchangeContract) public {
-		sotaMarket = _sotaMarket;
-		sotaExchangeContract = _sotaExchangeContract;
+	constructor(address _polkaMarket, address _polkaExchangeContract) public {
+		polkaMarket = _polkaMarket;
+		polkaExchangeContract = _polkaExchangeContract;
 	}
 
-	function setMarket(address _sotaMarket) external onlyOwner() {
-		sotaMarket = _sotaMarket;
+	function setMarket(address _polkaMarket) external onlyOwner() {
+		polkaMarket = _polkaMarket;
 	}
 
-	function setSotaExchange(address _sotaExchangeContract) external onlyOwner() {
-		sotaExchangeContract = _sotaExchangeContract;
+	function setPolkaExchange(address _polkaExchangeContract) external onlyOwner() {
+		polkaExchangeContract = _polkaExchangeContract;
 	}
 
 	function setFee(uint256 _xUser) external onlyOwner() {
@@ -37,11 +37,11 @@ contract ProfitEstimator is Ownable {
 	}
 
 	function estimateUSDT(address _paymentToken, uint256 _paymentAmount) private view returns (uint256) {
-		return ISotaExchange(sotaExchangeContract).estimateToUSDT(_paymentToken, _paymentAmount);
+		return IPolkaExchange(polkaExchangeContract).estimateToUSDT(_paymentToken, _paymentAmount);
 	}
 
 	function estimateToken(address _paymentToken, uint256 _usdtAmount) private view returns (uint256) {
-		return ISotaExchange(sotaExchangeContract).estimateFromUSDT(_paymentToken, _usdtAmount);
+		return IPolkaExchange(polkaExchangeContract).estimateFromUSDT(_paymentToken, _usdtAmount);
 	}
 
 	function profitToCreator(
@@ -52,7 +52,7 @@ contract ProfitEstimator is Ownable {
 		uint256 _price,
 		uint256 _lastBuyPriceInUSD
 	) external onlyMarket() returns (uint256) {
-		uint256 loyaltyFee = ISOTANFT(_nft).getLoyaltyFee(_tokenId);
+		uint256 loyaltyFee = IPOLKANFT(_nft).getLoyaltyFee(_tokenId);
 		uint256 buyPriceInUSD = estimateUSDT(_paymentToken, _price);
 		if (buyPriceInUSD > _lastBuyPriceInUSD) {
 			uint totalSell = buyPriceInUSD.mul(_amount).mul(ZOOM_FEE - xUser).div(ZOOM_FEE);

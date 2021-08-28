@@ -1,7 +1,7 @@
 [
   {
     "inputs": [],
-    "name": "ZOOM_PUMPKIN",
+    "name": "ZOOM_POLKA",
     "outputs": [
       {
         "internalType": "uint256",
@@ -14,7 +14,7 @@
   },
   {
     "inputs": [],
-    "name": "ZOOM_SOTA",
+    "name": "ZOOM_PUMPKIN",
     "outputs": [
       {
         "internalType": "uint256",

@@ -3,32 +3,32 @@ const { solidity } = require("ethereum-waffle");
 use(solidity);  //to user revertedWith
 
 describe("Unit testing - ProfitEstimator", function() {
-    let mockSotaExchange;
+    let mockPolkaExchange;
     let mockMarketV2;
-    let sota721General;
-    let mockSOTA;
+    let polka721General;
+    let mockPolka;
 
     beforeEach(async function () {
         [owner, addr, addr2] = await ethers.getSigners();
 
-        const MockSotaExchange = await ethers.getContractFactory("MockSotaExchange");
-        mockSotaExchange = await MockSotaExchange.deploy();
-        await mockSotaExchange.deployed();
+        const MockPolkaExchange = await ethers.getContractFactory("MockPolkaExchange");
+        mockPolkaExchange = await MockPolkaExchange.deploy();
+        await mockPolkaExchange.deployed();
 
-        const MockSOTA = await hre.ethers.getContractFactory("MockSOTA");
-        mockSOTA = await MockSOTA.deploy();
-        await mockSOTA.deployed();
+        const MockPolka = await hre.ethers.getContractFactory("MockPolka");
+        mockPolka = await MockPolka.deploy();
+        await mockPolka.deployed();
 
         const MockMarketV2 = await hre.ethers.getContractFactory("MockMarketV2");
         mockMarketV2 = await MockMarketV2.deploy();
         await mockMarketV2.deployed();
 
-        const Sota721General = await ethers.getContractFactory("Sota721General");
-        sota721General = await Sota721General.deploy();
-        await sota721General.deployed();
+        const Polka721General = await ethers.getContractFactory("Polka721General");
+        polka721General = await Polka721General.deploy();
+        await polka721General.deployed();
 
         const ProfitEstimator = await ethers.getContractFactory("ProfitEstimator");
-        profitEstimator = await ProfitEstimator.deploy(mockMarketV2.address, mockSotaExchange.address);
+        profitEstimator = await ProfitEstimator.deploy(mockMarketV2.address, mockPolkaExchange.address);
         profitEstimator.deployed();
     });
 
@@ -48,10 +48,10 @@ describe("Unit testing - ProfitEstimator", function() {
             //     uint256 _lastBuyPriceInUSD
             // )
 
-            await sota721General.create('urltest', 100);
+            await polka721General.create('urltest', 100);
             await expect(profitEstimator.profitToCreator(
-                sota721General.address,
-                mockSOTA.address,
+                polka721General.address,
+                mockPolka.address,
                 1,
                 1,
                 3000,
@@ -60,8 +60,8 @@ describe("Unit testing - ProfitEstimator", function() {
 
             await expect(mockMarketV2.mockProfitToCreator(
                 profitEstimator.address,
-                sota721General.address,
-                mockSOTA.address,
+                polka721General.address,
+                mockPolka.address,
                 1,
                 1,
                 3000,
