@@ -1144,11 +1144,11 @@ pragma solidity ^0.8.0;
 
 
 
-contract SotaTokenWrapper {
+contract PolkaTokenWrapper {
 	using SafeMath for uint256;
-	IERC20 public sotaToken;
-	constructor(IERC20 _sotaToken) {
-		sotaToken = IERC20(_sotaToken);
+	IERC20 public polkaToken;
+	constructor(IERC20 _polkaToken) {
+		polkaToken = IERC20(_polkaToken);
 	}
 	uint256 private _totalSupply;
 	mapping(address => uint256) private _balances;
@@ -1161,16 +1161,16 @@ contract SotaTokenWrapper {
 	function stake(uint256 amount) public virtual {
 		_totalSupply = _totalSupply.add(amount);
 		_balances[msg.sender] = _balances[msg.sender].add(amount);
-		sotaToken.transferFrom(msg.sender, address(this), amount);
+		polkaToken.transferFrom(msg.sender, address(this), amount);
 	}
 	function withdraw(uint256 amount) public virtual {
 		_totalSupply = _totalSupply.sub(amount);
 		_balances[msg.sender] = _balances[msg.sender].sub(amount);
-		sotaToken.transfer(msg.sender, amount);
+		polkaToken.transfer(msg.sender, amount);
 	}
 }
 contract Constant {
-	uint public constant ZOOM_SOTA = 10 ** 18;
+	uint public constant ZOOM_POLKA = 10 ** 18;
 	uint public constant ZOOM_PUMPKIN = 10 ** 18;
 }
 
@@ -1178,10 +1178,10 @@ interface IStakingPool {
     function cardInfo(uint256 id) external returns (uint256);
 }
 
-contract StakingPool is SotaTokenWrapper, Ownable, Constant {
+contract StakingPool is PolkaTokenWrapper, Ownable, Constant {
     using SafeMath for uint256;
 
-	ERC1155Tradable public sotaNFTs;
+	ERC1155Tradable public polkaNFTs;
 	mapping(address => bool ) public whiteListAdder;
 	mapping(address => uint256) public lastUpdateTime;
 	mapping(address => uint256) public pumpkins;
@@ -1202,8 +1202,8 @@ contract StakingPool is SotaTokenWrapper, Ownable, Constant {
 		}
 		_;
 	}
-	constructor(ERC1155Tradable _sotaNFT, IERC20 _sotaToken) SotaTokenWrapper(_sotaToken) {
-		sotaNFTs = _sotaNFT;
+	constructor(ERC1155Tradable _polkaNFT, IERC20 _polkaToken) PolkaTokenWrapper(_polkaToken) {
+		polkaNFTs = _polkaNFT;
 		whiteListAdder[msg.sender] = true;
 	}
 	function adminWhiteListAdder(address _adder, bool _whiteList) public onlyOwner {
@@ -1214,7 +1214,7 @@ contract StakingPool is SotaTokenWrapper, Ownable, Constant {
 		cards[cardId] = amount;
 		emit CardAdded(cardId, amount);
 	}
-	// 1000 SOTA staked will earn 100 pumpkins perday
+	// 1000 POLKA staked will earn 100 pumpkins perday
 	function earned(address account) public view returns (uint256) {
 	    uint blockTime = block.timestamp;
 		return
@@ -1222,7 +1222,7 @@ contract StakingPool is SotaTokenWrapper, Ownable, Constant {
 				blockTime.sub(lastUpdateTime[account]).mul(1e18).div(86400).mul(balanceOf(account).div(100 * ZOOM_PUMPKIN))
 			);
 	}
-	// stake visibility is public as overriding SotaTokenWrapper's stake() function
+	// stake visibility is public as overriding PolkaTokenWrapper's stake() function
 	function stake(uint256 amount) public override updateReward(msg.sender) {
 		super.stake(amount);
 		emit Staked(msg.sender, amount);
@@ -1238,9 +1238,9 @@ contract StakingPool is SotaTokenWrapper, Ownable, Constant {
 	function redeem(uint256 card) public updateReward(msg.sender) {
 		require(cards[card] != 0, "Card not found");
 		require(pumpkins[msg.sender] >= cards[card], "Not enough pumpkins to redeem for card");
-		require(sotaNFTs.totalSupply(card) < sotaNFTs.maxSupply(card), "Max cards minted");
+		require(polkaNFTs.totalSupply(card) < polkaNFTs.maxSupply(card), "Max cards minted");
 		pumpkins[msg.sender] = pumpkins[msg.sender].sub(cards[card]);
-		sotaNFTs.mint(msg.sender, card, 1, "");
+		polkaNFTs.mint(msg.sender, card, 1, "");
 		emit Redeemed(msg.sender, cards[card]);
 	}
 

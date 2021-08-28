@@ -3,11 +3,11 @@ pragma solidity ^0.8.0;
 
 // import './ERC1155Holder.sol';
 import './interfaces/IReferral.sol';
-import './interfaces/ISotaExchange.sol';
-import './interfaces/ISOTANFT.sol';
+//import './interfaces/IPolkaExchange.sol';
+import './interfaces/IPOLKANFT.sol';
 import './interfaces/IWBNB.sol';
 import './interfaces/IProfitEstimator.sol';
-import './interfaces/ISotaMarket.sol';
+import './interfaces/IPolkaMarket.sol';
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
@@ -20,24 +20,19 @@ import '@openzeppelin/contracts/security/Pausable.sol';
 import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts/utils/Address.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
-
+import "hardhat/console.sol";
 contract Manager is Ownable, Pausable {
-//	address public immutable oldMarket;
-	address public sota;
 	address public WBNB = 0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd;
 	address public referralContract;
-	address public sotaExchangeContract;
-	address public profitEstimatorContract;
 
 	// FEE
 	uint256 public xUser = 250; // 2.5%
 	uint256 public xCreator = 1500;
 	uint256 public yRefRate = 5000; // 50%
 	uint256 public zProfitToCreator = 5000; // 10% profit
-	uint256 public discountForBuyer = 50;
-	uint256 public discountForSota = 100; // discount for user who made payment in sota
+
 	mapping(address => bool) public paymentMethod;
-	mapping(address => bool) public isSOTANFTs;
+	mapping(address => bool) public isPOLKANFTs;
 	mapping(address => bool) public isFarmingNFTs;
 	mapping(address => bool) public isOperator;
 	mapping(address => bool) public isRetailer;
@@ -72,58 +67,37 @@ contract Manager is Ownable, Pausable {
 		uint256 _xUser,
 		uint256 _xCreator,
 		uint256 _yRefRate,
-		uint256 _zProfitToCreator,
-		uint256 _discountForBuyer,
-		uint256 _discountForSota
+		uint256 _zProfitToCreator
 	) external onlyOwner {
-		_setSystemFee(_xUser, _xCreator, _yRefRate, _zProfitToCreator, _discountForBuyer, _discountForSota);
+		_setSystemFee(_xUser, _xCreator, _yRefRate, _zProfitToCreator);
 	}
 
 	function _setSystemFee(
 		uint256 _xUser,
 		uint256 _xCreator,
 		uint256 _yRefRate,
-		uint256 _zProfitToCreator,
-		uint256 _discountForBuyer,
-		uint256 _discountForSota
+		uint256 _zProfitToCreator
 	) internal {
 		xUser = _xUser;
 		xCreator = _xCreator;
 		yRefRate = _yRefRate;
 		zProfitToCreator = _zProfitToCreator;
-		discountForBuyer = _discountForBuyer;
-		discountForSota = _discountForSota;
 	}
 
-	function setSotaContract(address _sota) public onlyOwner returns (bool) { //TODO confirm deprecate
-		sota = _sota;
-		return true;
-	}
-
-	function addSOTANFTs(
-		address _sotaNFT,
-		bool _isSOTANFT,
+	function addPOLKANFTs(
+		address _polkaNFT,
+		bool _isPOLKANFT,
 		bool _isFarming
 	) external onlyOperator() returns (bool) {
-		isSOTANFTs[_sotaNFT] = _isSOTANFT;
+		isPOLKANFTs[_polkaNFT] = _isPOLKANFT;
 		if (_isFarming) {
-			isFarmingNFTs[_sotaNFT] = true;
+			isFarmingNFTs[_polkaNFT] = true;
 		}
 		return true;
 	}
 
 	function setReferralContract(address _referralContract) public onlyOwner returns (bool) {
 		referralContract = _referralContract;
-		return true;
-	}
-
-	function setSotaExchangeContract(address _sotaExchangeContract) public onlyOwner returns (bool) {
-		sotaExchangeContract = _sotaExchangeContract;
-		return true;
-	}
-
-	function setProfitSenderContract(address _profitEstimatorContract) public onlyOwner returns (bool) {
-		profitEstimatorContract = _profitEstimatorContract;
 		return true;
 	}
 
@@ -151,12 +125,12 @@ contract Manager is Ownable, Pausable {
 	}
 }
 
-contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
+contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	using SafeMath for uint256;
 	using SafeERC20 for IERC20;
 	using Address for address payable;
 
-	uint256 public constant ZOOM_SOTA = 10**18;
+//	uint256 public constant ZOOM_POLKA = 10**18;
 	uint256 public constant ZOOM_USDT = 10**6;
 	uint256 public constant ZOOM_FEE = 10**4;
 	uint256 public totalOrders;
@@ -191,9 +165,12 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	mapping(uint256 => Order) public orders;
 	mapping(bytes32 => uint256) private orderID;
 	mapping(uint256 => Bid) public bids;
-	mapping(address => mapping(bytes32 => uint256)) lastBuyPriceInUSDT; // lastbuy price of NFT with id = keccak256(address, id) from user in USD
+	mapping(address => mapping(bytes32 => uint256)) public lastBuyPriceInUSDT; // lastbuy price of NFT with id = keccak256(address, id) from user in USD
 	mapping(address => mapping(uint256 => uint256)) public amountFirstSale;
 	mapping(address => mapping(bytes32 => uint256)) public farmingAmount;
+
+	//hold: createBid
+	mapping(address => uint256) public adminHoldPayment;
 
 	event OrderCreated(uint256 indexed _orderId, address _tokenAddress, uint256 indexed _tokenId, uint256 indexed _quantity, uint256 _price, address _paymentToken);
 	event Buy(uint256 _itemId, uint256 _quantity, address _paymentToken, uint256 _paymentAmount);
@@ -204,41 +181,21 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	event BidUpdated(uint256 indexed _bidId);
 	event BidCancelled(uint256 indexed _bidId);
 
-	modifier validAmount(
-		uint256 _orderId,
-		uint256 _quantity,
-		uint256 _paymentAmount,
-		address _paymentToken
-	) {
-		require(_validAmount(_orderId, _quantity, _paymentAmount, _paymentToken));
-		_;
-	}
+//	modifier validAmount(
+//		uint256 _orderId,
+//		uint256 _quantity,
+//		uint256 _paymentAmount,
+//		address _paymentToken
+//	) {
+//		require(_validAmount(_orderId, _quantity, _paymentAmount, _paymentToken));
+//		_;
+//	}
 
 	constructor() Manager() {}
 
 	function getRefData(address _user) private view returns (address payable) {
 		address payable userRef = IReferral(referralContract).getReferral(_user);
 		return userRef;
-	}
-
-	function estimateUSDT(address _paymentToken, uint256 _paymentAmount) private view returns (uint256) {
-		return ISotaExchange(sotaExchangeContract).estimateToUSDT(_paymentToken, _paymentAmount);
-	}
-
-	function estimateToken(address _paymentToken, uint256 _usdtAmount) private view returns (uint256) {
-		return ISotaExchange(sotaExchangeContract).estimateFromUSDT(_paymentToken, _usdtAmount);
-	}
-
-	function _validAmount(
-		uint256 _orderId,
-		uint256 _quantity,
-		uint256 _paymentAmount,
-		address _paymentToken
-	) private returns (bool) {
-		Order memory order = orders[_orderId];
-
-		uint256 buyAmount = (_paymentToken == order.paymentToken) ? order.price.mul(_quantity) : estimateToken(_paymentToken, order.price.mul(_quantity)); // total purchase amount for quantity*price
-		return (_paymentAmount >= buyAmount.mul(ZOOM_FEE + xUser).div(ZOOM_FEE)) ? true : false; //102.5%
 	}
 
 	function _paid(
@@ -266,7 +223,6 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		address _paymentToken,
 		uint256 _orderId,
 		uint256 _quantity,
-		uint256 _price,
 		bytes32 _id
 	) private returns (bool) {
 		Order memory order = orders[_orderId];
@@ -277,7 +233,7 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		}
 		order.quantity = order.quantity.sub(_quantity);
 		orders[_orderId].quantity = order.quantity;
-		lastBuyPriceInUSDT[_buyer][_id] = estimateUSDT(_paymentToken, _price);
+//		lastBuyPriceInUSDT[_buyer][_id] = estimateUSDT(_paymentToken, _price);
 		return true;
 	}
 
@@ -286,8 +242,7 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	 * @param _buyer is address of buyer
 	 * @param _orderId is id of order
 	 * @param _quantity is total amount to buy
-	 * @param _paymentToken is payment method (USDT, SOTA, BNB, ...)
-	 * @param _price is matched price
+	 * @param _paymentToken is payment method (USDT, ETH, ...)
 	 */
 
 	function _match(
@@ -295,131 +250,30 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		address _paymentToken,
 		uint256 _orderId,
 		uint256 _quantity,
-		uint256 _price,
 		uint256 orderAmount,
 		address payable sellerRef,
 		address payable buyerRef
 	) private returns (bool) {
 		Order memory order = orders[_orderId];
-		uint256 amountToSeller = orderAmount; //
+		address payable creator = payable(IPOLKANFT(order.tokenAddress).getCreator(order.tokenId));
+		uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
+
 		if (buyerRef != address(0)) {
 			uint256 amountToBuyerRef = orderAmount.mul(xUser).mul(ZOOM_FEE - yRefRate).div(ZOOM_FEE**2); // 1.25
 			_paid(_paymentToken, buyerRef, amountToBuyerRef);
-			if (discountForBuyer > 0) {
-				// discount for buyer that have ref
-				_paid(_paymentToken, _buyer, orderAmount.mul(discountForBuyer).div(ZOOM_FEE));
-			}
 		}
 
-		if (order.retailer != address(0)) {
+		if (creator != address(0)) {
 			_paid(
 				_paymentToken,
-				order.retailer,
-				orderAmount.mul(order.retailFee).div(ZOOM_FEE) // take retailFee for retailer
+				creator,
+				orderAmount.mul(loyaltyFee).div(ZOOM_FEE) // take retailFee for retailer
 			);
-			amountToSeller = amountToSeller.sub(orderAmount.mul(order.retailFee).div(ZOOM_FEE));
 		}
 
-		if (isSOTANFTs[order.tokenAddress]) {
-			address payable creator = payable(ISOTANFT(order.tokenAddress).getCreator(order.tokenId));
-			if (amountFirstSale[order.tokenAddress][order.tokenId] > 0 && (creator == order.owner)) {
-				if (sellerRef != address(0)) {
-					{
-						uint256 amountToSellferRef;
-						if (amountFirstSale[order.tokenAddress][order.tokenId] >= _quantity) {
-							amountToSellferRef = orderAmount.mul(xCreator).mul(ZOOM_FEE - yRefRate).div(ZOOM_FEE**2); // take 15%*50% fee
-							amountToSeller = amountToSeller.sub(orderAmount.mul(xCreator).div(ZOOM_FEE)); // take 15% fee
-							amountFirstSale[order.tokenAddress][order.tokenId] = amountFirstSale[order.tokenAddress][order.tokenId].sub(_quantity);
-						} else {
-							{
-								uint256 a = amountFirstSale[order.tokenAddress][order.tokenId].mul(_price).mul(xCreator);
-								amountToSeller = amountToSeller.sub(a.div(ZOOM_FEE));
-								a = a.mul(ZOOM_FEE - yRefRate).div(ZOOM_FEE**2);
-								amountToSellferRef = a;
-								a = _quantity - amountFirstSale[order.tokenAddress][order.tokenId];
-								a = a.mul(_price).mul(xUser);
-								amountToSeller = amountToSeller.sub(a.div(ZOOM_FEE));
-								a = a.mul(ZOOM_FEE - yRefRate).div(ZOOM_FEE**2);
-								amountToSellferRef = amountToSellferRef.add(a);
-							}
-						}
-						_paid(_paymentToken, sellerRef, amountToSellferRef);
-					}
-				} else {
-					if (amountFirstSale[order.tokenAddress][order.tokenId] >= _quantity) {
-						amountToSeller = amountToSeller.sub(orderAmount.mul(xCreator).div(ZOOM_FEE));
-						amountFirstSale[order.tokenAddress][order.tokenId] = amountFirstSale[order.tokenAddress][order.tokenId].sub(_quantity);
-					} else {
-						uint256 b = amountFirstSale[order.tokenAddress][order.tokenId].mul(_price).mul(xCreator).div(ZOOM_FEE);
-						amountToSeller = amountToSeller.sub(b);
-						b = _quantity - amountFirstSale[order.tokenAddress][order.tokenId];
-						b = b.mul(_price).mul(xUser).div(ZOOM_FEE);
-						amountToSeller = amountToSeller.sub(b);
-					}
-				}
-				_paid(_paymentToken, order.owner, amountToSeller);
-			} else {
-				if (isFarmingNFTs[order.tokenAddress] && (order.owner != creator) && farmingAmount[order.owner][keccak256(abi.encodePacked(order.tokenAddress, order.tokenId))] > 0) {
-					uint256 a = farmingAmount[order.owner][keccak256(abi.encodePacked(order.tokenAddress, order.tokenId))];
-					if (a >= _quantity) {
-						_paid(_paymentToken, creator, orderAmount.mul(zProfitToCreator).div(ZOOM_FEE));
-						amountToSeller = amountToSeller.sub(orderAmount.mul(ZOOM_FEE - zProfitToCreator).div(ZOOM_FEE));
-						_paid(_paymentToken, order.owner, amountToSeller);
-						farmingAmount[order.owner][keccak256(abi.encodePacked(order.tokenAddress, order.tokenId))] = a.sub(_quantity);
-					} else {
-						{
-							uint256 amountToCreator = a.mul(_price).mul(zProfitToCreator).div(ZOOM_FEE);
-							amountToSeller = amountToSeller.sub(amountToCreator);
-							a = _quantity.sub(a);
-							amountToCreator =
-								amountToCreator +
-								IProfitEstimator(profitEstimatorContract).profitToCreator(
-									order.tokenAddress,
-									_paymentToken,
-									order.tokenId,
-									a,
-									_price,
-									lastBuyPriceInUSDT[order.owner][keccak256(abi.encodePacked(order.tokenAddress, order.tokenId))]
-								);
-							_paid(_paymentToken, creator, amountToCreator);
-							_paid(_paymentToken, order.owner, amountToSeller.sub(amountToCreator));
-							farmingAmount[order.owner][keccak256(abi.encodePacked(order.tokenAddress, order.tokenId))] = 0;
-						}
-					}
-				} else {
-					amountToSeller = amountToSeller.sub(orderAmount.mul(xUser).div(ZOOM_FEE));
-					if (sellerRef != address(0)) {
-						_paid(_paymentToken, sellerRef, orderAmount.mul(xUser).mul(ZOOM_FEE - yRefRate).div(ZOOM_FEE**2));
-					}
+		_paid(_paymentToken, order.owner, orderAmount);
 
-					if (order.owner == creator) {
-						_paid(_paymentToken, order.owner, amountToSeller);
-					} else {
-						uint256 amountToCreator =
-							IProfitEstimator(profitEstimatorContract).profitToCreator(
-								order.tokenAddress,
-								_paymentToken,
-								order.tokenId,
-								_quantity,
-								_price,
-								lastBuyPriceInUSDT[order.owner][keccak256(abi.encodePacked(order.tokenAddress, order.tokenId))]
-							);
-						if (amountToCreator > 0) {
-							_paid(_paymentToken, creator, amountToCreator);
-						}
-						_paid(_paymentToken, order.owner, amountToSeller.sub(amountToCreator));
-					}
-				}
-			}
-		} else {
-			amountToSeller = amountToSeller.sub(orderAmount.mul(xUser).div(ZOOM_FEE));
-			if (sellerRef != address(0)) {
-				_paid(_paymentToken, sellerRef, orderAmount.mul(xUser).mul(ZOOM_FEE - yRefRate).div(ZOOM_FEE**2));
-			}
-			_paid(_paymentToken, order.owner, amountToSeller);
-		}
-
-		return _updateOrder(_buyer, _paymentToken, _orderId, _quantity, _price, keccak256(abi.encodePacked(order.tokenAddress, order.tokenId)));
+		return _updateOrder(_buyer, _paymentToken, _orderId, _quantity, keccak256(abi.encodePacked(order.tokenAddress, order.tokenId)));
 	}
 
 	/**
@@ -428,7 +282,7 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	 * @param _tokenId is id of NFTs
 	 * @param _quantity is total amount for sale
 	 * @param _price is price per item in payment method (example 50 USDT)
-	 * @param _paymentToken is payment method (USDT, SOTA, BNB, ...)
+	 * @param _paymentToken is payment method (USDT, ETH, ...)
 	 * @return _orderId uint256 for _orderId
 	 */
 	function createOrder(
@@ -458,24 +312,24 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		newOrder.owner = msg.sender;
 		newOrder.price = _price;
 		newOrder.quantity = _quantity;
-		if (isRetailer[_retailer]) {
+		//if (isRetailer[_retailer]) { //NBN change
 			newOrder.retailer = _retailer;
 			newOrder.retailFee = _retailFee;
-		}
+		//}
 		newOrder.tokenId = _tokenId;
 		newOrder.isERC721 = isERC721;
 		newOrder.tokenAddress = _tokenAddress;
 		newOrder.paymentToken = _paymentToken;
 		if (
-			isSOTANFTs[_tokenAddress] &&
-			ISOTANFT(_tokenAddress).getCreator(_tokenId) == msg.sender &&
+			isPOLKANFTs[_tokenAddress] &&
+			IPOLKANFT(_tokenAddress).getCreator(_tokenId) == msg.sender &&
 			amountFirstSale[_tokenAddress][_tokenId] == 0 &&
 			lastBuyPriceInUSDT[msg.sender][keccak256(abi.encodePacked(_tokenAddress, _tokenId))] == 0
 		) {
 			amountFirstSale[_tokenAddress][_tokenId] = balance;
 		}
 		if (
-			isFarmingNFTs[_tokenAddress] && (msg.sender != ISOTANFT(_tokenAddress).getCreator(_tokenId)) && (lastBuyPriceInUSDT[msg.sender][keccak256(abi.encodePacked(_tokenAddress, _tokenId))] == 0)
+			isFarmingNFTs[_tokenAddress] && (msg.sender != IPOLKANFT(_tokenAddress).getCreator(_tokenId)) && (lastBuyPriceInUSDT[msg.sender][keccak256(abi.encodePacked(_tokenAddress, _tokenId))] == 0)
 		) {
 			farmingAmount[msg.sender][keccak256(abi.encodePacked(_tokenAddress, _tokenId))] = balance;
 		}
@@ -499,24 +353,21 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		require(order.isOnsale && order.quantity >= _quantity, 'Not-available-to-buy');
 		uint256 orderAmount = order.price.mul(_quantity);
 		uint256 exactPaymentAmount;
+		uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
+
 		if (_paymentToken == order.paymentToken) {
-			exactPaymentAmount = orderAmount.mul(ZOOM_FEE + xUser).div(ZOOM_FEE);
+			exactPaymentAmount = orderAmount.mul(ZOOM_FEE + xUser + loyaltyFee).div(ZOOM_FEE);
 		} else {
-			orderAmount = estimateToken(_paymentToken, orderAmount);
-			exactPaymentAmount = orderAmount.mul(ZOOM_FEE + xUser).div(ZOOM_FEE);
+			//Not Cover in version
 		}
-		// uint256 exactPaymentAmount =
-		// 	(_paymentToken == order.paymentToken) ? orderAmount.mul(ZOOM_FEE + xUser).div(ZOOM_FEE) : estimateToken(_paymentToken, orderAmount).mul(ZOOM_FEE + xUser).div(ZOOM_FEE); // 1.025
-		if (_paymentToken == sota && discountForSota > 0) {
-			exactPaymentAmount = exactPaymentAmount.sub(orderAmount.mul(discountForSota).div(ZOOM_FEE));
-		}
+
 		if (_paymentToken == address(0) && msg.value > 0) {
 			require(msg.value >= exactPaymentAmount);
 		} else {
 			IERC20(_paymentToken).safeTransferFrom(msg.sender, address(this), exactPaymentAmount);
 		}
 		emit Buy(_orderId, _quantity, _paymentToken, exactPaymentAmount);
-		return _match(msg.sender, _paymentToken, _orderId, _quantity, estimateToken(_paymentToken, order.price), orderAmount, getRefData(order.owner), getRefData(msg.sender));
+		return _match(msg.sender, _paymentToken, _orderId, _quantity, orderAmount, getRefData(order.owner), getRefData(msg.sender));
 	}
 
 	function createBid(
@@ -541,6 +392,12 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		} else {
 			newBid.paymentToken = _paymentToken;
 		}
+
+		if (newBid.paymentToken != address(0)) {
+			IERC20(newBid.paymentToken).safeTransferFrom(newBid.bidder, address(this), _quantity.mul(_price));
+		}
+		adminHoldPayment[_paymentToken] = adminHoldPayment[_paymentToken].add(_quantity.mul(_price));
+
 		newBid.status = true;
 		newBid.expTime = _expTime;
 		bids[totalBids] = newBid;
@@ -558,14 +415,12 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		require(order.owner == msg.sender && order.isOnsale, 'Oops!Wrong-order-owner-or-cancelled');
 		require(order.quantity >= _quantity && _quantity <= bid.quantity && bid.status, 'Invalid-quantity-or-bid-cancelled');
 		uint256 orderAmount = bid.bidPrice.mul(_quantity);
-		uint256 exactPaymentAmount = orderAmount.mul(ZOOM_FEE + xUser).div(ZOOM_FEE); // 1.025
-		if (bid.paymentToken == sota) {
-			exactPaymentAmount = exactPaymentAmount.sub(orderAmount.mul(discountForSota).div(ZOOM_FEE));
-		}
-		if (bid.paymentToken != address(0)) {
-			IERC20(bid.paymentToken).safeTransferFrom(bid.bidder, address(this), exactPaymentAmount);
-		}
-		_match(bid.bidder, bid.paymentToken, _orderId, _quantity, bid.bidPrice, orderAmount, getRefData(msg.sender), getRefData(bid.bidder));
+		uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
+
+		adminHoldPayment[bid.paymentToken] = adminHoldPayment[bid.paymentToken].sub(orderAmount);
+
+		_match(bid.bidder, bid.paymentToken, _orderId, _quantity,
+			orderAmount.mul(ZOOM_FEE).div(ZOOM_FEE.add(xUser).add(loyaltyFee)), getRefData(msg.sender), getRefData(bid.bidder));
 		emit AcceptBid(_bidId);
 		return _updateBid(_bidId, _quantity);
 	}
@@ -596,7 +451,12 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		if (bid.paymentToken == address(0)) {
 			uint256 payBackAmount = bid.quantity.mul(bid.bidPrice);
 			payable(msg.sender).sendValue(payBackAmount);
+		} else {
+			IERC20(bid.paymentToken).safeTransferFrom(address(this), bid.bidder, bid.quantity.mul(bid.bidPrice));
 		}
+
+		adminHoldPayment[bid.paymentToken] = adminHoldPayment[bid.paymentToken].sub(bid.quantity.mul(bid.bidPrice));
+
 		bid.status = false;
 		bid.quantity = 0;
 		bids[_bidId] = bid;
@@ -645,36 +505,102 @@ contract SotaMarketV2 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		emit BidUpdated(_bidId);
 	}
 
-//	function adminMigrateData(uint256 _fromOrderId, uint256 _toOrderId) external onlyOwner() {
-//		for (uint256 i = _fromOrderId; i <= _toOrderId; i++) {
-//			(	address owner,
-//				address tokenAddress,
-//				address paymentToken,
-//				,
-//				uint256 tokenId,
-//				uint256 quantity,
-//				uint256 price,
-//				,
-//				,
-//				) = ISotaMarket(oldMarket).orders(i);
-//			if (quantity > 0) {
-//				IERC1155(tokenAddress).safeTransferFrom(oldMarket, address(this), tokenId, quantity, '0x');
-//				Order memory newOrder;
-//				newOrder.isOnsale = true;
-//				newOrder.owner = owner;
-//				newOrder.price = price.div(quantity).mul(10000).div(10250);
-//				newOrder.quantity = quantity;
-//				newOrder.tokenId = tokenId;
-//				newOrder.tokenAddress = tokenAddress;
-//				newOrder.paymentToken = paymentToken;
-//				orders[totalOrders] = newOrder;
-//				uint256 _orderId = totalOrders;
-//				bytes32 _id = keccak256(abi.encodePacked(tokenAddress, tokenId, owner));
-//				orderID[_id] = _orderId;
-//			}
-//			totalOrders = totalOrders.add(1);
-//		}
-//	}
+	function adminMigrateOrders(address oldMarket) external onlyOwner() {
+		totalOrders = IPolkaMarket(oldMarket).totalOrders();
+		for (uint256 i = 0; i < totalOrders; i++) {
+			(
+				address owner,
+				address tokenAddress,
+				address paymentToken,
+				address retailer,
+				uint256 tokenId,
+				uint256 quantity,
+				uint256 price,
+				uint256 retailFee,
+				bool isOnsale,
+				bool isERC721
+				) = IPolkaMarket(oldMarket).orders(i);
+			if (quantity > 0) {
+				if (isERC721) {
+					if (IERC721(tokenAddress).ownerOf(tokenId) == oldMarket && isPOLKANFTs[tokenAddress]) {
+						IERC721(tokenAddress).safeTransferFrom(oldMarket, address(this), tokenId);
+					}
+				} else {
+					uint256 quantityOf = IERC1155(tokenAddress).balanceOf(oldMarket, tokenId);
+					if (quantityOf > 0 && isPOLKANFTs[tokenAddress]) {
+						IERC1155(tokenAddress).safeTransferFrom(
+							oldMarket,
+							address(this),
+							tokenId,
+							quantityOf,
+							abi.encodePacked(keccak256('onERC1155Received(address,address,uint256,uint256,bytes)'))
+						);
+					}
+				}
+
+				Order memory newOrder;
+				newOrder.isOnsale = isOnsale;
+				newOrder.isERC721 = isERC721;
+				newOrder.owner = owner;
+				newOrder.price = price;
+				newOrder.quantity = quantity;
+				newOrder.tokenId = tokenId;
+				newOrder.tokenAddress = tokenAddress;
+				newOrder.paymentToken = paymentToken;
+				newOrder.retailer = retailer;
+				newOrder.retailFee = retailFee;
+				orders[i] = newOrder;
+				bytes32 _id = keccak256(abi.encodePacked(tokenAddress, tokenId, owner));
+				orderID[_id] = i;
+			}
+		}
+
+	}
+
+	function adminMigrateBids(address oldMarket) external onlyOwner() {
+		totalBids = IPolkaMarket(oldMarket).totalBids();
+
+		for (uint256 j = 0; j < totalBids; j++) {
+			(
+				address bidder,
+				address paymentToken,
+				address tokenAddress,
+				uint256 tokenId,
+				uint256 bidPrice,
+				uint256 quantity,
+				uint256 expTime,
+				bool status
+				) = IPolkaMarket(oldMarket).bids(j);
+			if (quantity > 0) {
+				Bid memory newBid;
+				newBid.bidder = bidder;
+				newBid.paymentToken = paymentToken;
+				newBid.tokenAddress = tokenAddress;
+				newBid.tokenId = tokenId;
+				newBid.bidPrice = bidPrice;
+				newBid.quantity = quantity;
+				newBid.expTime = expTime;
+				newBid.status = status;
+				bids[j] = newBid;
+
+				if (status) {
+					adminHoldPayment[paymentToken] = adminHoldPayment[paymentToken].add(quantity.mul(bidPrice));
+				}
+			}
+		}
+	}
+
+	function sendPaymentToNewContract(
+		address _token,
+		address _newContract
+	) external onlyOwner() {
+		require(_newContract != address(0), 'Invalid-address');
+		if (_token == address(0)) {
+			payable(_newContract).sendValue(adminHoldPayment[_token]);
+		} else {
+			IERC20(_token).safeTransfer(_newContract, adminHoldPayment[_token]);
+		}
+	}
 
 	function setApproveForAll(address _token, address _spender) external onlyOwner() {
 		IERC1155(_token).setApprovalForAll(_spender, true);

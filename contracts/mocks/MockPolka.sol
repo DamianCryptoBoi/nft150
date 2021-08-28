@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 
-contract MockSOTA is ERC20 {
-	constructor() public ERC20('SOTA', 'SOTA') {
+contract MockPolka is ERC20 {
+	constructor() public ERC20('Polka', 'Polka') {
 	}
 
     function mint(address _to, uint _amount) public {

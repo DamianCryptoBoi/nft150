@@ -6,7 +6,7 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract Sota721General is ERC721, Ownable, ERC721URIStorage {
+contract Polka721General is ERC721, Ownable, ERC721URIStorage {
 	using SafeMath for uint256;
 
 	uint256 public _currentTokenId = 0;
@@ -16,8 +16,7 @@ contract Sota721General is ERC721, Ownable, ERC721URIStorage {
 	mapping(uint256 => uint256) public loyaltyFee;
 	mapping(uint256 => string) public tokenURIs;
 
-	constructor() ERC721('Sota Platform ERC721 NFTs', 'SOTA721GENERAL') { //TODO change
-		//_setBaseURI('https://storage.sota.finance');
+	constructor() ERC721('Polka Platform ERC721 NFTs', 'POLKA721GENERAL') {
 	}
 
 	function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) virtual{

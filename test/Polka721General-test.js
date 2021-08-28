@@ -16,9 +16,9 @@ describe("Unit testing - Polka721General", function() {
         });
 
         it("Contractor", async function () {
-            expect(await polka721General.name()).to.equal("Sota Platform ERC721 NFTs"); //TODO
+            expect(await polka721General.name()).to.equal("Polka Platform ERC721 NFTs"); //TODO
 
-            expect(await polka721General.symbol()).to.equal("SOTA721GENERAL"); //TODO
+            expect(await polka721General.symbol()).to.equal("POLKA721GENERAL"); //TODO
         });
     });
     describe("Transactions", function () {

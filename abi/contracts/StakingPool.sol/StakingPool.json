@@ -3,12 +3,12 @@
     "inputs": [
       {
         "internalType": "contract ERC1155Tradable",
-        "name": "_sotaNFT",
+        "name": "_polkaNFT",
         "type": "address"
       },
       {
         "internalType": "contract IERC20",
-        "name": "_sotaToken",
+        "name": "_polkaToken",
         "type": "address"
       }
     ],
@@ -112,7 +112,7 @@
   },
   {
     "inputs": [],
-    "name": "ZOOM_PUMPKIN",
+    "name": "ZOOM_POLKA",
     "outputs": [
       {
         "internalType": "uint256",
@@ -125,7 +125,7 @@
   },
   {
     "inputs": [],
-    "name": "ZOOM_SOTA",
+    "name": "ZOOM_PUMPKIN",
     "outputs": [
       {
         "internalType": "uint256",
@@ -319,6 +319,32 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "polkaNFTs",
+    "outputs": [
+      {
+        "internalType": "contract ERC1155Tradable",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "polkaToken",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -355,32 +381,6 @@
     "name": "renounceOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "sotaNFTs",
-    "outputs": [
-      {
-        "internalType": "contract ERC1155Tradable",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "sotaToken",
-    "outputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {

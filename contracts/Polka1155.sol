@@ -1214,11 +1214,11 @@ contract ERC1155Tradable is
 }
 
 /**
- * @title Sota1155
- * Sota1155 - Collect limited edition NFTs from SotaPlatform
+ * @title Polka1155
+ * Polka1155 - Collect limited edition NFTs from Polka Platform
  */
-contract Sota1155 is ERC1155Tradable {
-    constructor() public ERC1155Tradable("SOTA1155", "SOTA1155") {
+contract Polka1155 is ERC1155Tradable {
+    constructor() public ERC1155Tradable("POLKA1155", "POLKA1155") {
         _setBaseMetadataURI("https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/"); //TODO
     }
 }
