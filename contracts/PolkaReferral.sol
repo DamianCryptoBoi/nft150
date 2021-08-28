@@ -2,7 +2,7 @@ pragma solidity ^0.8.0;
 
 import './Controller.sol';
 
-contract SOTAReferral is Controller {
+contract PolkaReferral is Controller {
 	mapping(address => address) public refs; //a use code of b -> refs[a] = b
 	mapping(address => mapping(address => uint256)) public expTime;
 

@@ -2,8 +2,8 @@ const { expect, assert, use } = require("chai");
 const { solidity } = require("ethereum-waffle");
 use(solidity);  //to user revertedWith
 
-describe("Unit testing - SotaExchangeV2", function() {
-    let sotaExchangeV2;
+describe("Unit testing - PolkaExchangeV2", function() {
+    let polkaExchangeV2;
 
     let bnbRouter;
     let usdt;
@@ -43,19 +43,19 @@ describe("Unit testing - SotaExchangeV2", function() {
         mockBSCswapRouter = await MockBSCswapRouter.deploy();
         mockBSCswapRouter.deployed();
 
-        const SotaExchangeV2 = await ethers.getContractFactory("SOTAExchangeV2");
-        sotaExchangeV2 = await SotaExchangeV2.deploy(
+        const PolkaExchangeV2 = await ethers.getContractFactory("SOTAExchangeV2");
+        polkaExchangeV2 = await PolkaExchangeV2.deploy(
             mockBSCswapRouter.address,
             usdt.address,
             busd.address,
             bnb.address
         );
-        sotaExchangeV2.deployed();
+        polkaExchangeV2.deployed();
     });
 
     describe("Deployment", function () {
         it("Should set the right owner", async function () {
-            expect(await sotaExchangeV2.owner()).to.equal(owner.address);
+            expect(await polkaExchangeV2.owner()).to.equal(owner.address);
         });
 
         it("Contractor", async function () {
@@ -64,10 +64,10 @@ describe("Unit testing - SotaExchangeV2", function() {
     describe("Transactions", function () {
 
         it("estimateToUSDT", async function () {
-            expect(await sotaExchangeV2.estimateToUSDT(busd.address, 1000)).to.be.equal(1000);
+            expect(await polkaExchangeV2.estimateToUSDT(busd.address, 1000)).to.be.equal(1000);
         });
         it("estimateFromUSDT", async function () {
-            expect(await sotaExchangeV2.estimateFromUSDT(busd.address, 1000)).to.be.equal(1000);
+            expect(await polkaExchangeV2.estimateFromUSDT(busd.address, 1000)).to.be.equal(1000);
         });
     });
 
