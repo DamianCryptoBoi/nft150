@@ -24,6 +24,8 @@ contract ERC1155 is IERC165 {
     // Operator Functions
     mapping(address => mapping(address => bool)) internal operators;
 
+    mapping(uint256 => mapping(uint256 => address)) public nftVersion;
+
     // Events
     event TransferSingle(
         address indexed _operator,
@@ -62,7 +64,8 @@ contract ERC1155 is IERC165 {
         address _to,
         uint256 _id,
         uint256 _amount,
-        bytes memory _data
+        bytes memory _data,
+        uint256 _version
     ) public {
         require(
             (msg.sender == _from) || isApprovedForAll(_from, msg.sender),
@@ -76,8 +79,18 @@ contract ERC1155 is IERC165 {
 
         _safeTransferFrom(_from, _to, _id, _amount);
         _callonERC1155Received(_from, _to, _id, _amount, _data);
+
+        nftVersion[_id][_version] = _to;
     }
 
+
+//    function setOwnOfVersion(
+//        uint256 _id,
+//        uint256 _version,
+//        address _owner
+//    ) public {
+//        nftVersion[_id][_version] = _owner;
+//    }
     /**
      * @notice Send multiple types of Tokens from the _from address to the _to address (with safety call)
      * @param _from     Source addresses

@@ -12,9 +12,10 @@ interface IPolkaMarket {
             uint256,
             uint256,
             uint256,
-            uint256 ,
+            uint256,
             bool,
-            bool
+            bool,
+            uint256
 		);
 
     function bids(uint256 id)
@@ -28,7 +29,8 @@ interface IPolkaMarket {
             uint256,
             uint256,
             uint256,
-            bool
+            bool,
+            uint256
 		);
 
     function totalOrders() external view returns(uint256);

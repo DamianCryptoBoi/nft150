@@ -32,6 +32,7 @@ WhitelistAdminRole
     mapping(uint256 => uint256) public tokenSupply;
     mapping(uint256 => uint256) public tokenMaxSupply;
     mapping(uint256 => string)  public tokenURI;
+
     // Contract name
     string public name;
     // Contract symbol
@@ -49,14 +50,6 @@ WhitelistAdminRole
         name = _name;
         symbol = _symbol;
     }
-
-//    function removeWhitelistAdmin(address account) public onlyOwner {
-//        _removeWhitelistAdmin(account);
-//    }
-
-//    function removeMinter(address account) public onlyOwner {
-//        _removeMinter(account);
-//    }
 
     function uri(uint256 _id) public view returns (string memory) {
         require(_exists(_id), "ERC721Tradable#uri: NONEXISTENT_TOKEN");
@@ -122,6 +115,10 @@ WhitelistAdminRole
         if (_initialSupply != 0) _mint(msg.sender, _id, _initialSupply, _data);
         tokenSupply[_id] = _initialSupply;
         tokenMaxSupply[_id] = _maxSupply;
+        for (uint256 i = 1; i <= _initialSupply; i++) {
+            nftVersion[_id][i] = msg.sender;
+        }
+
         emit Create(msg.sender, _id, _loyaltyFee, _maxSupply, _initialSupply);
         return _id;
     }
