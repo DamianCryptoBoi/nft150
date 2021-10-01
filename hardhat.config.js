@@ -19,7 +19,7 @@ module.exports = {
       }
     }
   },
-  defaultNetwork: 'rinkeby',
+  defaultNetwork: 'mumbai',
   networks: {
     hardhat: {
         gas: 12000000,
@@ -46,6 +46,14 @@ module.exports = {
       allowUnlimitedContractSize: true,
       timeout: 1800000
     },
+    mumbai: {
+      url: 'https://rpc-mumbai.maticvigil.com',
+      accounts: [`9b1a1461a714724dbf4e8d2345cf5008545e1140f54914a0c1a62eb1bf1c88a0`],
+      gas: 12000000,
+      blockGasLimit: 0x1fffffffffffff,
+      allowUnlimitedContractSize: true,
+      timeout: 1800000
+    },
 
     testbnb: {
       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
@@ -55,6 +63,8 @@ module.exports = {
   },
 
   etherscan: {
-    apiKey: "GUNCG9NJ78N2UW5WZSEUC82CQARFRVSWF5"
+    //apiKey: "GUNCG9NJ78N2UW5WZSEUC82CQARFRVSWF5" eth
+    apiKey: "7A5TAKHWI24BHVT5V8CSUDRPVAEM5KUWWP" // poligon mumbai
+
   }
 };
