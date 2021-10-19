@@ -8,13 +8,12 @@ interface IPolkaMarket {
 			address,
             address,
             address,
-            address,
-            uint256,
             uint256,
             uint256,
             uint256,
             bool,
             bool,
+            uint256,
             uint256
 		);
 
@@ -38,4 +37,17 @@ interface IPolkaMarket {
 
     function setApproveForAll(address _token, address _spender) external;
     function setApproveForAllERC721(address _token, address _spender) external;
+
+    function nftVersion(address _tokenAddress, uint256 _tokenId, uint256 _version) external view returns(address);
+    function nftVersionOnSale(address _tokenAddress, uint256 _tokenId, uint256 _version) external view returns(bool);
+
+    function createVersionNFT(
+        address _tokenAddress,
+		uint256 _tokenId,
+		uint256 _fromVersion,
+		uint256 _toVersion,
+		address _owner
+    ) external;
+
+
 }

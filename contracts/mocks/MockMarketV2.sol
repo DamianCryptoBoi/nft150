@@ -8,10 +8,6 @@ contract MockMarketV2 is MarketV3 {
         return msg.sender;
     }
 
-    function getWBNB() public view returns (address) {
-        return WBNB;
-    }
-
     function mockIsOperator(address addr) public view returns (bool) {
         return isOperator[addr];
     }
