@@ -17,10 +17,10 @@ const main = async () => {
       console.log("POLKA721_CONTRACT deployed at: ", polka721General.address);
 
       //polka1155
-      const Polka1155 = await hre.ethers.getContractFactory("Polka1155");
-      const polka1155 = await Polka1155.deploy();
-      await polka1155.deployed();
-      console.log("POLKA1155_CONTRACT (is contract of farm)  deployed at: ", polka1155.address);
+//      const Polka1155 = await hre.ethers.getContractFactory("Polka1155");
+//      const polka1155 = await Polka1155.deploy();
+//      await polka1155.deployed();
+//      console.log("POLKA1155_CONTRACT (is contract of farm)  deployed at: ", polka1155.address);
 
 //    //NFT150
       const NFT150 = await hre.ethers.getContractFactory("NFT150");
@@ -87,10 +87,6 @@ const main = async () => {
             "0xEA040dB91b2FB439857145D3e660ceE46f458F94", // usdt
             true);
 
-//      await marketV3.setPaymentMethod(
-//            bNFT150Token.address, //
-//            true);
-
       await marketV3.setPaymentMethod(
             "0xc778417e063141139fce010982780140aa0cd5ab", // bnb
             true);
@@ -98,10 +94,6 @@ const main = async () => {
       await marketV3.setPaymentMethod(
             "0x0000000000000000000000000000000000000000", // ETH
             true);
-
-//      await marketV3.setProfitSenderContract(
-//            profitEstimator.address // setProfitSenderContract
-//            );
 
 }
 
