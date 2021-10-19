@@ -19,7 +19,7 @@ module.exports = {
       }
     }
   },
-  defaultNetwork: 'mumbai',
+  defaultNetwork: 'rinkeby',
   networks: {
     hardhat: {
         gas: 12000000,
@@ -63,8 +63,8 @@ module.exports = {
   },
 
   etherscan: {
-    //apiKey: "GUNCG9NJ78N2UW5WZSEUC82CQARFRVSWF5" eth
-    apiKey: "7A5TAKHWI24BHVT5V8CSUDRPVAEM5KUWWP" // poligon mumbai
+    apiKey: "GUNCG9NJ78N2UW5WZSEUC82CQARFRVSWF5" //eth
+    //apiKey: "7A5TAKHWI24BHVT5V8CSUDRPVAEM5KUWWP" // poligon mumbai
 
   }
 };
