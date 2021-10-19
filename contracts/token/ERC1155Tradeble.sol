@@ -23,8 +23,6 @@ WhitelistAdminRole
     using Strings for string;
     using SafeMath for uint256;
 
-
-
     address proxyRegistryAddress;
     uint256 public _currentTokenID = 0;
     mapping(uint256 => address) public creators;
@@ -32,6 +30,9 @@ WhitelistAdminRole
     mapping(uint256 => uint256) public tokenSupply;
     mapping(uint256 => uint256) public tokenMaxSupply;
     mapping(uint256 => string)  public tokenURI;
+    mapping(uint256 => mapping(uint256 => address))  public nftOwnVersion;
+    mapping(uint256 => mapping(uint256 => bool))  public nftOnSaleVersion;
+
     // Contract name
     string public name;
     // Contract symbol
@@ -49,14 +50,6 @@ WhitelistAdminRole
         name = _name;
         symbol = _symbol;
     }
-
-//    function removeWhitelistAdmin(address account) public onlyOwner {
-//        _removeWhitelistAdmin(account);
-//    }
-
-//    function removeMinter(address account) public onlyOwner {
-//        _removeMinter(account);
-//    }
 
     function uri(uint256 _id) public view returns (string memory) {
         require(_exists(_id), "ERC721Tradable#uri: NONEXISTENT_TOKEN");
@@ -122,6 +115,11 @@ WhitelistAdminRole
         if (_initialSupply != 0) _mint(msg.sender, _id, _initialSupply, _data);
         tokenSupply[_id] = _initialSupply;
         tokenMaxSupply[_id] = _maxSupply;
+        for (uint256 i = 1; i <= _initialSupply; i++) {
+            nftOwnVersion[_id][i] = msg.sender;
+            nftOnSaleVersion[_id][i] = false;
+        }
+
         emit Create(msg.sender, _id, _loyaltyFee, _maxSupply, _initialSupply);
         return _id;
     }
@@ -205,5 +203,14 @@ WhitelistAdminRole
 
     function getLoyaltyFee(uint256 _id) public view returns (uint256) {
         return loyaltyFee[_id];
+    }
+
+//    nftOwnVersion[_id][i] = msg.sender;
+//            nftOnSaleVersion[_id][i] = false;
+    function setNftOwnVersion(uint256 _id, uint256 _version, address owner) external {
+        nftOwnVersion[_id][_version] = owner;
+    }
+    function setNftOnSaleVersion(uint256 _id, uint256 _version, bool isOnSale) external {
+        nftOnSaleVersion[_id][_version] = isOnSale;
     }
 }
