@@ -14,6 +14,7 @@ contract Polka721 is ERC721, Ownable, ERC721URIStorage {
 
 	mapping(uint256 => address) public creators;
 	mapping(uint256 => uint256) public loyaltyFee;
+	mapping(uint256 => uint256) public xUserFee;
 	mapping(uint256 => string) public tokenURIs;
 
 	constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {
@@ -41,11 +42,12 @@ contract Polka721 is ERC721, Ownable, ERC721URIStorage {
 	 * @dev Create new NFT
 	 * @param _loyaltyFee of tokenID
 	 */
-	function create(string calldata _tokenURI, uint256 _loyaltyFee) external {
+	function create(string calldata _tokenURI, uint256 _loyaltyFee, uint256 _xUserFee) external {
 		uint256 newTokenId = _getNextTokenId();
 		_mint(msg.sender, newTokenId);
 		creators[newTokenId] = msg.sender;
 		loyaltyFee[newTokenId] = _loyaltyFee;
+		xUserFee[newTokenId] = _xUserFee;
 		tokenURIs[newTokenId] = _tokenURI;// change for deprecation solidity 4.x
 //		_setTokenURI(newTokenId, _tokenURI); //deprecation solidity 4.x
 
@@ -77,5 +79,9 @@ contract Polka721 is ERC721, Ownable, ERC721URIStorage {
 
 	function getLoyaltyFee(uint256 _id) public view returns (uint256) {
 		return loyaltyFee[_id];
+	}
+
+	function getXUserFee(uint256 _id) public view returns (uint256) {
+		return xUserFee[_id];
 	}
 }
