@@ -111,7 +111,7 @@ describe("Unit testing - Market", function() {
             //		uint256 _quantity, // total amount for sale
             //		uint256 _price, // price of 1 nft
             //		uint256 _retailFee
-            await polka721General.create('urltest', 100);
+            await polka721General.create('urltest', 100, 250);
             await polka721General.setApprovalForAll(mockMarketV2.address, true);
 
             expect(await polka721General.ownerOf(1)).to.equal(owner.address);
@@ -140,7 +140,7 @@ describe("Unit testing - Market", function() {
             //        uint256 _loyaltyFee,
             //        string memory _uri,
             //        bytes memory _data
-            await nft150.create(1000, 100, 200, '_uritest', 1);
+            await nft150.create(1000, 100, 200, '_uritest', 1, 250);
             await nft150.setApprovalForAll(mockMarketV2.address, true);
             expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
             await mockMarketV2.createOrder(
@@ -161,7 +161,7 @@ describe("Unit testing - Market", function() {
             await polkaReferral.setReferral([addr.address], [refer.address]);
 
             //mint
-            await polka721General.create('urltest', 2000);
+            await polka721General.create('urltest', 2000, 250);
             await polka721General.setApprovalForAll(mockMarketV2.address, true);
             expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 
@@ -194,7 +194,7 @@ describe("Unit testing - Market", function() {
 
          it("Buy 1155", async function() {
             //mint
-            await nft150.create(1000, 100, 2000, '_uritest', 1);
+            await nft150.create(1000, 100, 2000, '_uritest', 1, 250);
             await nft150.setApprovalForAll(mockMarketV2.address, true);
             expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
             await mockMarketV2.createOrder(
@@ -225,7 +225,7 @@ describe("Unit testing - Market", function() {
          it("createBid 721", async function() {
             //mint
              //mint
-            await polka721General.create('urltest', 100);
+            await polka721General.create('urltest', 100, 250);
             await polka721General.setApprovalForAll(mockMarketV2.address, true);
             expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 
@@ -267,7 +267,7 @@ describe("Unit testing - Market", function() {
          it("createBid 1155", async function() {
             //mint
              //mint
-            await nft150.create(1000, 100, 200, '_uritest', 1);
+            await nft150.create(1000, 100, 200, '_uritest', 1, 250);
             await nft150.setApprovalForAll(mockMarketV2.address, true);
             expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
             await mockMarketV2.createOrder(
@@ -302,7 +302,7 @@ describe("Unit testing - Market", function() {
 
         it("acceptBid 721", async function() {
             //mint
-            await polka721General.create('urltest', 2000);
+            await polka721General.create('urltest', 2000, 250);
             await polka721General.setApprovalForAll(mockMarketV2.address, true);
             expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 
@@ -355,7 +355,7 @@ describe("Unit testing - Market", function() {
          });
 
          it("cancelOrder", async function() {
-            await polka721General.create('urltest', 100);
+            await polka721General.create('urltest', 100, 250);
             await polka721General.setApprovalForAll(mockMarketV2.address, true);
             expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 
@@ -379,7 +379,7 @@ describe("Unit testing - Market", function() {
 
         it("Cancel order 1155 success", async function() {
             //mint
-            await nft150.create(1000, 100, 2000, '_uritest', 1);
+            await nft150.create(1000, 100, 2000, '_uritest', 1, 250);
             await nft150.setApprovalForAll(mockMarketV2.address, true);
             expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
             await mockMarketV2.createOrder(
@@ -403,7 +403,7 @@ describe("Unit testing - Market", function() {
 
          it("Cancel order 1155 revert", async function() {
             //mint
-            await nft150.create(1000, 100, 2000, '_uritest', 1);
+            await nft150.create(1000, 100, 2000, '_uritest', 1, 250);
             await nft150.setApprovalForAll(mockMarketV2.address, true);
             expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
             await mockMarketV2.createOrder(
@@ -426,7 +426,7 @@ describe("Unit testing - Market", function() {
 
         it("cancelBid", async function() {
              //mint
-            await nft150.create(1000, 100, 200, '_uritest', 1);
+            await nft150.create(1000, 100, 200, '_uritest', 1, 250);
             await nft150.setApprovalForAll(mockMarketV2.address, true);
             expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
             await mockMarketV2.createOrder(
@@ -465,7 +465,7 @@ describe("Unit testing - Market", function() {
 
          it("cancelBid 1155 revert ", async function() {
              //mint
-            await nft150.create(1000, 100, 200, '_uritest', 1);
+            await nft150.create(1000, 100, 200, '_uritest', 1, 250);
             await nft150.setApprovalForAll(mockMarketV2.address, true);
             expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
             await mockMarketV2.createOrder(
@@ -501,7 +501,7 @@ describe("Unit testing - Market", function() {
          });
 
          it("burn 721", async function() {
-            await polka721General.create('urltest', 100);
+            await polka721General.create('urltest', 100, 250);
             await polka721General.setApprovalForAll(mockMarketV2.address, true);
             expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 
@@ -528,7 +528,7 @@ describe("Unit testing - Market", function() {
          });
 
          it("burn 1155", async function() {
-            await nft150.create(1000, 100, 200, '_uritest', 1);
+            await nft150.create(1000, 100, 200, '_uritest', 1, 250);
             await nft150.setApprovalForAll(mockMarketV2.address, true);
             expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
             await mockMarketV2.createOrder(
@@ -555,7 +555,7 @@ describe("Unit testing - Market", function() {
 
         it("updateOrder", async function() {
          //mint
-            await nft150.create(1000, 100, 200, '_uritest', 1);
+            await nft150.create(1000, 100, 200, '_uritest', 1, 250);
             await nft150.setApprovalForAll(mockMarketV2.address, true);
             expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
             await mockMarketV2.createOrder(
@@ -602,7 +602,7 @@ describe("Unit testing - Market", function() {
 
         it("updateBid", async function() {
              //mint
-            await nft150.create(1000, 100, 200, '_uritest', 1);
+            await nft150.create(1000, 100, 200, '_uritest', 1, 250);
             await nft150.setApprovalForAll(mockMarketV2.address, true);
             expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
             await mockMarketV2.createOrder(
@@ -645,7 +645,7 @@ describe("Unit testing - Market", function() {
          //_match TODO
         it("adminMigrateData", async function() {
 
-            await nft150.create(1000, 100, 200, '_uritest', 1);
+            await nft150.create(1000, 100, 200, '_uritest', 1, 250);
             await nft150.setApprovalForAll(mockMarketV2.address, true);
 
             expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
@@ -693,7 +693,7 @@ describe("Unit testing - Market", function() {
             );
 
             //721
-            await polka721General.create('urltest', 100);
+            await polka721General.create('urltest', 100, 250);
             await polka721General.setApprovalForAll(mockMarketV2.address, true);
             expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 
