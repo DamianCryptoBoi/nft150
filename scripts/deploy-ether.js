@@ -68,7 +68,7 @@ const main = async () => {
       //0xa0e7fe8176135C12657f54F41DF5851F22C868B3 polka721General.address
 
       await marketV3.setReferralContract(polkaReferral.address);
-      await marketV3.addPOLKANFTs(polka1155.address, true, true);
+//      await marketV3.addPOLKANFTs(polka1155.address, true, true);
       await marketV3.addPOLKANFTs(polka721General.address, true, false);
       await marketV3.addPOLKANFTs(nft150.address, true, false);
 

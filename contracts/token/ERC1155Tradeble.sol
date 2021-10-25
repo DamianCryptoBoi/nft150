@@ -27,6 +27,7 @@ WhitelistAdminRole
     uint256 public _currentTokenID = 0;
     mapping(uint256 => address) public creators;
     mapping(uint256 => uint256) public loyaltyFee;
+    mapping(uint256 => uint256) public xUserFee;
     mapping(uint256 => uint256) public tokenSupply;
     mapping(uint256 => uint256) public tokenMaxSupply;
     mapping(uint256 => string)  public tokenURI;
@@ -43,7 +44,8 @@ WhitelistAdminRole
         uint256 indexed _id,
         uint256 indexed _loyaltyFee,
         uint256 _maxSupply,
-        uint256 _initSupply
+        uint256 _initSupply,
+        uint256 _xUserFee
     );
 
     constructor(string memory _name, string memory _symbol) {
@@ -99,17 +101,21 @@ WhitelistAdminRole
         uint256 _initialSupply,
         uint256 _loyaltyFee,
         string memory _uri,
-        bytes memory _data
+        bytes memory _data,
+        uint256 _xUserFee
     ) public returns (uint256 tokenId) {
         require(
             _initialSupply <= _maxSupply,
             "Initial supply cannot be more than max supply"
         );
         require(0 <= _loyaltyFee && _loyaltyFee <= 10000, "Invalid-loyalty-fee");
+        require(0 <= _xUserFee && _xUserFee <= 10000, "Invalid-user-fee");
+
         uint256 _id = _getNextTokenID();
         _incrementTokenTypeId();
         creators[_id] = msg.sender;
         loyaltyFee[_id] = _loyaltyFee;
+        xUserFee[_id] = _xUserFee;
         tokenURI[_id] = _uri;
 
         if (_initialSupply != 0) _mint(msg.sender, _id, _initialSupply, _data);
@@ -120,7 +126,7 @@ WhitelistAdminRole
             nftOnSaleVersion[_id][i] = false;
         }
 
-        emit Create(msg.sender, _id, _loyaltyFee, _maxSupply, _initialSupply);
+        emit Create(msg.sender, _id, _loyaltyFee, _maxSupply, _initialSupply, _xUserFee);
         return _id;
     }
 
@@ -203,6 +209,10 @@ WhitelistAdminRole
 
     function getLoyaltyFee(uint256 _id) public view returns (uint256) {
         return loyaltyFee[_id];
+    }
+
+    function getXUserFee(uint256 _id) public view returns (uint256) {
+        return xUserFee[_id];
     }
 
 //    nftOwnVersion[_id][i] = msg.sender;

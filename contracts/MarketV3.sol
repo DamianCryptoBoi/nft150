@@ -175,7 +175,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	//_tokenAddress > _tokenId > version => boolen
 //	mapping(address => mapping(uint256 => mapping(uint256 => bool))) public nftVersionOnSale;
 	//_tokenAddress > _tokenId > version => orderId
-	//mapping(address => mapping(uint256 => mapping(uint256 => uint256))) public orderIdByVersion;
+	mapping(address => mapping(uint256 => mapping(uint256 => uint256))) public orderIdByVersion;
 
 	//hold: createBid
 	mapping(address => uint256) public adminHoldPayment;
@@ -341,12 +341,14 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 
 		if (isERC721) {
 			IERC721(_tokenAddress).safeTransferFrom(msg.sender, address(this), _tokenId);
+			orderIdByVersion[_tokenAddress][_tokenId][1] = _orderId;
 		} else {
 			IERC1155(_tokenAddress).safeTransferFrom(msg.sender, address(this), _tokenId, _quantity, '0x');
 
 			for (uint256 i = _fromVersion; i <= _toVersion; i++) {
 				IERC1155(_tokenAddress).setNftOwnVersion(_tokenId, i, msg.sender);
 				IERC1155(_tokenAddress).setNftOnSaleVersion(_tokenId, i, true);
+				orderIdByVersion[_tokenAddress][_tokenId][i] = _orderId;
 			}
 		}
 
@@ -366,7 +368,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 
 		totalOrders = totalOrders.add(1);
 
-		orderID[keccak256(abi.encodePacked(_tokenAddress, _tokenId, msg.sender))] = _orderId;
+		//orderID[keccak256(abi.encodePacked(_tokenAddress, _tokenId, msg.sender))] = _orderId;
 
 		emit OrderCreated(_orderId, _tokenAddress, _tokenId, _quantity, _price, _fromVersion, _toVersion);
 
@@ -450,8 +452,9 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 
 	function acceptBid(uint256 _bidId, uint256 _quantity) external whenNotPaused() returns (bool) {
 		Bid memory bid = bids[_bidId];
-		bytes32 _id = keccak256(abi.encodePacked(bid.tokenAddress, bid.tokenId, msg.sender));
-		uint256 _orderId = orderID[_id];
+		//bytes32 _id = keccak256(abi.encodePacked(bid.tokenAddress, bid.tokenId, msg.sender));
+		//uint256 _orderId = orderID[_id];
+		uint256 _orderId = orderIdByVersion[bid.tokenAddress][bid.tokenId][bid.version];
 		Order memory order = orders[_orderId];
 		require(order.owner == msg.sender && order.isOnsale, 'Oops!Wrong-order-owner-or-cancelled');
 		require(order.quantity >= _quantity && _quantity <= bid.quantity && bid.status, 'Invalid-quantity-or-bid-cancelled');
@@ -667,8 +670,12 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 				newOrder.fromVersion = fromVersion;
 				newOrder.toVersion = toVersion;
 				orders[i] = newOrder;
-				bytes32 _id = keccak256(abi.encodePacked(tokenAddress, tokenId, owner));
-				orderID[_id] = i;
+				//bytes32 _id = keccak256(abi.encodePacked(tokenAddress, tokenId, owner));
+				//orderID[_id] = i;
+
+				for (uint256 j = fromVersion; j <= toVersion; j++) {
+					orderIdByVersion[tokenAddress][tokenId][j] = i;
+				}
 			}
 		}
 	}
