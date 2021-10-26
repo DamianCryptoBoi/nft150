@@ -17,7 +17,7 @@ module.exports = {
       }
     }
   },
-  defaultNetwork: 'rinkeby',
+  defaultNetwork: 'mainnet',
   networks: {
     hardhat: {
         gas: 12000000,
@@ -26,6 +26,14 @@ module.exports = {
         timeout: 1800000
     },
     rinkeby: {
+      url: process.env.PROVIDER_URL,
+      accounts: [process.env.PRIVATE_KEY],
+      gas: 12000000,
+      blockGasLimit: 0x1fffffffffffff,
+      allowUnlimitedContractSize: true,
+      timeout: 1800000
+    },
+    mainnet: {
       url: process.env.PROVIDER_URL,
       accounts: [process.env.PRIVATE_KEY],
       gas: 12000000,
