@@ -1,6 +1,7 @@
 const hre = require("hardhat")
 
 const main = async () => {
+      console.log("--- Start Deploy ---");
       const [admin] = await hre.ethers.getSigners();
 
 // ETH rinkeby:
