@@ -19,12 +19,16 @@ describe("Unit testing - Market", function() {
         mockPOLKA = await MockPOLKA.deploy();
         await mockPOLKA.deployed();
 
+        PolkaURI = await hre.ethers.getContractFactory("PolkaURI");
+        polkaURI = await PolkaURI.deploy("https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/");
+        await polkaURI.deployed();
+
         Polka721General = await hre.ethers.getContractFactory("Polka721General");
-        polka721General = await Polka721General.deploy();
+        polka721General = await Polka721General.deploy(polkaURI.address);
         await polka721General.deployed();
 
         NFT150 = await hre.ethers.getContractFactory("NFT150");
-        nft150 = await NFT150.deploy();
+        nft150 = await NFT150.deploy(polkaURI.address);
         await nft150.deployed();
 
         //PolkaReferral
