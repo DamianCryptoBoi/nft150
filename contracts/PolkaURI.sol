@@ -1,15 +1,22 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "./token/ERC1155Tradeble.sol";
+import '@openzeppelin/contracts/access/Ownable.sol';
 
-/**
- * @title 1155 General
- * 1155General
- */
-contract NFT150 is ERC1155Tradeble {
-    constructor() ERC1155Tradeble("NFT150 General", "NFT150")
+contract PolkaURI is Ownable {
+
+    string public baseMetadataURI;
+
+    function _setBaseMetadataURI(string memory _newBaseMetadataURI) internal {
+        baseMetadataURI = _newBaseMetadataURI;
+    }
+
+    constructor(string memory _newBaseMetadataURI)
     {
-        _setBaseMetadataURI("https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/"); //TODO
+        _setBaseMetadataURI(_newBaseMetadataURI);
+    }
+
+    function adminSetBaseMetadataURI(string memory _newBaseMetadataURI) external onlyOwner() {
+        _setBaseMetadataURI(_newBaseMetadataURI);
     }
 }

@@ -1,9 +1,5 @@
 pragma solidity ^0.8.0;
 
-interface IAddressMarket {
-
-
-    function marketAddress() external returns(address);
-
-
+interface IPolkaURI {
+    function baseMetadataURI() view external returns(string memory);
 }
