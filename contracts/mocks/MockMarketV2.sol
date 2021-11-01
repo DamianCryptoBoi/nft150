@@ -22,9 +22,9 @@ contract MockMarketV2 is MarketV3 {
 //	uint256 public yRefRate = 5000; // 50%
 //	uint256 public zProfitToCreator = 5000; // 10% profit
 
-    function mockGetxUser() public view returns (uint256) {
-        return xUser;
-    }
+//    function mockGetxUser() public view returns (uint256) {
+//        return xUser;
+//    }
     function mockGetxCreator() public view returns (uint256) {
         return xCreator;
     }

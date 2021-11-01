@@ -79,17 +79,15 @@ describe("Unit testing - Market", function() {
             await mockMarketV2.setSystemFee(
                 9999,
                 9999,
-                9999,
                 9999);
 
-            expect((await mockMarketV2.mockGetxUser()).toNumber()).to.equal(9999);
+            //expect((await mockMarketV2.mockGetxUser()).toNumber()).to.equal(9999);
             expect((await mockMarketV2.mockGetxCreator()).toNumber()).to.equal(9999);
             expect((await mockMarketV2.mockGetyRefRate()).toNumber()).to.equal(9999);
             expect((await mockMarketV2.mockGetzProfitToCreator()).toNumber()).to.equal(9999);
 
             //restore value
             await mockMarketV2.setSystemFee(
-                250,
                 1500,
                 5000,
                 5000
@@ -118,6 +116,7 @@ describe("Unit testing - Market", function() {
             await polka721General.create('urltest', 100, 250);
             await polka721General.setApprovalForAll(mockMarketV2.address, true);
 
+            expect((await polka721General.getXUserFee(1)).toNumber()).to.equal(250);
             expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 
             //create _tokenId 1
@@ -146,6 +145,7 @@ describe("Unit testing - Market", function() {
             //        bytes memory _data
             await nft150.create(1000, 100, 200, '_uritest', 1, 250);
             await nft150.setApprovalForAll(mockMarketV2.address, true);
+            expect((await nft150.getXUserFee(1)).toNumber()).to.equal(250);
             expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
             await mockMarketV2.createOrder(
                 nft150.address,
@@ -557,94 +557,6 @@ describe("Unit testing - Market", function() {
 
          });
 
-        it("updateOrder", async function() {
-         //mint
-            await nft150.create(1000, 100, 200, '_uritest', 1, 250);
-            await nft150.setApprovalForAll(mockMarketV2.address, true);
-            expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
-            await mockMarketV2.createOrder(
-                nft150.address,
-                mockPOLKA.address,
-                1,
-                1,
-                100,
-                1,
-                1
-            );
-            //      address _tokenAddress,
-            //		address _retailer,
-            //		address _paymentToken, // payment method
-            //		uint256 _tokenId,
-            //		uint256 _quantity, // total amount for sale
-            //		uint256 _price, // price of 1 nft
-            //		uint256 _retailFee
-
-            //updateOrder(
-            //    uint256 _orderId,
-            //    uint256 _quantity,
-            //    uint256 _price,
-            //    uint256 _retailFee,
-            //    address _retailer
-            //)
-            await mockMarketV2.updateOrder(
-                0,
-                99,
-                99,
-                99,
-                owner.address,
-                1
-            );
-
-            let order = await mockMarketV2.mockGetOrder(0);
-
-            expect(order.quantity.toNumber()).to.equal(99);
-            expect(order.price.toNumber()).to.equal(99);
-//            expect(order.retailFee.toNumber()).to.equal(99); //TODO
-//            expect(order.retailer).to.equal(owner.address); //TODO
-
-        });
-
-        it("updateBid", async function() {
-             //mint
-            await nft150.create(1000, 100, 200, '_uritest', 1, 250);
-            await nft150.setApprovalForAll(mockMarketV2.address, true);
-            expect((await mockMarketV2.mockTotalOrders()).toNumber()).to.equal(0);
-            await mockMarketV2.createOrder(
-                nft150.address,
-                mockPOLKA.address,
-                1,
-                1,
-                100,
-                1,
-                1
-            );
-
-            await mockPOLKA.mint(addr.address, 1000000);
-            await mockPOLKA.connect(addr).approve(mockMarketV2.address, 1000000);
-
-            await mockMarketV2.connect(addr).createBid(
-                nft150.address,
-                mockPOLKA.address,
-                1,
-                1,
-                30,
-                3, //days
-                1
-            );
-
-            //function updateBid(
-            //uint256 _bidId,
-            //uint256 _quantity,
-            //uint256 _bidPrice
-            //)
-            await mockMarketV2.connect(addr).updateBid(0, 9, 9);
-
-            let bid = await mockMarketV2.mockGetBid(0);
-
-            expect(bid.quantity.toNumber()).to.equal(9);
-            expect(bid.bidPrice.toNumber()).to.equal(9);
-
-        });
 
          //_match TODO
         it("adminMigrateData", async function() {

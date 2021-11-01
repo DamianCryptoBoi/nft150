@@ -49,10 +49,6 @@ const main = async () => {
             true);
 
       await marketV3.setPaymentMethod(
-            "0xc778417e063141139fce010982780140aa0cd5ab", // bnb
-            true);
-
-      await marketV3.setPaymentMethod(
             "0x0000000000000000000000000000000000000000", // ETH
             true);
 

@@ -22,7 +22,7 @@ contract Manager is Ownable, Pausable {
 	address public referralContract;
 
 	// FEE
-	uint256 public xUser = 250; // 2.5%
+	//uint256 public xUser = 250; // 2.5%
 	uint256 public xCreator = 1500;
 	uint256 public yRefRate = 5000; // 50%
 	uint256 public zProfitToCreator = 5000; // 10% profit
@@ -60,21 +60,18 @@ contract Manager is Ownable, Pausable {
 	}
 
 	function setSystemFee(
-		uint256 _xUser,
 		uint256 _xCreator,
 		uint256 _yRefRate,
 		uint256 _zProfitToCreator
 	) external onlyOwner {
-		_setSystemFee(_xUser, _xCreator, _yRefRate, _zProfitToCreator);
+		_setSystemFee(_xCreator, _yRefRate, _zProfitToCreator);
 	}
 
 	function _setSystemFee(
-		uint256 _xUser,
 		uint256 _xCreator,
 		uint256 _yRefRate,
 		uint256 _zProfitToCreator
 	) internal {
-		xUser = _xUser;
 		xCreator = _xCreator;
 		yRefRate = _yRefRate;
 		zProfitToCreator = _zProfitToCreator;
@@ -269,9 +266,10 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		Order memory order = orders[_orderId];
 		address payable creator = payable(IPOLKANFT(order.tokenAddress).getCreator(order.tokenId));
 		uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
+		uint256 nftXUserFee = IPOLKANFT(order.tokenAddress).getXUserFee(order.tokenId);
 
 		if (buyerRef != address(0)) {
-			uint256 amountToBuyerRef = orderAmount.mul(xUser).mul(ZOOM_FEE - yRefRate).div(ZOOM_FEE**2); // 1.25
+			uint256 amountToBuyerRef = orderAmount.mul(nftXUserFee).mul(ZOOM_FEE - yRefRate).div(ZOOM_FEE**2); // 1.25
 			_paid(_paymentToken, buyerRef, amountToBuyerRef);
 		}
 
@@ -374,9 +372,10 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		uint256 orderAmount = order.price.mul(_quantity);
 		uint256 exactPaymentAmount;
 		uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
+		uint256 nftXUserFee = IPOLKANFT(order.tokenAddress).getXUserFee(order.tokenId);
 
 		if (_paymentToken == order.paymentToken) {
-			exactPaymentAmount = orderAmount.mul(ZOOM_FEE + xUser + loyaltyFee).div(ZOOM_FEE);
+			exactPaymentAmount = orderAmount.mul(ZOOM_FEE + nftXUserFee + loyaltyFee).div(ZOOM_FEE);
 		} else {
 			//Not Cover in version
 		}
@@ -444,6 +443,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 
 		uint256 orderAmount = bid.bidPrice.mul(_quantity);
 		uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
+		uint256 nftXUserFee = IPOLKANFT(order.tokenAddress).getXUserFee(order.tokenId);
 
 		adminHoldPayment[bid.paymentToken] = adminHoldPayment[bid.paymentToken].sub(orderAmount);
 
@@ -452,7 +452,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 			bid.paymentToken,
 			_orderId,
 			_quantity,
-			orderAmount.mul(ZOOM_FEE).div(ZOOM_FEE.add(xUser).add(loyaltyFee)),
+			orderAmount.mul(ZOOM_FEE).div(ZOOM_FEE.add(nftXUserFee).add(loyaltyFee)),
 			getRefData(msg.sender),
 			getRefData(bid.bidder),
 			bid.version
@@ -507,53 +507,6 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		bid.quantity = 0;
 		bids[_bidId] = bid;
 		emit BidCancelled(_bidId);
-	}
-
-	function updateOrder(
-		uint256 _orderId,
-		uint256 _quantity,
-		uint256 _price,
-		uint256 _retailFee,
-		address _retailer,
-		uint256 _version
-	) external whenNotPaused() {
-		Order memory order = orders[_orderId];
-		require(order.owner == msg.sender && order.isOnsale, 'Oops!Wrong-order-owner-or-cancelled');
-		if (_quantity > order.quantity && !order.isERC721) {
-			IERC1155(order.tokenAddress).safeTransferFrom(
-				msg.sender,
-				address(this),
-				order.tokenId,
-				_quantity.sub(order.quantity),
-				'0x'
-			);
-			order.quantity = _quantity;
-		} else if (_quantity < order.quantity) {
-			IERC1155(order.tokenAddress).safeTransferFrom(
-				address(this),
-				msg.sender,
-				order.tokenId,
-				order.quantity.sub(_quantity),
-				abi.encodePacked(keccak256('onERC1155Received(address,address,uint256,uint256,bytes)'))
-			);
-			order.quantity = _quantity;
-		}
-		order.price = _price;
-		orders[_orderId] = order;
-		emit OrderUpdated(_orderId, _version);
-	}
-
-	function updateBid(
-		uint256 _bidId,
-		uint256 _quantity,
-		uint256 _bidPrice
-	) external whenNotPaused() {
-		Bid memory bid = bids[_bidId];
-		require(bid.bidder == msg.sender, 'Invalid-bidder');
-		bid.quantity = _quantity;
-		bid.bidPrice = _bidPrice;
-		bids[_bidId] = bid;
-		emit BidUpdated(_bidId);
 	}
 
 	function burnVersion(
