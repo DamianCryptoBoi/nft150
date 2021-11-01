@@ -14,7 +14,7 @@ const main = async () => {
       const PolkaURI = await hre.ethers.getContractFactory("PolkaURI");
       const polkaURI = await PolkaURI.deploy("https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/");
       await polkaURI.deployed();
-      console.log("PolkaURI deployed at: ", polka721General.address);
+      console.log("PolkaURI deployed at: ", polkaURI.address);
 
       //Polka721General
       const Polka721General = await hre.ethers.getContractFactory("Polka721General");
