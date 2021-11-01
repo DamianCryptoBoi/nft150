@@ -11,15 +11,20 @@ const main = async () => {
 //    address public busd; // 0x3b00ef435fa4fcff5c209a37d1f3dcff37c705ad
 //    address public bnb; // 0xae13d989dac2f0debff460ac112a837c89baa7cd ==> wbnb chuyển sang weth: 0xc778417e063141139fce010982780140aa0cd5ab
 
+      const PolkaURI = await hre.ethers.getContractFactory("PolkaURI");
+      const polkaURI = await PolkaURI.deploy("https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/");
+      await polkaURI.deployed();
+      console.log("PolkaURI deployed at: ", polka721General.address);
+
       //Polka721General
       const Polka721General = await hre.ethers.getContractFactory("Polka721General");
-      const polka721General = await Polka721General.deploy();
+      const polka721General = await Polka721General.deploy(polkaURI.address);
       await polka721General.deployed();
       console.log("POLKA721_CONTRACT deployed at: ", polka721General.address);
 
 //    //NFT150
       const NFT150 = await hre.ethers.getContractFactory("NFT150");
-      const nft150 = await NFT150.deploy();
+      const nft150 = await NFT150.deploy(polkaURI.address);
       await nft150.deployed();
       console.log("ERC1155_CONTRACT deployed at: ", nft150.address);
 
