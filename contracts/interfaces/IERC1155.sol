@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import './IERC165.sol';
+import '@openzeppelin/contracts/utils/introspection/IERC165.sol';
 
 /**
  * @dev Required interface of an ERC1155 compliant contract, as defined in the
@@ -115,4 +115,9 @@ interface IERC1155 is IERC165 {
 	function getCreator(uint256 _id) external view returns (address);
 
 	function getLoyaltyFee(uint256 _id) external view returns (uint256);
+
+	function nftOwnVersion(uint256 _tokenId, uint256 _version) external view returns (address);
+    function nftOnSaleVersion(uint256 _tokenId, uint256 _version) external view returns (bool);
+    function setNftOwnVersion(uint256 _tokenId, uint256 _version, address _owner) external;
+    function setNftOnSaleVersion(uint256 _tokenId, uint256 _version, bool _isOnSale) external;
 }

@@ -11,6 +11,7 @@ import "../dependencies/ProxyRegistry.sol";
 import "./ERC1155.sol";
 import "./ERC1155MintBurn.sol";
 import "./ERC1155Metadata.sol";
+import "../interfaces/IPolkaURI.sol";
 
 contract ERC1155Tradeble is
 ERC1155,
@@ -33,6 +34,7 @@ WhitelistAdminRole
     mapping(uint256 => string)  public tokenURI;
     mapping(uint256 => mapping(uint256 => address))  public nftOwnVersion;
     mapping(uint256 => mapping(uint256 => bool))  public nftOnSaleVersion;
+    address public polkaUriAddress;
 
     // Contract name
     string public name;
@@ -48,15 +50,20 @@ WhitelistAdminRole
         uint256 _xUserFee
     );
 
-    constructor(string memory _name, string memory _symbol) {
+    constructor(string memory _name, string memory _symbol, address _polkaUriAddress) {
         name = _name;
         symbol = _symbol;
+        polkaUriAddress = _polkaUriAddress;
     }
 
     function uri(uint256 _id) public view returns (string memory) {
         require(_exists(_id), "ERC721Tradable#uri: NONEXISTENT_TOKEN");
-        return Strings.strConcat(baseMetadataURI, tokenURI[_id]);
+        return Strings.strConcat(IPolkaURI(polkaUriAddress).baseMetadataURI() , tokenURI[_id]);
     }
+
+    function setPolkaUriAddress(address _polkaUriAddress) external onlyOwner() {
+		polkaUriAddress = _polkaUriAddress;
+	}
 
     /**
      * @dev Returns the total quantity for a token ID
@@ -215,8 +222,6 @@ WhitelistAdminRole
         return xUserFee[_id];
     }
 
-//    nftOwnVersion[_id][i] = msg.sender;
-//            nftOnSaleVersion[_id][i] = false;
     function setNftOwnVersion(uint256 _id, uint256 _version, address owner) external {
         nftOwnVersion[_id][_version] = owner;
     }
