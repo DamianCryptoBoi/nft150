@@ -7,8 +7,13 @@ describe("Unit testing - NFT150", function() {
 
     beforeEach(async function () {
         [owner, addr, addr2] = await ethers.getSigners();
+
+        PolkaURI = await hre.ethers.getContractFactory("PolkaURI");
+        polkaURI = await PolkaURI.deploy("https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/");
+        await polkaURI.deployed();
+
         const NFT150 = await ethers.getContractFactory("NFT150");
-        nft150 = await NFT150.deploy();
+        nft150 = await NFT150.deploy(polkaURI.address);
         nft150.deployed();
     });
 
@@ -37,9 +42,9 @@ describe("Unit testing - NFT150", function() {
 
 
         it("create - maxSupply - totalSupply - getLoyaltyFee - getCreator", async function () {
-            await expect(nft150.create(1000, 1001, 200, '_uritest', 1)).to.be.revertedWith("Initial supply cannot be more than max supply");
-            await expect(nft150.create(1000, 100, 10001, '_uritest', 1)).to.be.revertedWith("Invalid-loyalty-fee");
-            await nft150.create(1000, 100, 200, '_uritest', 1);
+            await expect(nft150.create(1000, 1001, 200, '_uritest', 1, 250)).to.be.revertedWith("Initial supply cannot be more than max supply");
+            await expect(nft150.create(1000, 100, 10001, '_uritest', 1, 250)).to.be.revertedWith("Invalid-loyalty-fee");
+            await nft150.create(1000, 100, 200, '_uritest', 1, 250);
 
 
             expect(await nft150.maxSupply(1)).to.equal(1000);
@@ -50,6 +55,9 @@ describe("Unit testing - NFT150", function() {
             expect(await nft150.totalSupply(1)).to.equal(109);
 
             expect(await nft150.getCreator(1)).to.equal(owner.address);
+            expect(await nft150.uri(1)).to.equal("https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/_uritest");
+            await polkaURI.adminSetBaseMetadataURI('https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/change/');
+            expect(await nft150.uri(1)).to.equal("https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/change/_uritest");
 
         });
 

@@ -5,19 +5,22 @@ import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "../interfaces/IPolkaURI.sol";
 
 contract Polka721 is ERC721, Ownable, ERC721URIStorage {
 	using SafeMath for uint256;
 
 	uint256 public _currentTokenId = 0;
-	string public baseURI = "https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/"; //TODO waiting Customer supply
+
+	address public polkaUriAddress;
 
 	mapping(uint256 => address) public creators;
 	mapping(uint256 => uint256) public loyaltyFee;
 	mapping(uint256 => uint256) public xUserFee;
 	mapping(uint256 => string) public tokenURIs;
 
-	constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {
+	constructor(string memory _name, string memory _symbol, address _polkaUriAddress) ERC721(_name, _symbol) {
+		polkaUriAddress = _polkaUriAddress;
 	}
 
 	function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) virtual{
@@ -25,7 +28,7 @@ contract Polka721 is ERC721, Ownable, ERC721URIStorage {
     }
 
 	function _baseURI() internal view override returns (string memory) {
-        return baseURI; //TODO waiting Customer supply
+		return IPolkaURI(polkaUriAddress).baseMetadataURI();
     }
 
 	function tokenURI(uint256 tokenId)
@@ -48,8 +51,7 @@ contract Polka721 is ERC721, Ownable, ERC721URIStorage {
 		creators[newTokenId] = msg.sender;
 		loyaltyFee[newTokenId] = _loyaltyFee;
 		xUserFee[newTokenId] = _xUserFee;
-		tokenURIs[newTokenId] = _tokenURI;// change for deprecation solidity 4.x
-//		_setTokenURI(newTokenId, _tokenURI); //deprecation solidity 4.x
+		tokenURIs[newTokenId] = _tokenURI;
 
 		_incrementTokenId();
 	}
@@ -69,8 +71,8 @@ contract Polka721 is ERC721, Ownable, ERC721URIStorage {
 		_currentTokenId++;
 	}
 
-	function setBaseURI(string calldata baseURI_) external onlyOwner() {
-		baseURI = baseURI_;
+	function setPolkaUriAddress(address _polkaUriAddress) external onlyOwner() {
+		polkaUriAddress = _polkaUriAddress;
 	}
 
 	function getCreator(uint256 _id) public view returns (address) {

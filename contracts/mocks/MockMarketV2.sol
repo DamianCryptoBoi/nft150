@@ -1,5 +1,6 @@
+// SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
-//
+
 import '../MarketV3.sol';
 contract MockMarketV2 is MarketV3 {
 
@@ -21,9 +22,9 @@ contract MockMarketV2 is MarketV3 {
 //	uint256 public yRefRate = 5000; // 50%
 //	uint256 public zProfitToCreator = 5000; // 10% profit
 
-    function mockGetxUser() public view returns (uint256) {
-        return xUser;
-    }
+//    function mockGetxUser() public view returns (uint256) {
+//        return xUser;
+//    }
     function mockGetxCreator() public view returns (uint256) {
         return xCreator;
     }
@@ -57,27 +58,5 @@ contract MockMarketV2 is MarketV3 {
         return bids[bidId];
     }
 
-    event mockEventProfitToCreator(uint256 res);
-
-    function mockProfitToCreator(
-        address _profitEstimatorContract,
-        address _nft,
-        address _paymentToken,
-        uint256 _tokenId,
-        uint256 _amount,
-        uint256 _price,
-        uint256 _lastBuyPriceInUSD
-    ) public returns (uint256) {
-        uint256 res =  IProfitEstimator(_profitEstimatorContract).profitToCreator(
-            _nft,
-            _paymentToken,
-            _tokenId,
-            _amount,
-            _price,
-            _lastBuyPriceInUSD
-        );
-        emit mockEventProfitToCreator(res);
-        return res;
-    }
 
 }
