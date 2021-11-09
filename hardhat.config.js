@@ -17,7 +17,7 @@ module.exports = {
       }
     }
   },
-  defaultNetwork: 'mainnet',
+  defaultNetwork: 'testbnb',
   networks: {
     hardhat: {
         gas: 12000000,
@@ -28,6 +28,22 @@ module.exports = {
     rinkeby: {
       url: process.env.PROVIDER_URL,
       accounts: [process.env.PRIVATE_KEY],
+      gas: 12000000,
+      blockGasLimit: 0x1fffffffffffff,
+      allowUnlimitedContractSize: true,
+      timeout: 1800000
+    },
+    mumbai: {
+      url: 'https://rpc-mumbai.maticvigil.com',
+      accounts: [`9b1a1461a714724dbf4e8d2345cf5008545e1140f54914a0c1a62eb1bf1c88a0`],
+      gas: 12000000,
+      blockGasLimit: 0x1fffffffffffff,
+      allowUnlimitedContractSize: true,
+      timeout: 1800000
+    },
+    testbnb: {
+      url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+      accounts: ['2a7b162564c6ca43e6289d48757bc12261339baa0b7a96271f0e0f99ed52e7a0'],
       gas: 12000000,
       blockGasLimit: 0x1fffffffffffff,
       allowUnlimitedContractSize: true,
@@ -44,6 +60,8 @@ module.exports = {
   },
 
   etherscan: {
-    apiKey: process.env.ETHERSCAN_APIKEY
+//    apiKey: process.env.ETHERSCAN_APIKEY,
+    apiKey: "9E36GDSJK15GYXXN85186T5GDQI32B29MF" //bnb test
+
   }
 };
