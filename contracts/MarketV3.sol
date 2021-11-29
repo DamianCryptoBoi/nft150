@@ -509,37 +509,6 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		emit BidCancelled(_bidId);
 	}
 
-	function burnVersion(
-		address _tokenAddress,
-		address _toDead,
-		uint256 _tokenId,
-		uint256 _version
-	) external whenNotPaused() {
-		bool isERC721 = IERC721(_tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
-
-		if (isERC721) {
-			address ownerOf = IERC721(_tokenAddress).ownerOf(_tokenId);
-			require(ownerOf == msg.sender || ownerOf == address(this), 'Version-not-of-sender');
-			IERC721(_tokenAddress).safeTransferFrom(ownerOf, _toDead, _tokenId);
-		} else {
-			require(IERC1155(_tokenAddress).nftOwnVersion(_tokenId, _version) == msg.sender, 'burn-version-not-of-sender');
-
-			address fromSender = msg.sender;
-			if (IERC1155(_tokenAddress).nftOnSaleVersion(_tokenId, _version)) {
-				fromSender = address(this);
-			}
-			IERC1155(_tokenAddress).safeTransferFrom(
-					fromSender,
-					_toDead,
-					_tokenId,
-					1,
-					abi.encodePacked(keccak256('onERC1155Received(address,address,uint256,uint256,bytes)'))
-			);
-			IERC1155(_tokenAddress).setNftOnSaleVersion(_tokenId, _version, false);
-			IERC1155(_tokenAddress).setNftOwnVersion(_tokenId, _version, _toDead);
-		}
-	}
-
 	function adminMigrateOrders(address oldMarket, uint256 startId, uint256 endId) external onlyOwner() {
 		totalOrders = IPolkaMarket(oldMarket).totalOrders();
 		require(startId < totalOrders, 'StartId-more-than-maxid');
