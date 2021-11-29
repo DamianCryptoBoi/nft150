@@ -37,11 +37,11 @@ const main = async () => {
       await marketV3.addPOLKANFTs(nft150.address, true, false);
 
       await marketV3.setPaymentMethod(
-            "0x0c3f4125B9f7600CfE2f556C0767D2A117EDdb4d", // usdt
+            "0x8c9aB1ffa133B60FA38215D94032b23Caf431C4F", // usdt
             true);
 
       await marketV3.setPaymentMethod(
-            "0x40bc286d3D2F8B44D28863B12DA18b553Ea1a4bB", // wETH (https://mumbai.polygonscan.com/token/0x2d7882bedcbfddce29ba99965dd3cdf7fcb10a1e)
+            "0x832161Faaff82A3af9f978F3b0c48915E89b8ea2", // wETH (https://mumbai.polygonscan.com/token/0x2d7882bedcbfddce29ba99965dd3cdf7fcb10a1e)
             true);
 }
 
