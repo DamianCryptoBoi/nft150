@@ -9,9 +9,9 @@ const main = async () => {
       await polkaMarketV3.deployed();
       console.log("MARKET_CONTRACT deployed at: ", polkaMarketV3.address);
 
-      await polkaMarketV3.setReferralContract("0xEb50f8b497e65e20Ce8f27951B9F034380070542");
-      await polkaMarketV3.addPOLKANFTs("0x44CAE0Fea77Bc76575ae4Fcef56C1f903caB57B2", true, false);
-      await polkaMarketV3.addPOLKANFTs("0x5F9eF767b409dBA5efc22E32ee46785868AD1C3a", true, false);
+      await polkaMarketV3.setReferralContract("0x6602e019fE2F8b8b5104BA8fd89BF5606086e901");
+      await polkaMarketV3.addPOLKANFTs("0x8d888ff4e7Bb0f6A02a2c397CB4fF83C27801387", true, false);
+      await polkaMarketV3.addPOLKANFTs("0x346840b84575F5cB00E20fB2Ca306801E02aA68a", true, false);
 
       await polkaMarketV3.setPaymentMethod(
             "0xEA040dB91b2FB439857145D3e660ceE46f458F94", // usdt
@@ -21,20 +21,37 @@ const main = async () => {
             "0x0000000000000000000000000000000000000000", // eth
             true);
 
-        //Migrate Data
-      let oldMarket = "0x80C20Aab0d9B09e4AF8cC0A7533e506b372e8BDD";
+      await polkaMarketV3.setPaymentMethod(
+            "0xbec758b709075141c71e1011b3E5ecea9c3cbc0b", // XP polka
+            true);
 
+        //Migrate Data
+      let oldMarket = "0xEccB8dB518ac6eC34074f375A38F46A0922eF034";
+      const oldMarketContract = await hre.ethers.getContractAt("MarketV3", oldMarket, admin);
+
+      
       console.log("---adminMigrateOrders---");
-      await polkaMarketV3.adminMigrateOrders(oldMarket);
+      const totalorder = await oldMarketContract.totalOrders();
+      console.log("---totalorder--- ", totalorder);
+      let blockLoop = Math.ceil(totalorder/10);
+      for (i = 0; i < blockLoop; i++) {
+            await polkaMarketV3.adminMigrateOrders(oldMarket, i * 10, i * 10 + 10);
+      }
       console.log("---Finish adminMigrateOrders---");
 
       console.log("---adminMigrateBids---");
-      await polkaMarketV3.adminMigrateBids(oldMarket);
+      const totalBid = await oldMarketContract.totalBids();
+      let blockLoopBid = Math.ceil(totalBid/10);
+      console.log("---totalBid--- ", totalBid);
+      for (i = 0; i < blockLoop; i++) {
+            await polkaMarketV3.adminMigrateBids(oldMarket, i * 10, i * 10 + 10);
+      }
       console.log("---Finish adminMigrateBids---");
 
       console.log("---adminMigratePushNFT---");
-      const oldMarketContract = await hre.ethers.getContractAt("MarketV3", oldMarket, admin);
-      await oldMarketContract.adminMigratePushNFT(polkaMarketV3.address);
+      for (i = 0; i < blockLoop; i++) {
+            await oldMarketContract.adminMigratePushNFT(polkaMarketV3.address, i * 10, i * 10 + 10);
+      }
       console.log("---Finish adminMigratePushNFT---");
 }
 

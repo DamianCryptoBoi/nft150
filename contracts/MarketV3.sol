@@ -540,9 +540,13 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		}
 	}
 
-	function adminMigrateOrders(address oldMarket) external onlyOwner() {
+	function adminMigrateOrders(address oldMarket, uint256 startId, uint256 endId) external onlyOwner() {
 		totalOrders = IPolkaMarket(oldMarket).totalOrders();
-		for (uint256 i = 0; i < totalOrders; i++) {
+		require(startId < totalOrders, 'StartId-more-than-maxid');
+		if (endId > totalOrders - 1) {
+			endId = totalOrders - 1;
+		}
+		for (uint256 i = startId; i <= endId; i++) {
 			(
 				address owner,
 				address tokenAddress,
@@ -571,15 +575,19 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 				orders[i] = newOrder;
 
 				for (uint256 j = fromVersion; j <= toVersion; j++) {
-					orderIdByVersion[tokenAddress][tokenId][j] = i;
+					orderIdByVersion[tokenAddress][tokenId][j] = IPolkaMarket(oldMarket).orderIdByVersion(tokenAddress, tokenId, j);
 				}
 			}
 		}
 	}
 
-	function adminMigratePushNFT(address newMarket) external onlyOwner() {
+	function adminMigratePushNFT(address newMarket, uint256 startId, uint256 endId) external onlyOwner() {
 		//totalOrders = IPolkaMarket(oldMarket).totalOrders();
-		for (uint256 i = 0; i < totalOrders; i++) {
+		require(startId < totalOrders, 'StartId-more-than-maxid');
+		if (endId > totalOrders - 1) {
+			endId = totalOrders - 1;
+		}
+		for (uint256 i = startId; i <= endId; i++) {
 
 			Order memory order = orders[i];
 
@@ -605,10 +613,15 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		}
 	}
 
-	function adminMigrateBids(address oldMarket) external onlyOwner() {
+	function adminMigrateBids(address oldMarket, uint256 startId, uint256 endId) external onlyOwner() {
 		totalBids = IPolkaMarket(oldMarket).totalBids();
 
-		for (uint256 j = 0; j < totalBids; j++) {
+		require(startId < totalBids, 'StartId-more-than-maxid');
+		if (endId > totalBids - 1) {
+			endId = totalBids - 1;
+		}
+
+		for (uint256 j = startId; j <= endId; j++) {
 			(
 				address bidder,
 				address paymentToken,
