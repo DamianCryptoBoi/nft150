@@ -17,7 +17,7 @@ module.exports = {
       }
     }
   },
-  defaultNetwork: 'testbnb',
+  defaultNetwork: 'rinkeby',
   networks: {
     hardhat: {
         gas: 12000000,
@@ -60,8 +60,8 @@ module.exports = {
   },
 
   etherscan: {
-//    apiKey: process.env.ETHERSCAN_APIKEY,
-    apiKey: "9E36GDSJK15GYXXN85186T5GDQI32B29MF" //bnb test
+   apiKey: process.env.ETHERSCAN_APIKEY,
+    // apiKey: "9E36GDSJK15GYXXN85186T5GDQI32B29MF" //bnb test
 
   }
 };
