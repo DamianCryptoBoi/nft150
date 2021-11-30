@@ -43,6 +43,10 @@ const main = async () => {
       await marketV3.setPaymentMethod(
             "0x832161Faaff82A3af9f978F3b0c48915E89b8ea2", // wETH (https://mumbai.polygonscan.com/token/0x2d7882bedcbfddce29ba99965dd3cdf7fcb10a1e)
             true);
+
+      await marketV3.setPaymentMethod(
+            "0x0000000000000000000000000000000000000000", // native
+            true);
 }
 
 main()
