@@ -19,6 +19,7 @@ import '@openzeppelin/contracts/utils/Address.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import "hardhat/console.sol";
 contract Manager is Ownable, Pausable {
+	using SafeERC20 for IERC20;
 	address public referralContract;
 
 	// FEE
@@ -97,8 +98,8 @@ contract Manager is Ownable, Pausable {
 	function setPaymentMethod(address _token, bool _status) public onlyOwner returns (bool) {
 		paymentMethod[_token] = _status;
 		if (_token != address(0)) {
-			IERC20(_token).approve(msg.sender, (2**256 - 1));
-			IERC20(_token).approve(address(this), (2**256 - 1));
+			IERC20(_token).safeApprove(msg.sender, (2**256 - 1));
+			IERC20(_token).safeApprove(address(this), (2**256 - 1));
 		}
 		return true;
 	}
