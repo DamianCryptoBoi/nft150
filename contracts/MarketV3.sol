@@ -114,7 +114,7 @@ contract Manager is Ownable, Pausable {
 			_withdrawAmount = address(this).balance;
 		} else {
 			_withdrawAmount = IERC20(_tokenAddress).balanceOf(address(this));
-			IERC20(_tokenAddress).transfer(_beneficiary, _withdrawAmount);
+			IERC20(_tokenAddress).safeTransfer(_beneficiary, _withdrawAmount);
 		}
 	}
 }
