@@ -21,6 +21,10 @@ const main = async () => {
             "0x0000000000000000000000000000000000000000", // eth
             true);
 
+      await marketV3.setPaymentMethod(
+            "0xbec758b709075141c71e1011b3E5ecea9c3cbc0b", // XP polka
+            true);
+
         //Migrate Data
       let oldMarket = "0x9507a3bA03F7a06e60E7e80Bf80E5D5fAb37F962";
 

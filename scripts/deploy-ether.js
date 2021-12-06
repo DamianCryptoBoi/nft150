@@ -60,6 +60,7 @@ const main = async () => {
       await auctionV3.setPaymentMethod("0xEA040dB91b2FB439857145D3e660ceE46f458F94", true); // usdt
       await auctionV3.setPaymentMethod("0x0000000000000000000000000000000000000000", true);
 
+
 }
 
 main()

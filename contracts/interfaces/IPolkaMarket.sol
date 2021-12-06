@@ -41,13 +41,14 @@ interface IPolkaMarket {
 
     function nftVersion(address _tokenAddress, uint256 _tokenId, uint256 _version) external view returns(address);
     function nftVersionOnSale(address _tokenAddress, uint256 _tokenId, uint256 _version) external view returns(bool);
+    function orderIdByVersion(address _tokenAddress, uint256 _tokenId, uint256 _version) external view returns(uint256);
 
     function createVersionNFT(
         address _tokenAddress,
-		uint256 _tokenId,
-		uint256 _fromVersion,
-		uint256 _toVersion,
-		address _owner
+        uint256 _tokenId,
+        uint256 _fromVersion,
+        uint256 _toVersion,
+        address _owner
     ) external;
 
 
