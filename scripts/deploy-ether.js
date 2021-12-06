@@ -34,23 +34,31 @@ const main = async () => {
       await marketV3.deployed();
       console.log("MARKET_CONTRACT deployed at: ", marketV3.address);
 
+      //AuctionV3
+      const AuctionV3 = await hre.ethers.getContractFactory("AuctionV3");
+      const auctionV3 = await AuctionV3.deploy();
+      await auctionV3.deployed();
+      console.log("AUCTION_CONTRACT deployed at: ", auctionV3.address);
+
       //PolkaReferral
       const PolkaReferral = await hre.ethers.getContractFactory("PolkaReferral");
       const polkaReferral = await PolkaReferral.deploy();
       await polkaReferral.deployed();
       console.log("REFERRAL_CONTRACT deployed at: ", polkaReferral.address);
 
+      console.log("Setting market");
       await marketV3.setReferralContract(polkaReferral.address);
-      await marketV3.addPOLKANFTs(polka721General.address, true, false);
-      await marketV3.addPOLKANFTs(nft150.address, true, false);
+      await marketV3.addPOLKANFTs(polka721General.address, true);
+      await marketV3.addPOLKANFTs(nft150.address, true);
+      await marketV3.setPaymentMethod("0xEA040dB91b2FB439857145D3e660ceE46f458F94", true); // usdt
+      await marketV3.setPaymentMethod("0x0000000000000000000000000000000000000000", true);
 
-      await marketV3.setPaymentMethod(
-            "0xEA040dB91b2FB439857145D3e660ceE46f458F94", // usdt
-            true);
-
-      await marketV3.setPaymentMethod(
-            "0x0000000000000000000000000000000000000000", // ETH
-            true);
+      console.log("Setting Auction");
+      await auctionV3.setReferralContract(polkaReferral.address);
+      await auctionV3.addPOLKANFTs(polka721General.address, true);
+      await auctionV3.addPOLKANFTs(nft150.address, true);
+      await auctionV3.setPaymentMethod("0xEA040dB91b2FB439857145D3e660ceE46f458F94", true); // usdt
+      await auctionV3.setPaymentMethod("0x0000000000000000000000000000000000000000", true);
 
 
 }
