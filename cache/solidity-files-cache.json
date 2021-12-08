@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/sotatek/projects/3nft-smartcontract/contracts/\bAuctionV3.sol": {
-      "lastModificationDate": 1638952517334,
-      "contentHash": "8b5db477bee42574a972f7a1331b7e98",
+      "lastModificationDate": 1638982982940,
+      "contentHash": "d6ce6f3e4202bf038cfa99217237ca47",
       "sourceName": "contracts/\bAuctionV3.sol",
       "solcConfig": {
         "version": "0.8.6",
