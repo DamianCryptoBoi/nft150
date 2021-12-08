@@ -35,7 +35,6 @@ contract ManagerAuction is Ownable, Pausable {
 
 	bytes4 internal constant _INTERFACE_ID_ERC721 = 0x80ac58cd;
 	bytes4 internal constant _INTERFACE_ID_ERC1155 = 0xd9b67a26;
-	
 
 	struct Auction {
 		address owner;
@@ -71,6 +70,8 @@ contract ManagerAuction is Ownable, Pausable {
 
 	mapping(address => mapping(uint256 => mapping(uint256 => uint256))) public auctionIdByVersion;
 
+	mapping(uint256 => mapping(address => bool)) public userJoinAuction;
+
 	event AuctionCreated(
 		uint256 _auctionId,
 		address _tokenAddress,
@@ -78,7 +79,14 @@ contract ManagerAuction is Ownable, Pausable {
 		uint256 _fromVersion,
 		uint256 _toVersion
 	);
-	event BidAuctionCreated(uint256 indexed _bidAuctionId, address _tokenAddress, uint256 indexed _tokenId, uint256 _price, address _paymentToken, uint256 _version);
+	event BidAuctionCreated(
+		uint256 indexed _bidAuctionId,
+		address _tokenAddress,
+		uint256 indexed _tokenId,
+		uint256 _price,
+		address _paymentToken,
+		uint256 _version
+	);
 	event BidAuctionEdited(uint256 indexed _bidAuctionId, uint256 _price);
 	event AuctionCanceled(uint256 indexed _auctionId);
 	event BidAuctionCanceled(uint256 indexed _bidAuctionId);
@@ -95,21 +103,16 @@ contract ManagerAuction is Ownable, Pausable {
 		_unpause();
 	}
 
-	function setSystemFee(
-		uint256 _yRefRate
-	) external onlyOwner {
+	function setSystemFee(uint256 _yRefRate) external onlyOwner {
 		yRefRate = _yRefRate;
 	}
 
-	function addPOLKANFTs(
-		address _polkaNFT,
-		bool _isPOLKANFT
-	) external onlyOwner returns (bool) {
+	function addPOLKANFTs(address _polkaNFT, bool _isPOLKANFT) external onlyOwner returns (bool) {
 		isPOLKANFTs[_polkaNFT] = _isPOLKANFT;
 		return true;
 	}
 
-	function setReferralContract(address _referralContract) external onlyOwner{
+	function setReferralContract(address _referralContract) external onlyOwner {
 		referralContract = _referralContract;
 	}
 
@@ -135,9 +138,7 @@ contract ManagerAuction is Ownable, Pausable {
 		}
 	}
 
-	function _payBidAuction(
-		uint256 _bidAuctionId
-	) internal {
+	function _payBidAuction(uint256 _bidAuctionId) internal {
 		BidAuction memory bidAuction = bidAuctions[_bidAuctionId];
 		Auction memory aut = auctions[bidAuctions[_bidAuctionId].auctionId];
 		address payable creator = payable(IPOLKANFT(bidAuction.tokenAddress).getCreator(bidAuction.tokenId));
@@ -147,11 +148,7 @@ contract ManagerAuction is Ownable, Pausable {
 		uint256 _bidPrice = bidAuctions[_bidAuctionId].bidPrice;
 
 		if (creator != address(0)) {
-			_paid(
-				_paymentToken,
-				creator,
-				_bidPrice.mul(loyaltyFee).div(ZOOM_FEE)
-			);
+			_paid(_paymentToken, creator, _bidPrice.mul(loyaltyFee).div(ZOOM_FEE));
 		}
 
 		_paid(_paymentToken, aut.owner, _bidPrice - _bidPrice.mul(loyaltyFee + nftXUserFee).div(ZOOM_FEE));
@@ -165,7 +162,11 @@ contract ManagerAuction is Ownable, Pausable {
 
 		bool isERC721 = IERC721(bidAuction.tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
 		if (!isERC721) {
-			IERC1155(bidAuction.tokenAddress).setNftOwnVersion(bidAuction.tokenId, bidAuction.version, bidAuction.bidder);
+			IERC1155(bidAuction.tokenAddress).setNftOwnVersion(
+				bidAuction.tokenId,
+				bidAuction.version,
+				bidAuction.bidder
+			);
 			IERC1155(bidAuction.tokenAddress).setNftOnSaleVersion(bidAuction.tokenId, bidAuction.version, false);
 		}
 	}
@@ -174,10 +175,7 @@ contract ManagerAuction is Ownable, Pausable {
 		address payable userRef = IReferral(referralContract).getReferral(_user);
 		return userRef;
 	}
-
 }
-
-
 
 contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	using SafeMath for uint256;
@@ -188,18 +186,18 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		address _tokenAddress,
 		address _paymentToken,
 		uint256 _tokenId,
-		uint256 _startPrice, 
+		uint256 _startPrice,
 		uint256 _reservePrice,
 		uint256 _startTime,
 		uint256 _endTime,
 		uint256 _fromVersion,
 		uint256 _toVersion
-	) external payable whenNotPaused() returns (uint256 _auctionId) {
+	) external payable whenNotPaused returns (uint256 _auctionId) {
 		require(paymentMethod[_paymentToken], 'Payment-not-support');
 		require(_startPrice <= _reservePrice, 'Price-invalid');
 		require(_startTime <= _endTime, 'Time-invalid');
-		require(_startTime <= _endTime, 'Time-invalid');
-		
+		require(_toVersion >= _fromVersion, 'Version-invalid');
+
 		bool isERC721 = IERC721(_tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
 		uint256 balance;
 
@@ -209,7 +207,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 			balance = IERC1155(_tokenAddress).balanceOf(msg.sender, _tokenId);
 		}
 		require(balance >= (_toVersion - _fromVersion + 1), 'Insufficient-token-balance');
-		
+
 		for (uint256 i = _fromVersion; i <= _toVersion; i++) {
 			if (!isERC721) {
 				require(!IERC1155(_tokenAddress).nftOnSaleVersion(_tokenId, i), 'Version-on-sale');
@@ -217,14 +215,20 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 			}
 			// require(!auctions[auctionIdByVersion[_tokenAddress][_tokenId][i]].status, 'Version-on-auction');
 		}
-		
+
 		_auctionId = totalAuctions;
 
 		if (isERC721) {
 			IERC721(_tokenAddress).safeTransferFrom(msg.sender, address(this), _tokenId);
 			auctionIdByVersion[_tokenAddress][_tokenId][1] = _auctionId;
 		} else {
-			IERC1155(_tokenAddress).safeTransferFrom(msg.sender, address(this), _tokenId, _toVersion - _fromVersion + 1, '0x');
+			IERC1155(_tokenAddress).safeTransferFrom(
+				msg.sender,
+				address(this),
+				_tokenId,
+				_toVersion - _fromVersion + 1,
+				'0x'
+			);
 
 			for (uint256 i = _fromVersion; i <= _toVersion; i++) {
 				auctionIdByVersion[_tokenAddress][_tokenId][i] = _auctionId;
@@ -259,20 +263,23 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		uint256 _auctionId,
 		uint256 _price,
 		uint256 _version
-	) external payable whenNotPaused() returns (uint256 _bidAuctionId) {
-		require(paymentMethod[_paymentToken], 'Payment-method-does-not-support');
+	) external payable whenNotPaused returns (uint256 _bidAuctionId) {
+		require(auctions[_auctionId].paymentToken == _paymentToken, 'incorrect-payment-method');
+		require(auctions[_auctionId].owner != msg.sender, 'owner-can-not-bid');
 
 		Auction storage currentAuction = auctions[_auctionId];
 
 		require(currentAuction.status, 'Auction-closed');
 		require(block.timestamp >= currentAuction.startTime, 'not-in-time-auction');
 		require(block.timestamp <= currentAuction.endTime, 'not-in-time-auction');
+		require(!userJoinAuction[_auctionId][msg.sender], 'user-joined-auction');
+		require(
+			currentAuction.listBidId.length == 0 ||
+				bidAuctions[currentAuction.listBidId[currentAuction.listBidId.length - 1]].bidPrice < _price,
+			'price-bid-less-than-max-price'
+		);
 
-		for (uint256 i = 0; i < currentAuction.listBidId.length; i++) {			
-			if (bidAuctions[currentAuction.listBidId[i]].status) {
-				require(bidAuctions[currentAuction.listBidId[i]].bidPrice < _price , 'price-bid-less-than-max-price');
-			}
-		}
+		userJoinAuction[_auctionId][msg.sender] = true;
 
 		BidAuction memory newBidAuction;
 		newBidAuction.bidder = msg.sender;
@@ -298,7 +305,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 
 		bidAuctions[totalBidAuctions] = newBidAuction;
 		_bidAuctionId = totalBidAuctions;
-		
+
 		currentAuction.listBidId.push(_bidAuctionId);
 
 		totalBidAuctions++;
@@ -308,11 +315,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		return _bidAuctionId;
 	}
 
-	function editBidAuction(
-		uint256 _bidAuctionId,
-		uint256 _price
-		) external payable whenNotPaused() returns (uint256) {
-		
+	function editBidAuction(uint256 _bidAuctionId, uint256 _price) external payable whenNotPaused returns (uint256) {
 		BidAuction storage objEditBidAuction = bidAuctions[_bidAuctionId];
 		Auction storage currentAuction = auctions[objEditBidAuction.auctionId];
 
@@ -320,74 +323,72 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		require(msg.sender == objEditBidAuction.bidder, 'Not-owner-bid-auction');
 		require(block.timestamp >= currentAuction.startTime, 'not-in-time-auction');
 		require(block.timestamp <= currentAuction.endTime, 'not-in-time-auction');
-		for (uint256 i = 0; i < currentAuction.listBidId.length; i++) {			
-			if (bidAuctions[currentAuction.listBidId[i]].status) {
-				require(bidAuctions[currentAuction.listBidId[i]].bidPrice < _price , 'price-bid-less-than-max-price');
-			}
-		}
+		require(
+			bidAuctions[currentAuction.listBidId[currentAuction.listBidId.length - 1]].bidPrice < _price,
+			'price-bid-less-than-max-price'
+		);
 
 		if (msg.value > 0) {
 			require(msg.value >= _price - objEditBidAuction.bidPrice, 'Invalid-amount');
 		}
 
 		if (objEditBidAuction.paymentToken != address(0)) {
-			IERC20(objEditBidAuction.paymentToken).safeTransferFrom(objEditBidAuction.bidder, address(this), _price - objEditBidAuction.bidPrice);
+			IERC20(objEditBidAuction.paymentToken).safeTransferFrom(
+				objEditBidAuction.bidder,
+				address(this),
+				_price - objEditBidAuction.bidPrice
+			);
 		}
-		adminHoldPayment[objEditBidAuction.paymentToken] = adminHoldPayment[objEditBidAuction.paymentToken].add(_price - objEditBidAuction.bidPrice);
+		adminHoldPayment[objEditBidAuction.paymentToken] = adminHoldPayment[objEditBidAuction.paymentToken].add(
+			_price - objEditBidAuction.bidPrice
+		);
 
 		objEditBidAuction.status = false;
-		
+
 		bidAuctions[totalBidAuctions] = objEditBidAuction;
 		bidAuctions[totalBidAuctions].status = true;
-		_bidAuctionId = totalBidAuctions;
+		bidAuctions[totalBidAuctions].bidPrice = _price;
 
-		currentAuction.listBidId.push(_bidAuctionId);
+		currentAuction.listBidId.push(totalBidAuctions);
 
 		totalBidAuctions++;
-		
+
 		emit BidAuctionEdited(_bidAuctionId, _price);
-		
+
 		return _bidAuctionId;
 	}
 
-	function cancelAuction(
-		uint256 _auctionId
-		) external whenNotPaused() returns (uint256) {
-
+	function cancelAuction(uint256 _auctionId) external whenNotPaused returns (uint256) {
 		require(block.timestamp < auctions[_auctionId].startTime, 'auction-started');
 		require(auctions[_auctionId].status, 'Auction-closed');
 		require(auctions[_auctionId].owner == msg.sender, 'Auction-not-owner');
 
-		auctions[_auctionId].status =  false;
+		auctions[_auctionId].status = false;
 
 		emit AuctionCanceled(_auctionId);
 		return _auctionId;
 	}
 
-	function cancelBidAuction(
-		uint256 _bidAuctionId
-		) external whenNotPaused() returns (uint256) {
+	function cancelBidAuction(uint256 _bidAuctionId) external whenNotPaused returns (uint256) {
 		require(bidAuctions[_bidAuctionId].status, 'Bid-closed');
+		require(msg.sender == bidAuctions[_bidAuctionId].bidder, 'Not-owner-bid-auction');
 		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
 
-		uint256 maxPrice;
-		for (uint256 i = 0; i < currentAuction.listBidId.length; i++) {			
-			if (bidAuctions[currentAuction.listBidId[i]].status 
-				&& bidAuctions[currentAuction.listBidId[i]].bidPrice > maxPrice) {
-				maxPrice = bidAuctions[currentAuction.listBidId[i]].bidPrice;
-			}
-		}
-		require(maxPrice > bidAuctions[_bidAuctionId].bidPrice , 'price-bid-less-than-max-price');
-		
+		require(
+			bidAuctions[currentAuction.listBidId[currentAuction.listBidId.length - 1]].bidPrice >
+				bidAuctions[_bidAuctionId].bidPrice,
+			'price-bid-less-than-max-price'
+		); // the last bid price > this bid price
+
 		bidAuctions[_bidAuctionId].status = false;
 		if (bidAuctions[_bidAuctionId].paymentToken == address(0)) {
 			payable(bidAuctions[_bidAuctionId].bidder).sendValue(bidAuctions[_bidAuctionId].bidPrice);
 		} else {
-			IERC20(bidAuctions[_bidAuctionId].paymentToken)
-				.safeTransferFrom(
-					address(this), 
-					bidAuctions[_bidAuctionId].bidder, 
-					bidAuctions[_bidAuctionId].bidPrice);
+			IERC20(bidAuctions[_bidAuctionId].paymentToken).safeTransferFrom(
+				address(this),
+				bidAuctions[_bidAuctionId].bidder,
+				bidAuctions[_bidAuctionId].bidPrice
+			);
 		}
 
 		emit BidAuctionCanceled(_bidAuctionId);
@@ -395,26 +396,19 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		return _bidAuctionId;
 	}
 
-	function acceptBidAuction(
-		uint256 _bidAuctionId
-		) external whenNotPaused() {
-
+	function acceptBidAuction(uint256 _bidAuctionId) external whenNotPaused {
+		require(auctions[bidAuctions[_bidAuctionId].auctionId].owner == msg.sender, 'Auction-not-owner');
 		_payBidAuction(_bidAuctionId);
-		_transferBidAuction(_bidAuctionId);
 
 		emit BidAuctionAccepted(_bidAuctionId);
 	}
 
-	function claimWinnerAuction(
-		uint256 _bidAuctionId
-		) external whenNotPaused() {
-
-		_payBidAuction(_bidAuctionId);
+	function claimWinnerAuction(uint256 _bidAuctionId) external whenNotPaused {
+		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
+		address winner = bidAuctions[currentAuction.listBidId[currentAuction.listBidId.length - 1]].bidder;
+		require(msg.sender == winner, 'price-bid-less-than-max-price'); // make sure the sender is the winner
 		_transferBidAuction(_bidAuctionId);
 
 		emit BidAuctionClaimed(_bidAuctionId);
 	}
 }
-
-
-

@@ -9,3 +9,6 @@ package-lock.json
 .csv
 
 script/
+
+abi/
+artifacts/

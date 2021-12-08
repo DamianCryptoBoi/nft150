@@ -1,9 +1,9 @@
 {
   "overrides": [
     {
-      "files": "*.sol",
+      "files": ["*.sol", "*.js"],
       "options": {
-        "printWidth": 200,
+        "printWidth": 120,
         "tabWidth": 4,
         "useTabs": true,
         "singleQuote": true,
