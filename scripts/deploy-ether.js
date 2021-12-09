@@ -1,7 +1,7 @@
 const hre = require("hardhat")
 
 const main = async () => {
-      console.log("--- Start Deploy ---");
+      console.log("--- Start Deploy DEV and STG ---");
       const [admin] = await hre.ethers.getSigners();
 
 // ETH rinkeby:
@@ -48,18 +48,19 @@ const main = async () => {
 
       console.log("Setting market");
       await marketV3.setReferralContract(polkaReferral.address);
-      await marketV3.addPOLKANFTs(polka721General.address, true);
-      await marketV3.addPOLKANFTs(nft150.address, true);
-      await marketV3.setPaymentMethod("0xEA040dB91b2FB439857145D3e660ceE46f458F94", true); // usdt
-      await marketV3.setPaymentMethod("0x0000000000000000000000000000000000000000", true);
+      await marketV3.addPOLKANFTs(polka721General.address, true, false);
+      await marketV3.addPOLKANFTs(nft150.address, true, false);
+      await marketV3.setPaymentMethod("0xd35d2e839d888d1cDBAdef7dE118b87DfefeD20e", true); // usdt
+      await marketV3.setPaymentMethod("0x0000000000000000000000000000000000000000", true); //eth
+      await marketV3.setPaymentMethod("0xbec758b709075141c71e1011b3E5ecea9c3cbc0b", true); //xp
 
       console.log("Setting Auction");
       await auctionV3.setReferralContract(polkaReferral.address);
       await auctionV3.addPOLKANFTs(polka721General.address, true);
       await auctionV3.addPOLKANFTs(nft150.address, true);
-      await auctionV3.setPaymentMethod("0xEA040dB91b2FB439857145D3e660ceE46f458F94", true); // usdt
-      await auctionV3.setPaymentMethod("0x0000000000000000000000000000000000000000", true);
-
+      await auctionV3.setPaymentMethod("0xd35d2e839d888d1cDBAdef7dE118b87DfefeD20e", true); // usdt
+      await auctionV3.setPaymentMethod("0x0000000000000000000000000000000000000000", true); //eth
+      await auctionV3.setPaymentMethod("0xbec758b709075141c71e1011b3E5ecea9c3cbc0b", true); //xp
 
 }
 
