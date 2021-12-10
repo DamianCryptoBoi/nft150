@@ -357,16 +357,29 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		return _bidAuctionId;
 	}
 
-	function cancelAuction(uint256 _auctionId) external whenNotPaused returns (uint256) {
-		require(block.timestamp < auctions[_auctionId].startTime, 'auction-started');
-		require(auctions[_auctionId].status, 'Auction-closed');
-		require(auctions[_auctionId].owner == msg.sender, 'Auction-not-owner');
+	function cancelAuction(
+        uint256 _auctionId
+        ) external whenNotPaused() returns (uint256) {
 
-		auctions[_auctionId].status = false;
+        require(block.timestamp < auctions[_auctionId].startTime, 'auction-started');
+        require(auctions[_auctionId].status, 'Auction-closed');
+        require(auctions[_auctionId].owner == msg.sender, 'Auction-not-owner');
 
-		emit AuctionCanceled(_auctionId);
-		return _auctionId;
-	}
+        bool isERC721 = IERC721(auctions[_auctionId].tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
+        Auction storage auctionObj = auctions[_auctionId];
+
+        if (isERC721) {
+            IERC721(auctionObj.tokenAddress).safeTransferFrom(address(this), msg.sender, auctionObj.tokenId);
+            
+        } else {
+            IERC1155(auctionObj.tokenAddress).safeTransferFrom(address(this), msg.sender, auctionObj.tokenId, auctionObj.toVersion - auctionObj.fromVersion + 1, '0x');
+        }
+
+        auctions[_auctionId].status =  false;
+
+        emit AuctionCanceled(_auctionId);
+        return _auctionId;
+    }
 
 	function cancelBidAuction(uint256 _bidAuctionId) external whenNotPaused returns (uint256) {
 		require(bidAuctions[_bidAuctionId].status, 'Bid-closed');
