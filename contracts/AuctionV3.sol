@@ -398,18 +398,21 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	}
 
 	function acceptBidAuction(uint256 _bidAuctionId) external whenNotPaused {
-		require(auctions[bidAuctions[_bidAuctionId].auctionId].endTime <= block.timestamp, 'Auction-not-end');
+		require(auctions[bidAuctions[_bidAuctionId].auctionId].endTime < block.timestamp, 'Auction-not-end');
 		require(auctions[bidAuctions[_bidAuctionId].auctionId].owner == msg.sender, 'Auction-not-owner');
+		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
+		require(bidAuctions[_bidAuctionId].bidPrice >= currentAuction.reservePrice, 'reserve-price-not-met');
 		_payBidAuction(_bidAuctionId);
 
 		emit BidAuctionAccepted(_bidAuctionId);
 	}
 
 	function claimWinnerAuction(uint256 _bidAuctionId) external whenNotPaused {
-		require(auctions[bidAuctions[_bidAuctionId].auctionId].endTime <= block.timestamp, 'Auction-not-end');
+		require(auctions[bidAuctions[_bidAuctionId].auctionId].endTime < block.timestamp, 'Auction-not-end');
 		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
 		address winner = bidAuctions[currentAuction.listBidId[currentAuction.listBidId.length - 1]].bidder;
-		require(msg.sender == winner, 'price-bid-less-than-max-price'); // make sure the sender is the winner
+		require(msg.sender == winner, 'not-winner'); // make sure the sender is the winner
+		require(bidAuctions[_bidAuctionId].bidPrice >= currentAuction.reservePrice, 'reserve-price-not-met');
 		_transferBidAuction(_bidAuctionId);
 
 		emit BidAuctionClaimed(_bidAuctionId);
