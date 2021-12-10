@@ -176,6 +176,15 @@ contract ManagerAuction is Ownable, Pausable {
 				bidAuction.bidder
 			);
 			IERC1155(bidAuction.tokenAddress).setNftOnSaleVersion(bidAuction.tokenId, bidAuction.version, false);
+			IERC1155(bidAuction.tokenAddress).safeTransferFrom(
+				address(this),
+				bidAuction.bidder,
+				bidAuction.tokenId,
+				1,
+				'0x'
+			);
+		} else {
+			IERC721(bidAuction.tokenAddress).safeTransferFrom(address(this), bidAuction.bidder, bidAuction.tokenId);
 		}
 	}
 
@@ -265,9 +274,9 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	) external payable whenNotPaused returns (uint256 _bidAuctionId) {
 		require(auctions[_auctionId].paymentToken == _paymentToken, 'incorrect-payment-method');
 		require(auctions[_auctionId].owner != msg.sender, 'owner-can-not-bid');
+		require(_price >= auctions[_auctionId].startPrice, 'price-lower-than-start-price');
 
 		Auction storage currentAuction = auctions[_auctionId];
-
 		require(currentAuction.status, 'Auction-closed');
 		require(block.timestamp >= currentAuction.startTime, 'not-in-time-auction');
 		require(block.timestamp <= currentAuction.endTime, 'not-in-time-auction');
@@ -357,29 +366,31 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		return _bidAuctionId;
 	}
 
-	function cancelAuction(
-        uint256 _auctionId
-        ) external whenNotPaused() returns (uint256) {
+	function cancelAuction(uint256 _auctionId) external whenNotPaused returns (uint256) {
+		require(block.timestamp < auctions[_auctionId].startTime, 'auction-started');
+		require(auctions[_auctionId].status, 'Auction-closed');
+		require(auctions[_auctionId].owner == msg.sender, 'Auction-not-owner');
 
-        require(block.timestamp < auctions[_auctionId].startTime, 'auction-started');
-        require(auctions[_auctionId].status, 'Auction-closed');
-        require(auctions[_auctionId].owner == msg.sender, 'Auction-not-owner');
+		bool isERC721 = IERC721(auctions[_auctionId].tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
+		Auction storage auctionObj = auctions[_auctionId];
 
-        bool isERC721 = IERC721(auctions[_auctionId].tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
-        Auction storage auctionObj = auctions[_auctionId];
+		if (isERC721) {
+			IERC721(auctionObj.tokenAddress).safeTransferFrom(address(this), msg.sender, auctionObj.tokenId);
+		} else {
+			IERC1155(auctionObj.tokenAddress).safeTransferFrom(
+				address(this),
+				msg.sender,
+				auctionObj.tokenId,
+				auctionObj.toVersion - auctionObj.fromVersion + 1,
+				'0x'
+			);
+		}
 
-        if (isERC721) {
-            IERC721(auctionObj.tokenAddress).safeTransferFrom(address(this), msg.sender, auctionObj.tokenId);
-            
-        } else {
-            IERC1155(auctionObj.tokenAddress).safeTransferFrom(address(this), msg.sender, auctionObj.tokenId, auctionObj.toVersion - auctionObj.fromVersion + 1, '0x');
-        }
+		auctions[_auctionId].status = false;
 
-        auctions[_auctionId].status =  false;
-
-        emit AuctionCanceled(_auctionId);
-        return _auctionId;
-    }
+		emit AuctionCanceled(_auctionId);
+		return _auctionId;
+	}
 
 	function cancelBidAuction(uint256 _bidAuctionId) external whenNotPaused returns (uint256) {
 		require(bidAuctions[_bidAuctionId].status, 'Bid-closed');
@@ -411,9 +422,11 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	}
 
 	function acceptBidAuction(uint256 _bidAuctionId) external whenNotPaused {
-		require(auctions[bidAuctions[_bidAuctionId].auctionId].endTime < block.timestamp, 'Auction-not-end');
-		require(auctions[bidAuctions[_bidAuctionId].auctionId].owner == msg.sender, 'Auction-not-owner');
 		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
+		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
+		uint256 highestBidId = currentAuction.listBidId[currentAuction.listBidId.length - 1];
+		require(_bidAuctionId == highestBidId, 'not-highest-bid');
+		require(currentAuction.owner == msg.sender, 'Auction-not-owner');
 		require(bidAuctions[_bidAuctionId].bidPrice >= currentAuction.reservePrice, 'reserve-price-not-met');
 		_payBidAuction(_bidAuctionId);
 
@@ -421,10 +434,11 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	}
 
 	function claimWinnerAuction(uint256 _bidAuctionId) external whenNotPaused {
-		require(auctions[bidAuctions[_bidAuctionId].auctionId].endTime < block.timestamp, 'Auction-not-end');
 		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
-		address winner = bidAuctions[currentAuction.listBidId[currentAuction.listBidId.length - 1]].bidder;
-		require(msg.sender == winner, 'not-winner'); // make sure the sender is the winner
+		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
+		uint256 highestBidId = currentAuction.listBidId[currentAuction.listBidId.length - 1];
+		require(_bidAuctionId == highestBidId, 'not-highest-bid');
+		require(msg.sender == bidAuctions[highestBidId].bidder, 'not-winner'); // make sure the sender is the winner
 		require(bidAuctions[_bidAuctionId].bidPrice >= currentAuction.reservePrice, 'reserve-price-not-met');
 		_transferBidAuction(_bidAuctionId);
 
