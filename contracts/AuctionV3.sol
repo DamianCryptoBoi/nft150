@@ -49,6 +49,8 @@ contract ManagerAuction is Ownable, Pausable {
 		uint256 toVersion;
 		uint256[] listBidId;
 		bool status; // true: open | false: closed
+		mapping(uint256 => bool) cancelledVersion;
+		uint256 cancelledVersionCount;
 	}
 
 	struct BidAuction {
@@ -125,12 +127,12 @@ contract ManagerAuction is Ownable, Pausable {
 		return true;
 	}
 
-	function getAuctionIdByVersion(
+	function _getAuctionByVersion(
 		address _tokenAddress,
 		uint256 _tokenId,
 		uint256 _version
-	) public view returns (uint256) {
-		return auctionIdByVersion[_tokenAddress][_tokenId][_version];
+	) internal view returns (Auction storage) {
+		return auctions[auctionIdByVersion[_tokenAddress][_tokenId][_version]];
 	}
 
 	function _paid(
@@ -146,9 +148,25 @@ contract ManagerAuction is Ownable, Pausable {
 		}
 	}
 
+	function _transferAfterAuction(
+		address _tokenAddress,
+		uint256 _tokenId,
+		uint256 _version,
+		address _recipient,
+		bool _isERC721
+	) private {
+		if (_isERC721) {
+			IERC721(_tokenAddress).safeTransferFrom(address(this), _recipient, _tokenId);
+		} else {
+			IERC1155(_tokenAddress).setNftOwnVersion(_tokenId, _version, _recipient);
+			IERC1155(_tokenAddress).setNftOnSaleVersion(_tokenId, _version, false);
+			IERC1155(_tokenAddress).safeTransferFrom(address(this), _recipient, _tokenId, 1, '0x');
+		}
+	}
+
 	function _payBidAuction(uint256 _bidAuctionId) internal {
 		BidAuction memory bidAuction = bidAuctions[_bidAuctionId];
-		Auction memory aut = auctions[bidAuctions[_bidAuctionId].auctionId];
+		Auction storage aut = auctions[bidAuctions[_bidAuctionId].auctionId];
 		address payable creator = payable(IPOLKANFT(bidAuction.tokenAddress).getCreator(bidAuction.tokenId));
 		uint256 loyaltyFee = IPOLKANFT(bidAuction.tokenAddress).getLoyaltyFee(bidAuction.tokenId);
 		uint256 nftXUserFee = IPOLKANFT(bidAuction.tokenAddress).getXUserFee(bidAuction.tokenId);
@@ -169,23 +187,27 @@ contract ManagerAuction is Ownable, Pausable {
 		aut.status = false;
 
 		bool isERC721 = IERC721(bidAuction.tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
-		if (!isERC721) {
-			IERC1155(bidAuction.tokenAddress).setNftOwnVersion(
-				bidAuction.tokenId,
-				bidAuction.version,
-				bidAuction.bidder
-			);
-			IERC1155(bidAuction.tokenAddress).setNftOnSaleVersion(bidAuction.tokenId, bidAuction.version, false);
-			IERC1155(bidAuction.tokenAddress).safeTransferFrom(
-				address(this),
-				bidAuction.bidder,
-				bidAuction.tokenId,
-				1,
-				'0x'
-			);
-		} else {
-			IERC721(bidAuction.tokenAddress).safeTransferFrom(address(this), bidAuction.bidder, bidAuction.tokenId);
-		}
+		_transferAfterAuction(
+			bidAuction.tokenAddress,
+			bidAuction.tokenId,
+			bidAuction.version,
+			bidAuction.bidder,
+			isERC721
+		);
+	}
+
+	function _returnBidAuction(uint256 _bidAuctionId) internal {
+		BidAuction memory bidAuction = bidAuctions[_bidAuctionId];
+		Auction storage currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
+		currentAuction.status = false;
+		bool isERC721 = IERC721(currentAuction.tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
+		_transferAfterAuction(
+			bidAuction.tokenAddress,
+			bidAuction.tokenId,
+			bidAuction.version,
+			currentAuction.owner,
+			isERC721
+		);
 	}
 
 	function _getRefData(address _user) internal view returns (address payable) {
@@ -231,7 +253,13 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 			for (uint256 i = _fromVersion; i <= _toVersion; i++) {
 				require(!IERC1155(_tokenAddress).nftOnSaleVersion(_tokenId, i), 'Version-on-sale');
 				require(IERC1155(_tokenAddress).nftOwnVersion(_tokenId, i) == msg.sender, 'Version-not-of-sender');
-				require(!auctions[getAuctionIdByVersion(_tokenAddress, _tokenId, i)].status, 'Version-on-auction');
+				require(
+					!_getAuctionByVersion(_tokenAddress, _tokenId, i).status ||
+						_getAuctionByVersion(_tokenAddress, _tokenId, i).cancelledVersion[i],
+					'Version-on-auction'
+				);
+				_getAuctionByVersion(_tokenAddress, _tokenId, i).cancelledVersion[i] = false;
+
 				auctionIdByVersion[_tokenAddress][_tokenId][i] = _auctionId;
 			}
 			IERC1155(_tokenAddress).safeTransferFrom(
@@ -275,8 +303,8 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		require(auctions[_auctionId].paymentToken == _paymentToken, 'incorrect-payment-method');
 		require(auctions[_auctionId].owner != msg.sender, 'owner-can-not-bid');
 		require(_price >= auctions[_auctionId].startPrice, 'price-lower-than-start-price');
-
 		Auction storage currentAuction = auctions[_auctionId];
+		require(!currentAuction.cancelledVersion[_version], 'version-cancelled');
 		require(currentAuction.status, 'Auction-closed');
 		require(block.timestamp >= currentAuction.startTime, 'not-in-time-auction');
 		require(block.timestamp <= currentAuction.endTime, 'not-in-time-auction');
@@ -331,6 +359,8 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		require(msg.sender == objEditBidAuction.bidder, 'Not-owner-bid-auction');
 		require(block.timestamp >= currentAuction.startTime, 'not-in-time-auction');
 		require(block.timestamp <= currentAuction.endTime, 'not-in-time-auction');
+		require(objEditBidAuction.status, 'bid-cancelled');
+		require(!currentAuction.cancelledVersion[objEditBidAuction.version], 'version-cancelled');
 		require(
 			bidAuctions[currentAuction.listBidId[currentAuction.listBidId.length - 1]].bidPrice < _price,
 			'price-bid-less-than-max-price'
@@ -366,27 +396,46 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		return _bidAuctionId;
 	}
 
-	function cancelAuction(uint256 _auctionId) external whenNotPaused returns (uint256) {
+	function cancelAuction(uint256 _auctionId, uint256[] memory _version) external whenNotPaused returns (uint256) {
 		require(block.timestamp < auctions[_auctionId].startTime, 'auction-started');
 		require(auctions[_auctionId].status, 'Auction-closed');
 		require(auctions[_auctionId].owner == msg.sender, 'Auction-not-owner');
 
 		bool isERC721 = IERC721(auctions[_auctionId].tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
-		Auction storage auctionObj = auctions[_auctionId];
+		Auction storage currentAuction = auctions[_auctionId];
+		require(
+			currentAuction.toVersion - currentAuction.fromVersion + 1 >= _version.length && _version.length >= 1,
+			'invalid-cancel-versions'
+		);
+
+		for (uint256 i = 0; i < _version.length; i++) {
+			require(
+				currentAuction.toVersion >= _version[i] && _version[i] >= currentAuction.fromVersion,
+				'invalid-version'
+			);
+			currentAuction.cancelledVersion[_version[i]] = true;
+		}
 
 		if (isERC721) {
-			IERC721(auctionObj.tokenAddress).safeTransferFrom(address(this), msg.sender, auctionObj.tokenId);
+			IERC721(currentAuction.tokenAddress).safeTransferFrom(address(this), msg.sender, currentAuction.tokenId);
 		} else {
-			IERC1155(auctionObj.tokenAddress).safeTransferFrom(
+			IERC1155(currentAuction.tokenAddress).safeTransferFrom(
 				address(this),
 				msg.sender,
-				auctionObj.tokenId,
-				auctionObj.toVersion - auctionObj.fromVersion + 1,
+				currentAuction.tokenId,
+				_version.length,
 				'0x'
 			);
 		}
 
-		auctions[_auctionId].status = false;
+		if (
+			currentAuction.cancelledVersionCount + _version.length ==
+			currentAuction.toVersion - currentAuction.fromVersion + 1
+		) {
+			auctions[_auctionId].status = false;
+		} else {
+			currentAuction.cancelledVersionCount += _version.length;
+		}
 
 		emit AuctionCanceled(_auctionId);
 		return _auctionId;
@@ -395,7 +444,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	function cancelBidAuction(uint256 _bidAuctionId) external whenNotPaused returns (uint256) {
 		require(bidAuctions[_bidAuctionId].status, 'Bid-closed');
 		require(msg.sender == bidAuctions[_bidAuctionId].bidder, 'Not-owner-bid-auction');
-		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
+		Auction storage currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
 
 		require(
 			bidAuctions[currentAuction.listBidId[currentAuction.listBidId.length - 1]].bidPrice >
@@ -421,8 +470,20 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		return _bidAuctionId;
 	}
 
+	function reclaimAuction(uint256 _auctionId) external whenNotPaused {
+		Auction storage currentAuction = auctions[_auctionId];
+		uint256 highestBidId = currentAuction.listBidId[currentAuction.listBidId.length - 1];
+		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
+		require(currentAuction.owner == msg.sender, 'Auction-not-owner');
+		require(
+			bidAuctions[highestBidId].bidPrice < currentAuction.reservePrice,
+			'bid-price-greater-than-reserve-price'
+		);
+		_returnBidAuction(highestBidId);
+	}
+
 	function acceptBidAuction(uint256 _bidAuctionId) external whenNotPaused {
-		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
+		Auction storage currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
 		uint256 highestBidId = currentAuction.listBidId[currentAuction.listBidId.length - 1];
 		require(_bidAuctionId == highestBidId, 'not-highest-bid');
@@ -434,7 +495,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	}
 
 	function claimWinnerAuction(uint256 _bidAuctionId) external whenNotPaused {
-		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
+		Auction storage currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
 		uint256 highestBidId = currentAuction.listBidId[currentAuction.listBidId.length - 1];
 		require(_bidAuctionId == highestBidId, 'not-highest-bid');

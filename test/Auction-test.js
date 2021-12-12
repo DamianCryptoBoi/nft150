@@ -129,14 +129,15 @@ describe('Unit testing - Auction', function () {
 				1
 			);
 
-			await expect(auctionV3.connect(addr).cancelAuction(0)).to.be.revertedWith('Auction-not-owner');
+			await expect(auctionV3.connect(addr).cancelAuction(0, [1])).to.be.revertedWith('Auction-not-owner');
 
-			await auctionV3.cancelAuction(0);
+			await auctionV3.cancelAuction(0, [1]);
 
 			const [, , , , , , , , , , status] = await auctionV3.auctions(auctionId.value);
 
 			expect(status).to.be.false;
-			await expect(auctionV3.cancelAuction(0)).to.be.revertedWith('Auction-closed');
+
+			await expect(auctionV3.cancelAuction(0, [1])).to.be.revertedWith('Auction-closed');
 		});
 
 		it('Create bid 721 token', async function () {
@@ -247,7 +248,7 @@ describe('Unit testing - Auction', function () {
 		// 	return new Promise((resolve) => {
 		// 		setTimeout(() => {
 		// 			resolve();
-		// 		}, 11000);
+		// 		}, 15000);
 		// 	}).then(async () => {
 		// 		await expect(auctionV3.connect(addr).claimWinnerAuction(1)).to.be.revertedWith('not-winner');
 		// 		await expect(auctionV3.connect(refer).claimWinnerAuction(1)).to.be.revertedWith(
@@ -257,6 +258,10 @@ describe('Unit testing - Auction', function () {
 		// 		await expect(auctionV3.acceptBidAuction(0)).to.be.revertedWith('not-highest-bid');
 		// 		await expect(auctionV3.acceptBidAuction(1)).to.be.revertedWith('reserve-price-not-met');
 		// 		await expect(auctionV3.connect(refer).acceptBidAuction(1)).to.be.revertedWith('Auction-not-owner');
+
+		// 		await auctionV3.reclaimAuction(0);
+
+		// 		expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 		// 	});
 		// });
 
@@ -335,7 +340,7 @@ describe('Unit testing - Auction', function () {
 
 			await auctionV3.addPOLKANFTs(nft150.address, true);
 
-			await nft150.create(1000, 100, 200, '_uritest', 1, 250);
+			await nft150.create(1000, 437, 200, '_uritest', 1, 250);
 			await nft150.setApprovalForAll(auctionV3.address, true);
 
 			await mockPOLKA.mint(addr.address, 1000000);
@@ -367,15 +372,13 @@ describe('Unit testing - Auction', function () {
 			await expect(
 				auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 2, 1)
 			).to.be.revertedWith('Version-invalid');
-
-			await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 1, 10);
-
-			await expect(
-				auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 1, 3)
-			).to.be.revertedWith('Version-on-auction');
-
+			await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 1, 430);
 			expect((await auctionV3.totalAuctions()).toNumber()).to.equal(1);
-			expect((await nft150.balanceOf(auctionV3.address, 1)).toNumber()).to.equal(10);
+			await expect(
+				auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 11, 13)
+			).to.be.revertedWith('Version-on-auction');
+			expect((await auctionV3.totalAuctions()).toNumber()).to.equal(1);
+			expect((await nft150.balanceOf(auctionV3.address, 1)).toNumber()).to.equal(430);
 		});
 
 		it('Cancel Auction 1155', async function () {
@@ -388,21 +391,37 @@ describe('Unit testing - Auction', function () {
 				8999999999,
 				9999999999,
 				1,
-				1
+				400
 			);
 
-			await expect(auctionV3.connect(addr).cancelAuction(0)).to.be.revertedWith('Auction-not-owner');
+			await expect(auctionV3.connect(addr).cancelAuction(0, [1])).to.be.revertedWith('Auction-not-owner');
 
-			await auctionV3.cancelAuction(0);
+			await auctionV3.cancelAuction(0, [6, 9, 69, 169, 269, 369]);
 
 			const [, , , , , , , , , , status] = await auctionV3.auctions(auctionId.value);
 
-			expect(status).to.be.false;
-			await expect(auctionV3.cancelAuction(0)).to.be.revertedWith('Auction-closed');
+			expect(status).to.be.true;
+
+			await expect(
+				auctionV3.createAuction(
+					nft150.address,
+					mockPOLKA.address,
+					1,
+					100,
+					200,
+					8999999999,
+					9999999999,
+					168,
+					169
+				)
+			).to.be.revertedWith('Version-on-auction');
+			await expect(
+				auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 8999999999, 9999999999, 6, 6)
+			).not.to.be.reverted;
 		});
 
 		it('Create bid 1155 token', async function () {
-			await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 1);
+			await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 400);
 
 			// address _tokenAddress,
 			// address _paymentToken,
@@ -484,11 +503,20 @@ describe('Unit testing - Auction', function () {
 				.reverted;
 		});
 
-		//After Auction test must run alone
+		// After Auction test must run alone
 
 		// it('After Auction 1155 No Winner', async () => {
-
-		// 	await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, Math.ceil(new Date().getTime() / 1000) + 20, 1, 1);
+		// 	await auctionV3.createAuction(
+		// 		nft150.address,
+		// 		mockPOLKA.address,
+		// 		1,
+		// 		100,
+		// 		200,
+		// 		1,
+		// 		Math.ceil(new Date().getTime() / 1000) + 20,
+		// 		1,
+		// 		1
+		// 	);
 
 		// 	await expect(
 		// 		auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 99, 1)
@@ -498,7 +526,7 @@ describe('Unit testing - Auction', function () {
 		// 	return new Promise((resolve) => {
 		// 		setTimeout(() => {
 		// 			resolve();
-		// 		}, 11000);
+		// 		}, 15000);
 		// 	}).then(async () => {
 		// 		await expect(auctionV3.connect(addr).claimWinnerAuction(1)).to.be.revertedWith('not-winner');
 		// 		await expect(auctionV3.connect(refer).claimWinnerAuction(1)).to.be.revertedWith(
@@ -508,6 +536,11 @@ describe('Unit testing - Auction', function () {
 		// 		await expect(auctionV3.acceptBidAuction(0)).to.be.revertedWith('not-highest-bid');
 		// 		await expect(auctionV3.acceptBidAuction(1)).to.be.revertedWith('reserve-price-not-met');
 		// 		await expect(auctionV3.connect(refer).acceptBidAuction(1)).to.be.revertedWith('Auction-not-owner');
+
+		// 		await auctionV3.reclaimAuction(0);
+
+		// 		expect(await nft150.nftOwnVersion(1, 1)).to.equal(owner.address);
+		// 		expect((await nft150.balanceOf(owner.address, 1)).toNumber()).to.equal(437);
 		// 	});
 		// });
 
@@ -574,7 +607,8 @@ describe('Unit testing - Auction', function () {
 		// 		expect((await nft150.balanceOf(addr.address, 1)).toNumber()).to.equal(1);
 		// 	});
 		// });
-	});
+		// });
 
-	after(async function () {});
+		after(async function () {});
+	});
 });
