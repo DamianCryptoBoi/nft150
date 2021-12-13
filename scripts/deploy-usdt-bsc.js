@@ -3,8 +3,7 @@ const hre = require("hardhat");
 const main = async () => {
       const [admin] = await hre.ethers.getSigners();
 
-      //StakingPool
-      const MockUSDT = await hre.ethers.getContractFactory("MockUSDT");
+      const MockUSDT = await hre.ethers.getContractFactory("BEP20USDT");
       const mockUSDT = await MockUSDT.deploy();
       await mockUSDT.deployed();
       console.log("mockUSDT deployed at: ", mockUSDT.address);
