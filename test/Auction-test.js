@@ -65,59 +65,59 @@ describe('Unit testing - Auction', function () {
 			await mockPOLKA.connect(refer).approve(auctionV3.address, 1000000);
 		});
 
-		it('Create Auction 721', async () => {
-			expect((await polka721General.getXUserFee(1)).toNumber()).to.equal(250);
-			expect(await polka721General.ownerOf(1)).to.equal(owner.address);
+		// it('Create Auction 721', async () => {
+		// 	expect((await polka721General.getXUserFee(1)).toNumber()).to.equal(250);
+		// 	expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 
-			expect((await auctionV3.totalAuctions()).toNumber()).to.equal(0);
+		// 	expect((await auctionV3.totalAuctions()).toNumber()).to.equal(0);
 
-			let now = Math.ceil(new Date().getTime() / 1000);
+		// 	let now = Math.ceil(new Date().getTime() / 1000);
 
-			// address _tokenAddress,
-			// address _paymentToken,
-			// uint256 _tokenId,
-			// uint256 _startPrice,
-			// uint256 _reservePrice,
-			// uint256 _startTime,
-			// uint256 _endTime,
-			// uint256 _fromVersion,
-			// uint256 _toVersion
+		// 	// address _tokenAddress,
+		// 	// address _paymentToken,
+		// 	// uint256 _tokenId,
+		// 	// uint256 _startPrice,
+		// 	// uint256 _reservePrice,
+		// 	// uint256 _startTime,
+		// 	// uint256 _endTime,
+		// 	// uint256 _fromVersion,
+		// 	// uint256 _toVersion
 
-			await auctionV3.createAuction(
-				polka721General.address,
-				mockPOLKA.address,
-				1,
-				100,
-				200,
-				now,
-				now + 86400,
-				1,
-				1
-			);
+		// 	await auctionV3.createAuction(
+		// 		polka721General.address,
+		// 		mockPOLKA.address,
+		// 		1,
+		// 		100,
+		// 		200,
+		// 		now,
+		// 		now + 86400,
+		// 		1,
+		// 		1
+		// 	);
 
-			await expect(
-				auctionV3.createAuction(polka721General.address, mockPOLKA.address, 1, 100, 200, now, now + 86400, 1, 1)
-			).to.be.revertedWith('Insufficient-token-balance');
+		// 	await expect(
+		// 		auctionV3.createAuction(polka721General.address, mockPOLKA.address, 1, 100, 200, now, now + 86400, 1, 1)
+		// 	).to.be.revertedWith('Insufficient-token-balance');
 
-			await expect(
-				auctionV3.createAuction(polka721General.address, owner.address, 1, 100, 200, now, now + 86400, 1, 1)
-			).to.be.revertedWith('Payment-not-support');
+		// 	await expect(
+		// 		auctionV3.createAuction(polka721General.address, owner.address, 1, 100, 200, now, now + 86400, 1, 1)
+		// 	).to.be.revertedWith('Payment-not-support');
 
-			await expect(
-				auctionV3.createAuction(polka721General.address, mockPOLKA.address, 1, 200, 100, now, now + 86400, 1, 1)
-			).to.be.revertedWith('Price-invalid');
+		// 	await expect(
+		// 		auctionV3.createAuction(polka721General.address, mockPOLKA.address, 1, 200, 100, now, now + 86400, 1, 1)
+		// 	).to.be.revertedWith('Price-invalid');
 
-			await expect(
-				auctionV3.createAuction(polka721General.address, mockPOLKA.address, 1, 100, 200, 2, 1, 1, 1)
-			).to.be.revertedWith('Time-invalid');
+		// 	await expect(
+		// 		auctionV3.createAuction(polka721General.address, mockPOLKA.address, 1, 100, 200, 2, 1, 1, 1)
+		// 	).to.be.revertedWith('Time-invalid');
 
-			expect((await auctionV3.totalAuctions()).toNumber()).to.equal(1);
+		// 	expect((await auctionV3.totalAuctions()).toNumber()).to.equal(1);
 
-			expect(await polka721General.ownerOf(1)).to.equal(auctionV3.address);
-		});
+		// 	expect(await polka721General.ownerOf(1)).to.equal(auctionV3.address);
+		// });
 
 		it('Cancel Auction 721', async function () {
-			const auctionId = await auctionV3.createAuction(
+			await auctionV3.createAuction(
 				polka721General.address,
 				mockPOLKA.address,
 				1,
@@ -129,100 +129,111 @@ describe('Unit testing - Auction', function () {
 				1
 			);
 
-			await expect(auctionV3.connect(addr).cancelAuction(0)).to.be.revertedWith('Auction-not-owner');
+			await expect(auctionV3.connect(addr).cancelAuction(0, 1)).to.be.revertedWith('Auction-not-owner');
 
-			await auctionV3.cancelAuction(0);
+			expect(await polka721General.ownerOf(1)).to.equal(auctionV3.address);
 
-			const [, , , , , , , , , , status] = await auctionV3.auctions(auctionId.value);
+			await auctionV3.cancelAuction(0, 1);
 
-			expect(status).to.be.false;
-			await expect(auctionV3.cancelAuction(0)).to.be.revertedWith('Auction-closed');
-		});
+			expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 
-		it('Create bid 721 token', async function () {
-			await auctionV3.createAuction(polka721General.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 1);
-
-			// address _tokenAddress,
-			// address _paymentToken,
-			// uint256 _tokenId,
-			// uint256 _auctionId,
-			// uint256 _price,
-			// uint256 _version
-
-			await expect(
-				auctionV3.connect(addr).bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 100, 1)
-			).to.be.revertedWith('incorrect-payment-method');
-
-			await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
-			const [bidder] = await auctionV3.bidAuctions(0);
-			expect(bidder).to.equal(addr.address);
-			expect(
-				auctionV3.connect(refer).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 10, 1)
-			).to.be.revertedWith('price-lower-than-start-price');
-			expect(
-				auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 200, 1)
-			).to.be.revertedWith('user-joined-auction');
-			expect(auctionV3.bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 200, 1)).to.be.revertedWith(
-				'owner-can-not-bid'
+			await auctionV3.createAuction(
+				polka721General.address,
+				mockPOLKA.address,
+				1,
+				100,
+				200,
+				8999999999,
+				9999999999,
+				1,
+				1
 			);
 		});
 
-		it('Create Bid 721 ETH', async function () {
-			await auctionV3.createAuction(polka721General.address, ZERO_ADDRESS, 1, 100, 200, 1, 9999999999, 1, 1);
+		// it('Create bid 721 token', async function () {
+		// 	await auctionV3.createAuction(polka721General.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 1);
 
-			await expect(
-				auctionV3.connect(addr).bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 10 })
-			).to.be.revertedWith('Invalid-amount');
+		// 	// address _tokenAddress,
+		// 	// address _paymentToken,
+		// 	// uint256 _tokenId,
+		// 	// uint256 _auctionId,
+		// 	// uint256 _price,
+		// 	// uint256 _version
 
-			await auctionV3
-				.connect(addr)
-				.bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 100 });
-			const [bidder] = await auctionV3.bidAuctions(0);
+		// 	await expect(
+		// 		auctionV3.connect(addr).bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 100, 1)
+		// 	).to.be.revertedWith('incorrect-payment-method');
 
-			expect(bidder).to.equal(addr.address);
+		// 	await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
+		// 	const [bidder] = await auctionV3.bidAuctions(0);
+		// 	expect(bidder).to.equal(addr.address);
+		// 	expect(
+		// 		auctionV3.connect(refer).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 10, 1)
+		// 	).to.be.revertedWith('price-lower-than-start-price');
+		// 	expect(
+		// 		auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 200, 1)
+		// 	).to.be.revertedWith('user-joined-auction');
+		// 	expect(auctionV3.bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 200, 1)).to.be.revertedWith(
+		// 		'owner-can-not-bid'
+		// 	);
+		// });
 
-			expect(
-				auctionV3.connect(refer).bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 10, 1, { value: 10 })
-			).to.be.revertedWith('price-lower-than-start-price');
-		});
+		// it('Create Bid 721 ETH', async function () {
+		// 	await auctionV3.createAuction(polka721General.address, ZERO_ADDRESS, 1, 100, 200, 1, 9999999999, 1, 1);
 
-		it('Edit Bid 721', async function () {
-			await auctionV3.createAuction(polka721General.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 1);
+		// 	await expect(
+		// 		auctionV3.connect(addr).bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 10 })
+		// 	).to.be.revertedWith('Invalid-amount');
 
-			// address _tokenAddress,
-			// address _paymentToken,
-			// uint256 _tokenId,
-			// uint256 _auctionId,
-			// uint256 _price,
-			// uint256 _version
-			await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
+		// 	await auctionV3
+		// 		.connect(addr)
+		// 		.bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 100 });
+		// 	const [bidder] = await auctionV3.bidAuctions(0);
 
-			await auctionV3.connect(addr).editBidAuction(0, 200);
+		// 	expect(bidder).to.equal(addr.address);
 
-			const [, , , , , bidPrice] = await auctionV3.bidAuctions(1);
-			expect(bidPrice.toNumber()).to.equal(200);
-		});
+		// 	expect(
+		// 		auctionV3.connect(refer).bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 10, 1, { value: 10 })
+		// 	).to.be.revertedWith('price-lower-than-start-price');
+		// });
 
-		it('Cancel Bid 721', async function () {
-			await auctionV3.createAuction(polka721General.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 1);
+		// it('Edit Bid 721', async function () {
+		// 	await auctionV3.createAuction(polka721General.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 1);
 
-			await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
+		// 	// address _tokenAddress,
+		// 	// address _paymentToken,
+		// 	// uint256 _tokenId,
+		// 	// uint256 _auctionId,
+		// 	// uint256 _price,
+		// 	// uint256 _version
+		// 	await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
 
-			await auctionV3.connect(refer).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 101, 1);
+		// 	await auctionV3.connect(addr).editBidAuction(0, 200);
 
-			await expect(auctionV3.cancelBidAuction(0)).to.be.revertedWith('Not-owner-bid-auction');
+		// 	const [, , , , , bidPrice] = await auctionV3.bidAuctions(1);
+		// 	expect(bidPrice.toNumber()).to.equal(200);
+		// });
 
-			await auctionV3.connect(addr).cancelBidAuction(0);
+		// it('Cancel Bid 721', async function () {
+		// 	await auctionV3.createAuction(polka721General.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 1);
 
-			const [, , , , , , status] = await auctionV3.bidAuctions(0);
+		// 	await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
 
-			expect(status).to.be.false;
+		// 	await auctionV3.connect(refer).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 101, 1);
 
-			await expect(auctionV3.connect(addr).cancelBidAuction(0)).to.be.revertedWith('Bid-closed');
+		// 	await expect(auctionV3.cancelBidAuction(0)).to.be.revertedWith('Not-owner-bid-auction');
 
-			await expect(auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 102, 1))
-				.to.not.be.reverted;
-		});
+		// 	await auctionV3.connect(addr).cancelBidAuction(0);
+
+		// 	const [, , , , , , status] = await auctionV3.bidAuctions(0);
+
+		// 	expect(status).to.be.false;
+
+		// 	await expect(auctionV3.connect(addr).cancelBidAuction(0)).to.be.revertedWith('Bid-closed');
+
+		// 	await expect(auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 102, 1))
+		// 		.to.not.be.reverted;
+		// });
 
 		//After Auction test must run alone
 
@@ -247,7 +258,7 @@ describe('Unit testing - Auction', function () {
 		// 	return new Promise((resolve) => {
 		// 		setTimeout(() => {
 		// 			resolve();
-		// 		}, 11000);
+		// 		}, 15000);
 		// 	}).then(async () => {
 		// 		await expect(auctionV3.connect(addr).claimWinnerAuction(1)).to.be.revertedWith('not-winner');
 		// 		await expect(auctionV3.connect(refer).claimWinnerAuction(1)).to.be.revertedWith(
@@ -257,6 +268,10 @@ describe('Unit testing - Auction', function () {
 		// 		await expect(auctionV3.acceptBidAuction(0)).to.be.revertedWith('not-highest-bid');
 		// 		await expect(auctionV3.acceptBidAuction(1)).to.be.revertedWith('reserve-price-not-met');
 		// 		await expect(auctionV3.connect(refer).acceptBidAuction(1)).to.be.revertedWith('Auction-not-owner');
+
+		// 		await auctionV3.reclaimAuction(0);
+
+		// 		expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 		// 	});
 		// });
 
@@ -335,7 +350,7 @@ describe('Unit testing - Auction', function () {
 
 			await auctionV3.addPOLKANFTs(nft150.address, true);
 
-			await nft150.create(1000, 100, 200, '_uritest', 1, 250);
+			await nft150.create(1000, 437, 200, '_uritest', 1, 250);
 			await nft150.setApprovalForAll(auctionV3.address, true);
 
 			await mockPOLKA.mint(addr.address, 1000000);
@@ -344,42 +359,46 @@ describe('Unit testing - Auction', function () {
 			await mockPOLKA.connect(refer).approve(auctionV3.address, 1000000);
 		});
 
-		it('Create Auction 1155 Single', async function () {
-			expect((await auctionV3.totalAuctions()).toNumber()).to.equal(0);
+		// it('Create Auction 1155 Single', async function () {
+		// 	expect((await auctionV3.totalAuctions()).toNumber()).to.equal(0);
 
-			// address _tokenAddress,
-			// address _paymentToken,
-			// uint256 _tokenId,
-			// uint256 _startPrice,
-			// uint256 _reservePrice,
-			// uint256 _startTime,
-			// uint256 _endTime,
-			// uint256 _fromVersion,
-			// uint256 _toVersion
-			await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 1, 1);
+		// 	// address _tokenAddress,
+		// 	// address _paymentToken,
+		// 	// uint256 _tokenId,
+		// 	// uint256 _startPrice,
+		// 	// uint256 _reservePrice,
+		// 	// uint256 _startTime,
+		// 	// uint256 _endTime,
+		// 	// uint256 _fromVersion,
+		// 	// uint256 _toVersion
+		// 	await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 1, 1);
 
-			expect((await auctionV3.totalAuctions()).toNumber()).to.equal(1);
-			expect((await nft150.balanceOf(auctionV3.address, 1)).toNumber()).to.equal(1);
-		});
+		// 	expect((await auctionV3.totalAuctions()).toNumber()).to.equal(1);
+		// 	expect((await nft150.balanceOf(auctionV3.address, 1)).toNumber()).to.equal(1);
+		// });
 
-		it('Create Auction 1155 Multiple', async function () {
-			expect((await auctionV3.totalAuctions()).toNumber()).to.equal(0);
-			await expect(
-				auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 2, 1)
-			).to.be.revertedWith('Version-invalid');
+		// it('Create Auction 1155 Multiple', async function () {
+		// 	expect((await auctionV3.totalAuctions()).toNumber()).to.equal(0);
 
-			await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 1, 10);
+		// 	await expect(
+		// 		auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 2, 1)
+		// 	).to.be.revertedWith('Version-invalid');
 
-			await expect(
-				auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 1, 3)
-			).to.be.revertedWith('Version-on-auction');
+		// 	await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 1, 430);
 
-			expect((await auctionV3.totalAuctions()).toNumber()).to.equal(1);
-			expect((await nft150.balanceOf(auctionV3.address, 1)).toNumber()).to.equal(10);
-		});
+		// 	expect((await auctionV3.totalAuctions()).toNumber()).to.equal(1);
+
+		// 	await expect(
+		// 		auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 1, 11, 13)
+		// 	).to.be.revertedWith('Version-on-auction');
+
+		// 	expect((await auctionV3.totalAuctions()).toNumber()).to.equal(1);
+
+		// 	expect((await nft150.balanceOf(auctionV3.address, 1)).toNumber()).to.equal(430);
+		// });
 
 		it('Cancel Auction 1155', async function () {
-			const auctionId = await auctionV3.createAuction(
+			await auctionV3.createAuction(
 				nft150.address,
 				mockPOLKA.address,
 				1,
@@ -388,107 +407,118 @@ describe('Unit testing - Auction', function () {
 				8999999999,
 				9999999999,
 				1,
-				1
+				400
 			);
 
-			await expect(auctionV3.connect(addr).cancelAuction(0)).to.be.revertedWith('Auction-not-owner');
+			await expect(auctionV3.connect(addr).cancelAuction(0, 1)).to.be.revertedWith('Auction-not-owner');
 
-			await auctionV3.cancelAuction(0);
+			await auctionV3.cancelAuction(0, 1);
 
-			const [, , , , , , , , , , status] = await auctionV3.auctions(auctionId.value);
+			expect(await auctionV3.versionOnAuction(nft150.address, 1, 1)).to.be.false;
+			expect(await auctionV3.versionOnAuction(nft150.address, 1, 2)).to.be.true;
 
-			expect(status).to.be.false;
-			await expect(auctionV3.cancelAuction(0)).to.be.revertedWith('Auction-closed');
+			// await expect(
+			// 	auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 8999999999, 9999999999, 1, 1)
+			// ).to.not.be.reverted;
 		});
 
-		it('Create bid 1155 token', async function () {
-			await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 1);
+		// it('Create bid 1155 token', async function () {
+		// 	await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 400);
 
-			// address _tokenAddress,
-			// address _paymentToken,
-			// uint256 _tokenId,
-			// uint256 _auctionId,
-			// uint256 _price,
-			// uint256 _version
+		// 	// address _tokenAddress,
+		// 	// address _paymentToken,
+		// 	// uint256 _tokenId,
+		// 	// uint256 _auctionId,
+		// 	// uint256 _price,
+		// 	// uint256 _version
 
-			await expect(
-				auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 100, 1)
-			).to.be.revertedWith('incorrect-payment-method');
+		// 	await expect(
+		// 		auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 100, 1)
+		// 	).to.be.revertedWith('incorrect-payment-method');
 
-			await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
-			const [bidder] = await auctionV3.bidAuctions(0);
-			expect(bidder).to.equal(addr.address);
-			expect(
-				auctionV3.connect(refer).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 10, 1)
-			).to.be.revertedWith('price-lower-than-start-price');
-			expect(
-				auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 200, 1)
-			).to.be.revertedWith('user-joined-auction');
-			expect(auctionV3.bidAuction(nft150.address, mockPOLKA.address, 1, 0, 200, 1)).to.be.revertedWith(
-				'owner-can-not-bid'
-			);
-		});
+		// 	await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
+		// 	const [bidder] = await auctionV3.bidAuctions(0);
+		// 	expect(bidder).to.equal(addr.address);
+		// 	expect(
+		// 		auctionV3.connect(refer).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 10, 1)
+		// 	).to.be.revertedWith('price-lower-than-start-price');
+		// 	expect(
+		// 		auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 200, 1)
+		// 	).to.be.revertedWith('user-joined-auction');
+		// 	expect(auctionV3.bidAuction(nft150.address, mockPOLKA.address, 1, 0, 200, 1)).to.be.revertedWith(
+		// 		'owner-can-not-bid'
+		// 	);
+		// });
 
-		it('Create Bid 1155 ETH', async function () {
-			await auctionV3.createAuction(nft150.address, ZERO_ADDRESS, 1, 100, 200, 1, 9999999999, 1, 1);
+		// it('Create Bid 1155 ETH', async function () {
+		// 	await auctionV3.createAuction(nft150.address, ZERO_ADDRESS, 1, 100, 200, 1, 9999999999, 1, 1);
 
-			await expect(
-				auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 10 })
-			).to.be.revertedWith('Invalid-amount');
+		// 	await expect(
+		// 		auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 10 })
+		// 	).to.be.revertedWith('Invalid-amount');
 
-			await auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 100 });
-			const [bidder] = await auctionV3.bidAuctions(0);
+		// 	await auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 100 });
+		// 	const [bidder] = await auctionV3.bidAuctions(0);
 
-			expect(bidder).to.equal(addr.address);
+		// 	expect(bidder).to.equal(addr.address);
 
-			expect(
-				auctionV3.connect(refer).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 10, 1, { value: 10 })
-			).to.be.revertedWith('price-lower-than-start-price');
-		});
+		// 	expect(
+		// 		auctionV3.connect(refer).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 10, 1, { value: 10 })
+		// 	).to.be.revertedWith('price-lower-than-start-price');
+		// });
 
-		it('Edit Bid 1155', async function () {
-			await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 1);
+		// it('Edit Bid 1155', async function () {
+		// 	await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 1);
 
-			// address _tokenAddress,
-			// address _paymentToken,
-			// uint256 _tokenId,
-			// uint256 _auctionId,
-			// uint256 _price,
-			// uint256 _version
-			await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
+		// 	// address _tokenAddress,
+		// 	// address _paymentToken,
+		// 	// uint256 _tokenId,
+		// 	// uint256 _auctionId,
+		// 	// uint256 _price,
+		// 	// uint256 _version
+		// 	await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
 
-			await auctionV3.connect(addr).editBidAuction(0, 200);
+		// 	await auctionV3.connect(addr).editBidAuction(0, 200);
 
-			const [, , , , , bidPrice] = await auctionV3.bidAuctions(1);
-			expect(bidPrice.toNumber()).to.equal(200);
-		});
+		// 	const [, , , , , bidPrice] = await auctionV3.bidAuctions(1);
+		// 	expect(bidPrice.toNumber()).to.equal(200);
+		// });
 
-		it('Cancel Bid 1155', async function () {
-			await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 1);
+		// it('Cancel Bid 1155', async function () {
+		// 	await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, 9999999999, 1, 1);
 
-			await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
+		// 	await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
 
-			await auctionV3.connect(refer).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 101, 1);
+		// 	await auctionV3.connect(refer).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 101, 1);
 
-			await expect(auctionV3.cancelBidAuction(0)).to.be.revertedWith('Not-owner-bid-auction');
+		// 	await expect(auctionV3.cancelBidAuction(0)).to.be.revertedWith('Not-owner-bid-auction');
 
-			await auctionV3.connect(addr).cancelBidAuction(0);
+		// 	await auctionV3.connect(addr).cancelBidAuction(0);
 
-			const [, , , , , , status] = await auctionV3.bidAuctions(0);
+		// 	const [, , , , , , status] = await auctionV3.bidAuctions(0);
 
-			expect(status).to.be.false;
+		// 	expect(status).to.be.false;
 
-			await expect(auctionV3.connect(addr).cancelBidAuction(0)).to.be.revertedWith('Bid-closed');
+		// 	await expect(auctionV3.connect(addr).cancelBidAuction(0)).to.be.revertedWith('Bid-closed');
 
-			await expect(auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 102, 1)).to.not.be
-				.reverted;
-		});
+		// 	await expect(auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 102, 1)).to.not.be
+		// 		.reverted;
+		// });
 
-		//After Auction test must run alone
+		// After Auction test must run alone
 
 		// it('After Auction 1155 No Winner', async () => {
-
-		// 	await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, Math.ceil(new Date().getTime() / 1000) + 20, 1, 1);
+		// 	await auctionV3.createAuction(
+		// 		nft150.address,
+		// 		mockPOLKA.address,
+		// 		1,
+		// 		100,
+		// 		200,
+		// 		1,
+		// 		Math.ceil(new Date().getTime() / 1000) + 20,
+		// 		1,
+		// 		1
+		// 	);
 
 		// 	await expect(
 		// 		auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 99, 1)
@@ -498,7 +528,7 @@ describe('Unit testing - Auction', function () {
 		// 	return new Promise((resolve) => {
 		// 		setTimeout(() => {
 		// 			resolve();
-		// 		}, 11000);
+		// 		}, 15000);
 		// 	}).then(async () => {
 		// 		await expect(auctionV3.connect(addr).claimWinnerAuction(1)).to.be.revertedWith('not-winner');
 		// 		await expect(auctionV3.connect(refer).claimWinnerAuction(1)).to.be.revertedWith(
@@ -508,6 +538,11 @@ describe('Unit testing - Auction', function () {
 		// 		await expect(auctionV3.acceptBidAuction(0)).to.be.revertedWith('not-highest-bid');
 		// 		await expect(auctionV3.acceptBidAuction(1)).to.be.revertedWith('reserve-price-not-met');
 		// 		await expect(auctionV3.connect(refer).acceptBidAuction(1)).to.be.revertedWith('Auction-not-owner');
+
+		// 		await auctionV3.reclaimAuction(0);
+
+		// 		expect(await nft150.nftOwnVersion(1, 1)).to.equal(owner.address);
+		// 		expect((await nft150.balanceOf(owner.address, 1)).toNumber()).to.equal(437);
 		// 	});
 		// });
 
@@ -574,7 +609,6 @@ describe('Unit testing - Auction', function () {
 		// 		expect((await nft150.balanceOf(addr.address, 1)).toNumber()).to.equal(1);
 		// 	});
 		// });
+		// });
 	});
-
-	after(async function () {});
 });

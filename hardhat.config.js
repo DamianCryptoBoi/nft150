@@ -7,6 +7,7 @@ require('@nomiclabs/hardhat-etherscan');
 require('hardhat-abi-exporter');
 require('dotenv').config();
 require('hardhat-contract-sizer');
+require('hardhat-gas-reporter');
 
 module.exports = {
 	solidity: {
@@ -29,7 +30,7 @@ module.exports = {
 	defaultNetwork: 'hardhat',
 	networks: {
 		hardhat: {
-			gas: 12000000,
+			gas: 120000000,
 			blockGasLimit: 0x1fffffffffffff,
 			allowUnlimitedContractSize: true,
 			timeout: 1800000,
@@ -74,6 +75,10 @@ module.exports = {
 
 	etherscan: {
 		apiKey: process.env.ETHERSCAN_APIKEY,
+	},
+
+	mocha: {
+		timeout: 1800000,
 	},
 
 	// contractSizer: {
