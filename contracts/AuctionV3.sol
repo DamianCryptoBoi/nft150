@@ -87,10 +87,12 @@ contract ManagerAuction is Ownable, Pausable {
 		uint256 _version
 	);
 	event BidAuctionEdited(uint256 indexed _bidAuctionId, uint256 _price);
-	event AuctionCanceled(uint256 indexed _auctionId);
+	event AuctionCanceled(uint256 indexed _auctionId, uint256 indexed _version);
 	event BidAuctionCanceled(uint256 indexed _bidAuctionId);
 	event BidAuctionAccepted(uint256 indexed _bidAuctionId);
 	event BidAuctionClaimed(uint256 indexed _bidAuctionId);
+	event AuctionReclaimed(uint256 indexed _auctionId, uint256 indexed _version);
+
 
 	constructor() {}
 
@@ -118,8 +120,8 @@ contract ManagerAuction is Ownable, Pausable {
 	function setPaymentMethod(address _token, bool _status) external onlyOwner returns (bool) {
 		paymentMethod[_token] = _status;
 		if (_token != address(0)) {
-			IERC20(_token).approve(msg.sender, (2**256 - 1));
-			IERC20(_token).approve(address(this), (2**256 - 1));
+			IERC20(_token).safeApprove(msg.sender, (2**256 - 1));
+			IERC20(_token).safeApprove(address(this), (2**256 - 1));
 		}
 		return true;
 	}
@@ -367,6 +369,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		bidAuctions[totalBidAuctions] = objEditBidAuction;
 		bidAuctions[totalBidAuctions].status = true;
 		bidAuctions[totalBidAuctions].bidPrice = _price;
+		_bidAuctionId = totalBidAuctions;
 
 		currentAuction.listBidId.push(totalBidAuctions);
 
@@ -394,7 +397,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 
 		_transferAfterAuction(currentAuction.tokenAddress, currentAuction.tokenId, _version, msg.sender, isERC721);
 
-		emit AuctionCanceled(_auctionId);
+		emit AuctionCanceled(_auctionId, _version);
 		return _auctionId;
 	}
 
@@ -427,7 +430,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		return _bidAuctionId;
 	}
 
-	function reclaimAuction(uint256 _auctionId) external whenNotPaused {
+	function reclaimAuction(uint256 _auctionId, uint256 _version) external whenNotPaused {
 		Auction storage currentAuction = auctions[_auctionId];
 		uint256 highestBidId = currentAuction.listBidId[currentAuction.listBidId.length - 1];
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
@@ -436,7 +439,17 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 			bidAuctions[highestBidId].bidPrice < currentAuction.reservePrice,
 			'bid-price-greater-than-reserve-price'
 		);
+		require(versionOnAuction[currentAuction.tokenAddress][currentAuction.tokenId][_version], 'version-cancelled');
+
+		require(
+			currentAuction.toVersion >= _version && _version >= currentAuction.fromVersion && _version >= 1,
+			'invalid-version'
+		);
+		versionOnAuction[currentAuction.tokenAddress][currentAuction.tokenId][_version] = false;
+
 		_returnBidAuction(highestBidId);
+
+		emit AuctionReclaimed(_auctionId, _version);
 	}
 
 	function acceptBidAuction(uint256 _bidAuctionId) external whenNotPaused {
