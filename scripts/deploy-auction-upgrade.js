@@ -1,10 +1,12 @@
 const { ethers, upgrades } = require('hardhat');
 
+AUCTION_PROXY_ADDRESS = '';
+
 async function main() {
-	const AuctionV3 = await ethers.getContractFactory('AuctionV3');
-	const auctionV3 = await upgrades.deployProxy(AuctionV3, []);
-	await auctionV3.deployed();
-	console.log('AuctionV3 deployed to:', auctionV3.address);
+	const AuctionV3x = await ethers.getContractFactory('AuctionV3x');
+	const auctionV3x = await upgrades.upgradeProxy(AUCTION_PROXY_ADDRESS, AuctionV3x);
+	await auctionV3x.deployed();
+	console.log('AuctionV3 upgraded ', auctionV3x.address);
 }
 
 main();

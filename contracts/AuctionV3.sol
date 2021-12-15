@@ -17,7 +17,13 @@ import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol';
 
-contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeable {
+contract ManagerAuction is
+	Initializable,
+	OwnableUpgradeable,
+	PausableUpgradeable,
+	ERC1155HolderUpgradeable,
+	ERC721HolderUpgradeable
+{
 	address public referralContract;
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -94,8 +100,12 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 	event BidAuctionClaimed(uint256 indexed _bidAuctionId);
 	event AuctionReclaimed(uint256 indexed _auctionId, uint256 indexed _version);
 
-	function initialize() public initializer {
+	function initialize() public virtual initializer {
 		yRefRate = 5000;
+		OwnableUpgradeable.__Ownable_init();
+		PausableUpgradeable.__Pausable_init();
+		ERC1155HolderUpgradeable.__ERC1155Holder_init();
+		ERC721HolderUpgradeable.__ERC721Holder_init();
 	}
 
 	function pause() external onlyOwner {
@@ -208,10 +218,14 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 	}
 }
 
-contract AuctionV3 is ManagerAuction, ERC1155HolderUpgradeable, ERC721HolderUpgradeable {
+contract AuctionV3 is ManagerAuction {
 	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 	using AddressUpgradeable for address payable;
+
+	function initialize() public override initializer {
+		ManagerAuction.initialize();
+	}
 
 	function createAuction(
 		address _tokenAddress,

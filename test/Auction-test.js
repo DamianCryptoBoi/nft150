@@ -1,6 +1,8 @@
 const { expect, assert, use } = require('chai');
 const { solidity } = require('ethereum-waffle');
+use(solidity); //to user revertedWith
 const { ethers, upgrades } = require('hardhat');
+
 const { ZERO_ADDRESS } = require('openzeppelin-test-helpers/src/constants');
 
 describe('Unit testing - Auction', function () {
@@ -10,36 +12,52 @@ describe('Unit testing - Auction', function () {
 	let polka721General;
 
 	beforeEach(async function () {
-		// [owner, addr, refer, toDead] = await ethers.getSigners();
-		// MarketV3 = await hre.ethers.getContractFactory('MarketV3');
-		// marketV3 = await MarketV3.deploy();
-		// await marketV3.deployed();
+		[owner, addr, refer, toDead] = await ethers.getSigners();
+		MarketV3 = await hre.ethers.getContractFactory('MarketV3');
+		marketV3 = await MarketV3.deploy();
+		await marketV3.deployed();
 
 		AuctionV3 = await hre.ethers.getContractFactory('AuctionV3');
 		auctionV3 = await upgrades.deployProxy(AuctionV3, []);
 		await auctionV3.deployed();
 
-		// MockPOLKA = await hre.ethers.getContractFactory('MockPolka');
-		// mockPOLKA = await MockPOLKA.deploy();
-		// await mockPOLKA.deployed();
+		MockPOLKA = await hre.ethers.getContractFactory('MockPolka');
+		mockPOLKA = await MockPOLKA.deploy();
+		await mockPOLKA.deployed();
 
-		// PolkaURI = await hre.ethers.getContractFactory('PolkaURI');
-		// polkaURI = await PolkaURI.deploy('https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/');
-		// await polkaURI.deployed();
+		PolkaURI = await hre.ethers.getContractFactory('PolkaURI');
+		polkaURI = await PolkaURI.deploy('https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/');
+		await polkaURI.deployed();
 
-		// //PolkaReferral
-		// PolkaReferral = await hre.ethers.getContractFactory('PolkaReferral');
-		// polkaReferral = await PolkaReferral.deploy();
-		// await polkaReferral.deployed();
+		//PolkaReferral
+		PolkaReferral = await hre.ethers.getContractFactory('PolkaReferral');
+		polkaReferral = await PolkaReferral.deploy();
+		await polkaReferral.deployed();
 
-		// await auctionV3.setReferralContract(polkaReferral.address);
-		// await auctionV3.setPaymentMethod(mockPOLKA.address, true);
-		// await auctionV3.setPaymentMethod(ZERO_ADDRESS, true);
+		await auctionV3.setReferralContract(polkaReferral.address);
+		await auctionV3.setPaymentMethod(mockPOLKA.address, true);
+		await auctionV3.setPaymentMethod(ZERO_ADDRESS, true);
 	});
 
 	describe('Deployment', function () {
 		it('Should set the right owner', async function () {
 			expect(await auctionV3.owner()).to.equal(owner.address);
+		});
+	});
+
+	describe('Upgrade', function () {
+		it('Should keep the changed fee when upgrade', async function () {
+			await auctionV3.setSystemFee(1000);
+
+			const AuctionV3x = await hre.ethers.getContractFactory('AuctionV3');
+			const auctionV3x = await upgrades.upgradeProxy(auctionV3.address, AuctionV3x);
+			await auctionV3x.deployed();
+
+			expect((await auctionV3x.yRefRate()).toNumber()).to.equal(1000);
+			await auctionV3x.setSystemFee(5000);
+			expect((await auctionV3.yRefRate()).toNumber()).to.equal(5000);
+
+			expect(auctionV3.address).to.equal(auctionV3x.address);
 		});
 	});
 
