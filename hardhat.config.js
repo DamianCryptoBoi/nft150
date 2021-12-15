@@ -12,7 +12,7 @@ require('hardhat-gas-reporter');
 module.exports = {
 	solidity: {
 		compilers: [
-      {
+			{
 				version: '0.5.16',
 			},
 			{
@@ -30,7 +30,7 @@ module.exports = {
 		],
 	},
 
-	defaultNetwork: 'rinkeby',
+	defaultNetwork: 'hardhat',
 	networks: {
 		hardhat: {
 			gas: 120000000,
@@ -77,9 +77,8 @@ module.exports = {
 	},
 
 	etherscan: {
-		//  apiKey: process.env.ETHERSCAN_APIKEY 
-		 apiKey: "UVE477915DMJIFSVTM5V3FI9Z17WUBGE2M"
-	
+		//  apiKey: process.env.ETHERSCAN_APIKEY
+		apiKey: 'UVE477915DMJIFSVTM5V3FI9Z17WUBGE2M',
 	},
 
 	mocha: {

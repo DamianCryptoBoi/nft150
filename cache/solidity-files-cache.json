@@ -1,56 +1,6 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/home/sotatek/projects/3nft-smartcontract/contracts/\bAuctionV3.sol": {
-      "lastModificationDate": 1639385992110,
-      "contentHash": "ecda9ea722e8084928a0feee9b46cbdc",
-      "sourceName": "contracts/\bAuctionV3.sol",
-      "solcConfig": {
-        "version": "0.8.6",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "./interfaces/IReferral.sol",
-        "./interfaces/IPOLKANFT.sol",
-        "./interfaces/IPolkaMarket.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "./interfaces/IERC1155.sol",
-        "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
-        "@openzeppelin/contracts/token/ERC721/IERC721.sol",
-        "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol",
-        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/security/Pausable.sol",
-        "@openzeppelin/contracts/utils/math/SafeMath.sol",
-        "@openzeppelin/contracts/utils/Address.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.0"
-      ],
-      "artifacts": [
-        "AuctionV3",
-        "ManagerAuction"
-      ]
-    },
     "/home/sotatek/projects/3nft-smartcontract/contracts/interfaces/IReferral.sol": {
       "lastModificationDate": 1638813041581,
       "contentHash": "39e42d1f4089522eb657eb5d01bccb6d",
@@ -3282,6 +3232,223 @@
       "imports": [],
       "versionPragmas": [],
       "artifacts": []
+    },
+    "/home/sotatek/projects/3nft-smartcontract/contracts/UsdtBSC.sol": {
+      "lastModificationDate": 1639502706428,
+      "contentHash": "e64e7c55d19aa0c9b749869b7a55d605",
+      "sourceName": "contracts/UsdtBSC.sol",
+      "solcConfig": {
+        "version": "0.5.16",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.5.16"
+      ],
+      "artifacts": [
+        "BEP20USDT",
+        "Context",
+        "IBEP20",
+        "Ownable",
+        "SafeMath"
+      ]
+    },
+    "/home/sotatek/projects/3nft-smartcontract/contracts/UsdtPolygon.sol": {
+      "lastModificationDate": 1639502706428,
+      "contentHash": "d691e48766b27761b5eb89dc36ba15c0",
+      "sourceName": "contracts/UsdtPolygon.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.0",
+        "^0.6.0",
+        "^0.6.0",
+        "^0.6.2",
+        "^0.6.0",
+        "^0.6.0",
+        "^0.6.0",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6"
+      ],
+      "artifacts": [
+        "AccessControl",
+        "AccessControlMixin",
+        "Address",
+        "ChainConstants",
+        "Context",
+        "ContextMixin",
+        "EIP712Base",
+        "ERC20",
+        "EnumerableSet",
+        "IChildToken",
+        "IERC20",
+        "Initializable",
+        "NativeMetaTransaction",
+        "SafeMath",
+        "UChildERC20"
+      ]
+    },
+    "/home/sotatek/projects/3nft-smartcontract/contracts/WETHPolygon.sol": {
+      "lastModificationDate": 1639502706428,
+      "contentHash": "1c33fa0af4e25f9c0a2be098b32de3f8",
+      "sourceName": "contracts/WETHPolygon.sol",
+      "solcConfig": {
+        "version": "0.6.6",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.0",
+        "^0.6.0",
+        "^0.6.0",
+        "^0.6.2",
+        "^0.6.0",
+        "^0.6.0",
+        "^0.6.0",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6",
+        "0.6.6"
+      ],
+      "artifacts": [
+        "AccessControl",
+        "AccessControlMixin",
+        "Address",
+        "ChainConstants",
+        "ChildERC20",
+        "Context",
+        "ContextMixin",
+        "EIP712Base",
+        "ERC20",
+        "EnumerableSet",
+        "IChildToken",
+        "IERC20",
+        "Initializable",
+        "MaticWETH",
+        "NativeMetaTransaction",
+        "SafeMath"
+      ]
+    },
+    "/home/sotatek/projects/3nft-smartcontract/contracts/\bAuctionV3.sol": {
+      "lastModificationDate": 1639535402277,
+      "contentHash": "7b47f0ce7fb7076ea6d090986f0de290",
+      "sourceName": "contracts/\bAuctionV3.sol",
+      "solcConfig": {
+        "version": "0.8.6",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./interfaces/IReferral.sol",
+        "./interfaces/IPOLKANFT.sol",
+        "./interfaces/IPolkaMarket.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "./interfaces/IERC1155.sol",
+        "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol",
+        "@openzeppelin/contracts/token/ERC721/IERC721.sol",
+        "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/security/Pausable.sol",
+        "@openzeppelin/contracts/utils/math/SafeMath.sol",
+        "@openzeppelin/contracts/utils/Address.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AuctionV3",
+        "ManagerAuction"
+      ]
     }
   }
 }
