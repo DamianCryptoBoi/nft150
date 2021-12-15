@@ -3,26 +3,27 @@ pragma solidity ^0.8.0;
 
 import './interfaces/IReferral.sol';
 import './interfaces/IPOLKANFT.sol';
-import './interfaces/IPolkaMarket.sol';
+import './upgradeable/IERC1155Upgradeable.sol';
 
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import './interfaces/IERC1155.sol';
-import '@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol';
-import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
-import '@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol';
-import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/security/Pausable.sol';
-import '@openzeppelin/contracts/utils/math/SafeMath.sol';
-import '@openzeppelin/contracts/utils/Address.sol';
+import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 
-contract ManagerAuction is Ownable, Pausable {
+import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol';
+
+contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeable {
 	address public referralContract;
-	using SafeMath for uint256;
-	using SafeERC20 for IERC20;
-	using Address for address payable;
+	using SafeMathUpgradeable for uint256;
+	using SafeERC20Upgradeable for IERC20Upgradeable;
+	using AddressUpgradeable for address payable;
 
-	uint256 public yRefRate = 5000; // 50%
+	uint256 public yRefRate;
 
 	mapping(address => bool) public paymentMethod;
 	mapping(address => bool) public isPOLKANFTs;
@@ -93,7 +94,9 @@ contract ManagerAuction is Ownable, Pausable {
 	event BidAuctionClaimed(uint256 indexed _bidAuctionId);
 	event AuctionReclaimed(uint256 indexed _auctionId, uint256 indexed _version);
 
-	constructor() {}
+	function initialize() public initializer {
+		yRefRate = 5000;
+	}
 
 	function pause() external onlyOwner {
 		_pause();
@@ -119,8 +122,8 @@ contract ManagerAuction is Ownable, Pausable {
 	function setPaymentMethod(address _token, bool _status) external onlyOwner returns (bool) {
 		paymentMethod[_token] = _status;
 		if (_token != address(0)) {
-			IERC20(_token).safeApprove(msg.sender, (2**256 - 1));
-			IERC20(_token).safeApprove(address(this), (2**256 - 1));
+			IERC20Upgradeable(_token).safeApprove(msg.sender, (2**256 - 1));
+			IERC20Upgradeable(_token).safeApprove(address(this), (2**256 - 1));
 		}
 		return true;
 	}
@@ -134,7 +137,7 @@ contract ManagerAuction is Ownable, Pausable {
 		if (_token == address(0)) {
 			payable(_to).sendValue(_amount);
 		} else {
-			IERC20(_token).safeTransfer(_to, _amount);
+			IERC20Upgradeable(_token).safeTransfer(_to, _amount);
 		}
 	}
 
@@ -146,11 +149,11 @@ contract ManagerAuction is Ownable, Pausable {
 		bool _isERC721
 	) internal {
 		if (_isERC721) {
-			IERC721(_tokenAddress).safeTransferFrom(address(this), _recipient, _tokenId);
+			IERC721Upgradeable(_tokenAddress).safeTransferFrom(address(this), _recipient, _tokenId);
 		} else {
-			IERC1155(_tokenAddress).setNftOwnVersion(_tokenId, _version, _recipient);
-			IERC1155(_tokenAddress).setNftOnSaleVersion(_tokenId, _version, false);
-			IERC1155(_tokenAddress).safeTransferFrom(address(this), _recipient, _tokenId, 1, '0x');
+			IERC1155Upgradeable(_tokenAddress).setNftOwnVersion(_tokenId, _version, _recipient);
+			IERC1155Upgradeable(_tokenAddress).setNftOnSaleVersion(_tokenId, _version, false);
+			IERC1155Upgradeable(_tokenAddress).safeTransferFrom(address(this), _recipient, _tokenId, 1, '0x');
 		}
 	}
 
@@ -175,7 +178,7 @@ contract ManagerAuction is Ownable, Pausable {
 		bidAuction.status = false;
 		versionOnAuction[bidAuction.tokenAddress][bidAuction.tokenId][bidAuction.version] = false;
 
-		bool isERC721 = IERC721(bidAuction.tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
+		bool isERC721 = IERC721Upgradeable(bidAuction.tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
 		_transferAfterAuction(
 			bidAuction.tokenAddress,
 			bidAuction.tokenId,
@@ -189,7 +192,7 @@ contract ManagerAuction is Ownable, Pausable {
 		BidAuction memory bidAuction = bidAuctions[_bidAuctionId];
 		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
 		versionOnAuction[bidAuction.tokenAddress][bidAuction.tokenId][bidAuction.version] = false;
-		bool isERC721 = IERC721(currentAuction.tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
+		bool isERC721 = IERC721Upgradeable(currentAuction.tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
 		_transferAfterAuction(
 			currentAuction.tokenAddress,
 			currentAuction.tokenId,
@@ -205,10 +208,10 @@ contract ManagerAuction is Ownable, Pausable {
 	}
 }
 
-contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
-	using SafeMath for uint256;
-	using SafeERC20 for IERC20;
-	using Address for address payable;
+contract AuctionV3 is ManagerAuction, ERC1155HolderUpgradeable, ERC721HolderUpgradeable {
+	using SafeMathUpgradeable for uint256;
+	using SafeERC20Upgradeable for IERC20Upgradeable;
+	using AddressUpgradeable for address payable;
 
 	function createAuction(
 		address _tokenAddress,
@@ -226,26 +229,29 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		require(_startTime <= _endTime, 'Time-invalid');
 		require(_toVersion >= _fromVersion, 'Version-invalid');
 
-		bool isERC721 = IERC721(_tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
+		bool isERC721 = IERC721Upgradeable(_tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
 
 		uint256 balance = isERC721
-			? ((IERC721(_tokenAddress).ownerOf(_tokenId) == msg.sender) ? 1 : 0)
-			: IERC1155(_tokenAddress).balanceOf(msg.sender, _tokenId);
+			? ((IERC721Upgradeable(_tokenAddress).ownerOf(_tokenId) == msg.sender) ? 1 : 0)
+			: IERC1155Upgradeable(_tokenAddress).balanceOf(msg.sender, _tokenId);
 		require(balance >= (_toVersion - _fromVersion + 1), 'Insufficient-token-balance');
 
 		_auctionId = totalAuctions;
 
 		if (isERC721) {
 			versionOnAuction[_tokenAddress][_tokenId][1] = true;
-			IERC721(_tokenAddress).safeTransferFrom(msg.sender, address(this), _tokenId);
+			IERC721Upgradeable(_tokenAddress).safeTransferFrom(msg.sender, address(this), _tokenId);
 		} else {
 			for (uint256 i = _fromVersion; i <= _toVersion; i++) {
-				require(!IERC1155(_tokenAddress).nftOnSaleVersion(_tokenId, i), 'Version-on-sale');
-				require(IERC1155(_tokenAddress).nftOwnVersion(_tokenId, i) == msg.sender, 'Version-not-of-sender');
+				require(!IERC1155Upgradeable(_tokenAddress).nftOnSaleVersion(_tokenId, i), 'Version-on-sale');
+				require(
+					IERC1155Upgradeable(_tokenAddress).nftOwnVersion(_tokenId, i) == msg.sender,
+					'Version-not-of-sender'
+				);
 				require(!versionOnAuction[_tokenAddress][_tokenId][i], 'Version-on-auction');
 				versionOnAuction[_tokenAddress][_tokenId][i] = true;
 			}
-			IERC1155(_tokenAddress).safeTransferFrom(
+			IERC1155Upgradeable(_tokenAddress).safeTransferFrom(
 				msg.sender,
 				address(this),
 				_tokenId,
@@ -315,7 +321,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		}
 
 		if (newBidAuction.paymentToken != address(0)) {
-			IERC20(newBidAuction.paymentToken).safeTransferFrom(newBidAuction.bidder, address(this), _price);
+			IERC20Upgradeable(newBidAuction.paymentToken).safeTransferFrom(newBidAuction.bidder, address(this), _price);
 		}
 
 		adminHoldPayment[_paymentToken] = adminHoldPayment[_paymentToken].add(_price);
@@ -353,7 +359,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		}
 
 		if (objEditBidAuction.paymentToken != address(0)) {
-			IERC20(objEditBidAuction.paymentToken).safeTransferFrom(
+			IERC20Upgradeable(objEditBidAuction.paymentToken).safeTransferFrom(
 				objEditBidAuction.bidder,
 				address(this),
 				_price - objEditBidAuction.bidPrice
@@ -385,7 +391,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 
 		require(auctions[_auctionId].owner == msg.sender, 'Auction-not-owner');
 
-		bool isERC721 = IERC721(auctions[_auctionId].tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
+		bool isERC721 = IERC721Upgradeable(auctions[_auctionId].tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
 		Auction storage currentAuction = auctions[_auctionId];
 		require(versionOnAuction[currentAuction.tokenAddress][currentAuction.tokenId][_version], 'version-cancelled');
 
@@ -418,7 +424,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		if (bidAuctions[_bidAuctionId].paymentToken == address(0)) {
 			payable(bidAuctions[_bidAuctionId].bidder).sendValue(bidAuctions[_bidAuctionId].bidPrice);
 		} else {
-			IERC20(bidAuctions[_bidAuctionId].paymentToken).safeTransferFrom(
+			IERC20Upgradeable(bidAuctions[_bidAuctionId].paymentToken).safeTransferFrom(
 				address(this),
 				bidAuctions[_bidAuctionId].bidder,
 				bidAuctions[_bidAuctionId].bidPrice
