@@ -50,7 +50,6 @@
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
-    "@openzeppelin/test-helpers": "^0.5.12",
     "chai": "^4.3.4",
     "eth-json-rpc-filters": "^4.2.2",
     "ethereum-waffle": "^3.4.0",

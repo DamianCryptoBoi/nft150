@@ -235,111 +235,98 @@ describe('Unit testing - Auction', function () {
 				.to.not.be.reverted;
 		});
 
-		//After Auction test must run alone
+		it('After Auction 721 No Winner', async () => {
+			const latestBlock = await hre.ethers.provider.getBlock('latest');
+			const now = latestBlock.timestamp;
+			await auctionV3.createAuction(
+				polka721General.address,
+				mockPOLKA.address,
+				1,
+				100,
+				200,
+				1,
+				now + 86400,
+				1,
+				1
+			);
 
-		// it('After Auction 721 No Winner', async () => {
-		// 	await auctionV3.createAuction(
-		// 		polka721General.address,
-		// 		mockPOLKA.address,
-		// 		1,
-		// 		100,
-		// 		200,
-		// 		1,
-		// 		Math.ceil(new Date().getTime() / 1000) + 20,
-		// 		1,
-		// 		1
-		// 	);
+			await expect(
+				auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 99, 1)
+			).to.be.revertedWith('price-lower-than-start-price');
+			await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
+			await auctionV3.connect(refer).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 150, 1);
 
-		// 	await expect(
-		// 		auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 99, 1)
-		// 	).to.be.revertedWith('price-lower-than-start-price');
-		// 	await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
-		// 	await auctionV3.connect(refer).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 150, 1);
-		// 	return new Promise((resolve) => {
-		// 		setTimeout(() => {
-		// 			resolve();
-		// 		}, 15000);
-		// 	}).then(async () => {
-		// 		await expect(auctionV3.connect(addr).claimWinnerAuction(1)).to.be.revertedWith('not-winner');
-		// 		await expect(auctionV3.connect(refer).claimWinnerAuction(1)).to.be.revertedWith(
-		// 			'reserve-price-not-met'
-		// 		);
-		// 		await expect(auctionV3.connect(refer).claimWinnerAuction(0)).to.be.revertedWith('not-highest-bid');
-		// 		await expect(auctionV3.acceptBidAuction(0)).to.be.revertedWith('not-highest-bid');
-		// 		await expect(auctionV3.acceptBidAuction(1)).to.be.revertedWith('reserve-price-not-met');
-		// 		await expect(auctionV3.connect(refer).acceptBidAuction(1)).to.be.revertedWith('Auction-not-owner');
+			await network.provider.send('evm_increaseTime', [90000]);
+			await network.provider.send('evm_mine');
 
-		// 		await auctionV3.reclaimAuction(0);
+			await expect(auctionV3.connect(addr).claimWinnerAuction(1)).to.be.revertedWith('not-winner');
+			await expect(auctionV3.connect(refer).claimWinnerAuction(1)).to.be.revertedWith('reserve-price-not-met');
+			await expect(auctionV3.connect(refer).claimWinnerAuction(0)).to.be.revertedWith('not-highest-bid');
+			await expect(auctionV3.acceptBidAuction(0)).to.be.revertedWith('not-highest-bid');
+			await expect(auctionV3.acceptBidAuction(1)).to.be.revertedWith('reserve-price-not-met');
+			await expect(auctionV3.connect(refer).acceptBidAuction(1)).to.be.revertedWith('Auction-not-owner');
 
-		// 		expect(await polka721General.ownerOf(1)).to.equal(owner.address);
-		// 	});
-		// });
+			await auctionV3.reclaimAuction(0, 1);
 
-		// it('After Auction 721 Winner', async () => {
-		// 	await auctionV3.createAuction(
-		// 		polka721General.address,
-		// 		mockPOLKA.address,
-		// 		1,
-		// 		100,
-		// 		200,
-		// 		1,
-		// 		Math.ceil(new Date().getTime() / 1000) + 20,
-		// 		1,
-		// 		1
-		// 	);
+			expect(await polka721General.ownerOf(1)).to.equal(owner.address);
+		});
 
-		// 	await expect(
-		// 		auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 99, 1)
-		// 	).to.be.revertedWith('price-lower-than-start-price');
-		// 	await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
-		// 	await auctionV3.connect(refer).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 250, 1);
-		// 	await auctionV3.connect(addr).editBidAuction(0, 300);
-		// 	return new Promise((resolve) => {
-		// 		setTimeout(() => {
-		// 			resolve();
-		// 		}, 11000);
-		// 	}).then(async () => {
-		// 		await expect(auctionV3.connect(addr).claimWinnerAuction(2)).to.not.be.reverted;
-		// 		await expect(auctionV3.acceptBidAuction(2)).to.not.be.reverted;
+		it('After Auction 721 Winner', async () => {
+			const latestBlock = await hre.ethers.provider.getBlock('latest');
+			const now = latestBlock.timestamp;
+			await auctionV3.createAuction(
+				polka721General.address,
+				mockPOLKA.address,
+				1,
+				100,
+				200,
+				1,
+				now + 86400,
+				1,
+				1
+			);
 
-		// 		expect(await polka721General.ownerOf(1)).to.equal(addr.address);
-		// 	});
-		// });
+			await expect(
+				auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 99, 1)
+			).to.be.revertedWith('price-lower-than-start-price');
+			await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
+			await auctionV3.connect(refer).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 250, 1);
+			await auctionV3.connect(addr).editBidAuction(0, 300);
 
-		// it('After Auction 721 Winner ETH', async () => {
-		// 	await auctionV3.createAuction(
-		// 		polka721General.address,
-		// 		ZERO_ADDRESS,
-		// 		1,
-		// 		100,
-		// 		200,
-		// 		1,
-		// 		Math.ceil(new Date().getTime() / 1000) + 20,
-		// 		1,
-		// 		1
-		// 	);
+			await network.provider.send('evm_increaseTime', [90000]);
+			await network.provider.send('evm_mine');
+			await expect(auctionV3.connect(addr).claimWinnerAuction(2)).to.not.be.reverted;
+			await expect(auctionV3.acceptBidAuction(2)).to.not.be.reverted;
 
-		// 	await expect(
-		// 		auctionV3.connect(addr).bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 99, 1, { value: 99 })
-		// 	).to.be.revertedWith('price-lower-than-start-price');
-		// 	await auctionV3
-		// 		.connect(addr)
-		// 		.bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 100 });
-		// 	await auctionV3
-		// 		.connect(refer)
-		// 		.bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 250, 1, { value: 250 });
-		// 	await auctionV3.connect(addr).editBidAuction(0, 300, { value: 200 });
-		// 	return new Promise((resolve) => {
-		// 		setTimeout(() => {
-		// 			resolve();
-		// 		}, 11000);
-		// 	}).then(async () => {
-		// 		await expect(auctionV3.connect(addr).claimWinnerAuction(2)).to.not.be.reverted;
-		// 		await expect(auctionV3.acceptBidAuction(2)).to.not.be.reverted;
+			expect(await polka721General.ownerOf(1)).to.equal(addr.address);
+		});
 
-		// 		expect(await polka721General.ownerOf(1)).to.equal(addr.address);
-		// 	});
-		// });
+		it('After Auction 721 Winner ETH', async () => {
+			const latestBlock = await hre.ethers.provider.getBlock('latest');
+			const now = latestBlock.timestamp;
+			await auctionV3.createAuction(polka721General.address, ZERO_ADDRESS, 1, 100, 200, 1, now + 86400, 1, 1);
+
+			await expect(
+				auctionV3.connect(addr).bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 99, 1, { value: 99 })
+			).to.be.revertedWith('price-lower-than-start-price');
+
+			await auctionV3
+				.connect(addr)
+				.bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 100 });
+			await auctionV3
+				.connect(refer)
+				.bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 250, 1, { value: 250 });
+
+			await auctionV3.connect(addr).editBidAuction(0, 300, { value: 200 });
+
+			await network.provider.send('evm_increaseTime', [90000]);
+			await network.provider.send('evm_mine');
+
+			await expect(auctionV3.connect(addr).claimWinnerAuction(2)).to.not.be.reverted;
+			await expect(auctionV3.acceptBidAuction(2)).to.not.be.reverted;
+
+			expect(await polka721General.ownerOf(1)).to.equal(addr.address);
+		});
 	});
 
 	describe('Auction 1155', () => {
@@ -507,108 +494,71 @@ describe('Unit testing - Auction', function () {
 
 		// After Auction test must run alone
 
-		// it('After Auction 1155 No Winner', async () => {
-		// 	await auctionV3.createAuction(
-		// 		nft150.address,
-		// 		mockPOLKA.address,
-		// 		1,
-		// 		100,
-		// 		200,
-		// 		1,
-		// 		Math.ceil(new Date().getTime() / 1000) + 20,
-		// 		1,
-		// 		1
-		// 	);
+		it('After Auction 1155 No Winner', async () => {
+			const latestBlock = await hre.ethers.provider.getBlock('latest');
+			const now = latestBlock.timestamp;
+			await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, now + 86400, 1, 1);
 
-		// 	await expect(
-		// 		auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 99, 1)
-		// 	).to.be.revertedWith('price-lower-than-start-price');
-		// 	await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
-		// 	await auctionV3.connect(refer).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 150, 1);
-		// 	return new Promise((resolve) => {
-		// 		setTimeout(() => {
-		// 			resolve();
-		// 		}, 15000);
-		// 	}).then(async () => {
-		// 		await expect(auctionV3.connect(addr).claimWinnerAuction(1)).to.be.revertedWith('not-winner');
-		// 		await expect(auctionV3.connect(refer).claimWinnerAuction(1)).to.be.revertedWith(
-		// 			'reserve-price-not-met'
-		// 		);
-		// 		await expect(auctionV3.connect(refer).claimWinnerAuction(0)).to.be.revertedWith('not-highest-bid');
-		// 		await expect(auctionV3.acceptBidAuction(0)).to.be.revertedWith('not-highest-bid');
-		// 		await expect(auctionV3.acceptBidAuction(1)).to.be.revertedWith('reserve-price-not-met');
-		// 		await expect(auctionV3.connect(refer).acceptBidAuction(1)).to.be.revertedWith('Auction-not-owner');
+			await expect(
+				auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 99, 1)
+			).to.be.revertedWith('price-lower-than-start-price');
+			await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
+			await auctionV3.connect(refer).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 150, 1);
 
-		// 		await auctionV3.reclaimAuction(0);
+			await network.provider.send('evm_increaseTime', [90000]);
+			await network.provider.send('evm_mine');
 
-		// 		expect(await nft150.nftOwnVersion(1, 1)).to.equal(owner.address);
-		// 		expect((await nft150.balanceOf(owner.address, 1)).toNumber()).to.equal(437);
-		// 	});
-		// });
+			await expect(auctionV3.connect(addr).claimWinnerAuction(1)).to.be.revertedWith('not-winner');
+			await expect(auctionV3.connect(refer).claimWinnerAuction(1)).to.be.revertedWith('reserve-price-not-met');
+			await expect(auctionV3.connect(refer).claimWinnerAuction(0)).to.be.revertedWith('not-highest-bid');
+			await expect(auctionV3.acceptBidAuction(0)).to.be.revertedWith('not-highest-bid');
+			await expect(auctionV3.acceptBidAuction(1)).to.be.revertedWith('reserve-price-not-met');
+			await expect(auctionV3.connect(refer).acceptBidAuction(1)).to.be.revertedWith('Auction-not-owner');
 
-		// it('After Auction 1155 Winner', async () => {
-		// 	await auctionV3.createAuction(
-		// 		nft150.address,
-		// 		mockPOLKA.address,
-		// 		1,
-		// 		100,
-		// 		200,
-		// 		1,
-		// 		Math.ceil(new Date().getTime() / 1000) + 20,
-		// 		1,
-		// 		1
-		// 	);
+			await auctionV3.reclaimAuction(0, 1);
 
-		// 	await expect(
-		// 		auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 99, 1)
-		// 	).to.be.revertedWith('price-lower-than-start-price');
-		// 	await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
-		// 	await auctionV3.connect(refer).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 250, 1);
-		// 	await auctionV3.connect(addr).editBidAuction(0, 300);
-		// 	return new Promise((resolve) => {
-		// 		setTimeout(() => {
-		// 			resolve();
-		// 		}, 11000);
-		// 	}).then(async () => {
-		// 		await auctionV3.connect(addr).claimWinnerAuction(2);
-		// 		await auctionV3.acceptBidAuction(2);
+			expect(await nft150.nftOwnVersion(1, 1)).to.equal(owner.address);
+			expect((await nft150.balanceOf(owner.address, 1)).toNumber()).to.equal(437);
+		});
 
-		// 		expect(await nft150.nftOwnVersion(1, 1)).to.equal(addr.address);
-		// 		expect((await nft150.balanceOf(addr.address, 1)).toNumber()).to.equal(1);
-		// 	});
-		// });
+		it('After Auction 1155 Winner', async () => {
+			const latestBlock = await hre.ethers.provider.getBlock('latest');
+			const now = latestBlock.timestamp;
+			await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, now + 86400, 1, 1);
 
-		// it('After Auction 1155 Winner ETH', async () => {
-		// 	await auctionV3.createAuction(
-		// 		nft150.address,
-		// 		ZERO_ADDRESS,
-		// 		1,
-		// 		100,
-		// 		200,
-		// 		1,
-		// 		Math.ceil(new Date().getTime() / 1000) + 20,
-		// 		1,
-		// 		1
-		// 	);
+			await expect(
+				auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 99, 1)
+			).to.be.revertedWith('price-lower-than-start-price');
+			await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
+			await auctionV3.connect(refer).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 250, 1);
+			await auctionV3.connect(addr).editBidAuction(0, 300);
+			await network.provider.send('evm_increaseTime', [90000]);
+			await network.provider.send('evm_mine');
+			await auctionV3.connect(addr).claimWinnerAuction(2);
+			await auctionV3.acceptBidAuction(2);
 
-		// 	await expect(
-		// 		auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 99, 1, { value: 99 })
-		// 	).to.be.revertedWith('price-lower-than-start-price');
-		// 	await auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 100 });
-		// 	await auctionV3.connect(refer).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 250, 1, { value: 250 });
-		// 	await auctionV3.connect(addr).editBidAuction(0, 300, { value: 200 });
-		// 	return new Promise((resolve) => {
-		// 		setTimeout(() => {
-		// 			resolve();
-		// 		}, 11000);
-		// 	}).then(async () => {
-		// 		await expect(auctionV3.connect(addr).claimWinnerAuction(2)).to.not.be.reverted;
-		// 		await expect(auctionV3.acceptBidAuction(2)).to.not.be.reverted;
+			expect(await nft150.nftOwnVersion(1, 1)).to.equal(addr.address);
+			expect((await nft150.balanceOf(addr.address, 1)).toNumber()).to.equal(1);
+		});
 
-		// 		expect(await nft150.nftOwnVersion(1, 1)).to.equal(addr.address);
-		// 		expect((await nft150.balanceOf(addr.address, 1)).toNumber()).to.equal(1);
-		// 	});
-		// });
-		// });
+		it('After Auction 1155 Winner ETH', async () => {
+			const latestBlock = await hre.ethers.provider.getBlock('latest');
+			const now = latestBlock.timestamp;
+			await auctionV3.createAuction(nft150.address, ZERO_ADDRESS, 1, 100, 200, 1, now + 86400, 1, 1);
+
+			await expect(
+				auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 99, 1, { value: 99 })
+			).to.be.revertedWith('price-lower-than-start-price');
+			await auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 100 });
+			await auctionV3.connect(refer).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 250, 1, { value: 250 });
+			await auctionV3.connect(addr).editBidAuction(0, 300, { value: 200 });
+			await network.provider.send('evm_increaseTime', [90000]);
+			await network.provider.send('evm_mine');
+			await expect(auctionV3.connect(addr).claimWinnerAuction(2)).to.not.be.reverted;
+			await expect(auctionV3.acceptBidAuction(2)).to.not.be.reverted;
+
+			expect(await nft150.nftOwnVersion(1, 1)).to.equal(addr.address);
+			expect((await nft150.balanceOf(addr.address, 1)).toNumber()).to.equal(1);
+		});
 	});
 });

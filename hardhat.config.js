@@ -37,10 +37,6 @@ module.exports = {
 			blockGasLimit: 0x1fffffffffffff,
 			allowUnlimitedContractSize: true,
 			timeout: 1800000,
-			mining: {
-				auto: true,
-				interval: 1000,
-			},
 		},
 		rinkeby: {
 			url: process.env.PROVIDER_URL,
