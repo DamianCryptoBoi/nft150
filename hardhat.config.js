@@ -7,7 +7,7 @@ require('@nomiclabs/hardhat-etherscan');
 require('hardhat-abi-exporter');
 require('dotenv').config();
 require('hardhat-contract-sizer');
-require('hardhat-gas-reporter');
+// require('hardhat-gas-reporter');
 
 module.exports = {
 	solidity: {

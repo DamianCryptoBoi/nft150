@@ -86,7 +86,7 @@ contract ManagerAuction is Ownable, Pausable {
 		address _paymentToken,
 		uint256 _version
 	);
-	event BidAuctionEdited(uint256 indexed _bidAuctionId, uint256 _price);
+	event BidAuctionEdited(uint256 indexed _bidAuctionId, uint256 indexed _oldBidAuctionId, uint256 _price);
 	event AuctionCanceled(uint256 indexed _auctionId, uint256 indexed _version);
 	event BidAuctionCanceled(uint256 indexed _bidAuctionId);
 	event BidAuctionAccepted(uint256 indexed _bidAuctionId);
@@ -365,6 +365,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		);
 
 		objEditBidAuction.status = false;
+		uint256 oldBidAuctionId = _bidAuctionId;
 
 		bidAuctions[totalBidAuctions] = objEditBidAuction;
 		bidAuctions[totalBidAuctions].status = true;
@@ -375,7 +376,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 
 		totalBidAuctions++;
 
-		emit BidAuctionEdited(_bidAuctionId, _price);
+		emit BidAuctionEdited(_bidAuctionId, oldBidAuctionId, _price);
 
 		return _bidAuctionId;
 	}
