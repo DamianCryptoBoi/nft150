@@ -432,7 +432,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 
 	function reclaimAuction(uint256 _auctionId, uint256 _version) external whenNotPaused {
 		Auction storage currentAuction = auctions[_auctionId];
-		uint256 highestBidId = currentAuction.listBidId.length > 1
+		uint256 highestBidId = currentAuction.listBidId.length > 0
 			? currentAuction.listBidId[currentAuction.listBidId.length - 1]
 			: 0;
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
@@ -457,7 +457,9 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	function acceptBidAuction(uint256 _bidAuctionId) external whenNotPaused {
 		Auction storage currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
-		uint256 highestBidId = currentAuction.listBidId[currentAuction.listBidId.length - 1];
+		uint256 highestBidId = currentAuction.listBidId.length > 0
+			? currentAuction.listBidId[currentAuction.listBidId.length - 1]
+			: 0;
 		require(_bidAuctionId == highestBidId, 'not-highest-bid');
 		require(currentAuction.owner == msg.sender, 'Auction-not-owner');
 		require(bidAuctions[_bidAuctionId].bidPrice >= currentAuction.reservePrice, 'reserve-price-not-met');
@@ -469,7 +471,9 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	function claimWinnerAuction(uint256 _bidAuctionId) external whenNotPaused {
 		Auction storage currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
-		uint256 highestBidId = currentAuction.listBidId[currentAuction.listBidId.length - 1];
+		uint256 highestBidId = currentAuction.listBidId.length > 0
+			? currentAuction.listBidId[currentAuction.listBidId.length - 1]
+			: 0;
 		require(_bidAuctionId == highestBidId, 'not-highest-bid');
 		require(msg.sender == bidAuctions[highestBidId].bidder, 'not-winner'); // make sure the sender is the winner
 		require(bidAuctions[_bidAuctionId].bidPrice >= currentAuction.reservePrice, 'reserve-price-not-met');
