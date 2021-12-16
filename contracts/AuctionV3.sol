@@ -162,12 +162,13 @@ contract ManagerAuction is Ownable, Pausable {
 		uint256 nftXUserFee = IPOLKANFT(bidAuction.tokenAddress).getXUserFee(bidAuction.tokenId);
 		address _paymentToken = bidAuctions[_bidAuctionId].paymentToken;
 		uint256 _bidPrice = bidAuctions[_bidAuctionId].bidPrice;
+		uint256 _totalEarnings = _bidPrice * ZOOM_FEE / (ZOOM_FEE +  loyaltyFee + nftXUserFee);
 
 		if (creator != address(0)) {
-			_paid(_paymentToken, creator, _bidPrice.mul(loyaltyFee).div(ZOOM_FEE));
+			_paid(_paymentToken, creator, _totalEarnings * loyaltyFee / ZOOM_FEE);
 		}
 
-		_paid(_paymentToken, aut.owner, _bidPrice - _bidPrice.mul(loyaltyFee + nftXUserFee).div(ZOOM_FEE));
+		_paid(_paymentToken, aut.owner, _totalEarnings);
 	}
 
 	function _transferBidAuction(uint256 _bidAuctionId) internal {
