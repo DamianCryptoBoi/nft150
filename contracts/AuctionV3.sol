@@ -464,11 +464,11 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		emit AuctionReclaimed(_auctionId, _version);
 	}
 
-	function acceptBidAuction(uint256 _bidAuctionId, uint256 _version) external whenNotPaused {
+	function acceptBidAuction(uint256 _bidAuctionId) external whenNotPaused {
 		BidAuction memory currentBid = bidAuctions[_bidAuctionId];
 		Auction storage currentAuction = auctions[currentBid.auctionId];
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
-		uint256 highestBidId = versionHighestBidId[currentBid.auctionId][_version];
+		uint256 highestBidId = versionHighestBidId[currentBid.auctionId][currentBid.version];
 		require(_bidAuctionId == highestBidId, 'not-highest-bid');
 		require(currentAuction.owner == msg.sender, 'Auction-not-owner');
 		require(currentBid.bidPrice >= currentAuction.reservePrice, 'reserve-price-not-met');
@@ -477,11 +477,11 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		emit BidAuctionAccepted(_bidAuctionId);
 	}
 
-	function claimWinnerAuction(uint256 _bidAuctionId, uint256 _version) external whenNotPaused {
+	function claimWinnerAuction(uint256 _bidAuctionId) external whenNotPaused {
 		BidAuction memory currentBid = bidAuctions[_bidAuctionId];
 		Auction storage currentAuction = auctions[currentBid.auctionId];
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
-		uint256 highestBidId = versionHighestBidId[currentBid.auctionId][_version];
+		uint256 highestBidId = versionHighestBidId[currentBid.auctionId][currentBid.version];
 		require(_bidAuctionId == highestBidId, 'not-highest-bid');
 		require(msg.sender == bidAuctions[highestBidId].bidder, 'not-winner'); // make sure the sender is the winner
 		require(currentBid.bidPrice >= currentAuction.reservePrice, 'reserve-price-not-met');
