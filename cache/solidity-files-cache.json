@@ -954,7 +954,7 @@
       ]
     },
     "/home/sotatek/projects/3nft-smartcontract/contracts/token/ERC1155Tradeble.sol": {
-      "lastModificationDate": 1638812995452,
+      "lastModificationDate": 1639640758584,
       "contentHash": "8b9dcf3054ddbd5eef81dc2286def909",
       "sourceName": "contracts/token/ERC1155Tradeble.sol",
       "solcConfig": {
@@ -3401,8 +3401,8 @@
       ]
     },
     "/home/sotatek/projects/3nft-smartcontract/contracts/\bAuctionV3.sol": {
-      "lastModificationDate": 1639540258433,
-      "contentHash": "759fac41808da2cdcf8fe37ce2389714",
+      "lastModificationDate": 1639720937282,
+      "contentHash": "5bcb1a2a1395427cf4c12754e9dd907a",
       "sourceName": "contracts/\bAuctionV3.sol",
       "solcConfig": {
         "version": "0.8.6",
