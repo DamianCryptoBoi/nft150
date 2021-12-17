@@ -424,10 +424,14 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		require(currentBid.status, 'Bid-closed');
 		require(msg.sender == currentBid.bidder, 'Not-owner-bid-auction');
 
-		require(
-			bidAuctions[versionHighestBidId[currentBid.auctionId][currentBid.version]].bidPrice > currentBid.bidPrice,
-			'price-bid-less-than-max-price'
-		); // the last bid price > this bid price
+		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
+
+		if (bidAuctions[_bidAuctionId].bidPrice >= currentAuction.reservePrice) {
+			require(
+				bidAuctions[versionHighestBidId[currentBid.auctionId][currentBid.version]].bidPrice > currentBid.bidPrice,
+				'price-bid-less-than-max-price'
+			); // the last bid price > this bid price
+		}
 
 		userJoinAuction[currentBid.auctionId][currentBid.version][msg.sender] = false;
 
