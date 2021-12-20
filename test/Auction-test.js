@@ -327,6 +327,29 @@ describe('Unit testing - Auction', function () {
 
 			expect(await polka721General.ownerOf(1)).to.equal(addr.address);
 		});
+
+		it('After Auction 721 No Bid', async () => {
+			const latestBlock = await hre.ethers.provider.getBlock('latest');
+			const now = latestBlock.timestamp;
+			await auctionV3.createAuction(
+				polka721General.address,
+				mockPOLKA.address,
+				1,
+				100,
+				200,
+				1,
+				now + 86400,
+				1,
+				1
+			);
+
+			await network.provider.send('evm_increaseTime', [90000]);
+			await network.provider.send('evm_mine');
+
+			await auctionV3.reclaimAuction(0, 1);
+
+			expect(await polka721General.ownerOf(1)).to.equal(owner.address);
+		});
 	});
 
 	describe('Auction 1155', () => {
@@ -570,6 +593,21 @@ describe('Unit testing - Auction', function () {
 
 			expect(await nft150.nftOwnVersion(1, 1)).to.equal(addr.address);
 			expect((await nft150.balanceOf(addr.address, 1)).toNumber()).to.equal(1);
+		});
+
+		it('After Auction 1155 No Bid', async () => {
+			const latestBlock = await hre.ethers.provider.getBlock('latest');
+			const now = latestBlock.timestamp;
+			await auctionV3.createAuction(nft150.address, mockPOLKA.address, 1, 100, 200, 1, now + 86400, 1, 1);
+
+			expect((await nft150.balanceOf(owner.address, 1)).toNumber()).to.equal(436);
+
+			await network.provider.send('evm_increaseTime', [90000]);
+			await network.provider.send('evm_mine');
+
+			await auctionV3.reclaimAuction(0, 1);
+
+			expect((await nft150.balanceOf(owner.address, 1)).toNumber()).to.equal(437);
 		});
 	});
 });

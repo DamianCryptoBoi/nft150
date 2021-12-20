@@ -190,10 +190,9 @@ contract ManagerAuction is Ownable, Pausable {
 		);
 	}
 
-	function _returnBidAuction(uint256 _bidAuctionId, uint256 _version) internal {
-		BidAuction memory bidAuction = bidAuctions[_bidAuctionId];
-		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
-		versionOnAuction[bidAuction.tokenAddress][bidAuction.tokenId][bidAuction.version] = false;
+	function _returnBidAuction(uint256 _auctionId, uint256 _version) internal {
+		Auction memory currentAuction = auctions[_auctionId];
+		versionOnAuction[currentAuction.tokenAddress][currentAuction.tokenId][_version] = false;
 		bool isERC721 = IERC721(currentAuction.tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
 		_transferAfterAuction(
 			currentAuction.tokenAddress,
@@ -428,7 +427,8 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 
 		if (bidAuctions[_bidAuctionId].bidPrice >= currentAuction.reservePrice) {
 			require(
-				bidAuctions[versionHighestBidId[currentBid.auctionId][currentBid.version]].bidPrice > currentBid.bidPrice,
+				bidAuctions[versionHighestBidId[currentBid.auctionId][currentBid.version]].bidPrice >
+					currentBid.bidPrice,
 				'price-bid-less-than-max-price'
 			); // the last bid price > this bid price
 		}
@@ -448,8 +448,9 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	}
 
 	function reclaimAuction(uint256 _auctionId, uint256 _version) external whenNotPaused {
-		Auction storage currentAuction = auctions[_auctionId];
+		Auction memory currentAuction = auctions[_auctionId];
 		uint256 highestBidId = versionHighestBidId[_auctionId][_version];
+
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
 		require(currentAuction.owner == msg.sender, 'Auction-not-owner');
 		require(
@@ -463,14 +464,14 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 			'invalid-version'
 		);
 
-		_returnBidAuction(highestBidId, _version);
+		_returnBidAuction(_auctionId, _version);
 
 		emit AuctionReclaimed(_auctionId, _version);
 	}
 
 	function acceptBidAuction(uint256 _bidAuctionId) external whenNotPaused {
 		BidAuction memory currentBid = bidAuctions[_bidAuctionId];
-		Auction storage currentAuction = auctions[currentBid.auctionId];
+		Auction memory currentAuction = auctions[currentBid.auctionId];
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
 		uint256 highestBidId = versionHighestBidId[currentBid.auctionId][currentBid.version];
 		require(_bidAuctionId == highestBidId, 'not-highest-bid');
@@ -483,7 +484,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 
 	function claimWinnerAuction(uint256 _bidAuctionId) external whenNotPaused {
 		BidAuction memory currentBid = bidAuctions[_bidAuctionId];
-		Auction storage currentAuction = auctions[currentBid.auctionId];
+		Auction memory currentAuction = auctions[currentBid.auctionId];
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
 		uint256 highestBidId = versionHighestBidId[currentBid.auctionId][currentBid.version];
 		require(_bidAuctionId == highestBidId, 'not-highest-bid');
