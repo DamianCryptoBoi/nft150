@@ -58,6 +58,8 @@ contract ManagerAuction is Ownable, Pausable {
 		uint256 auctionId;
 		uint256 bidPrice;
 		bool status;
+		bool isOwnerAccepted;
+		bool isBiderClaimed;
 		uint256 version;
 	}
 
@@ -177,7 +179,6 @@ contract ManagerAuction is Ownable, Pausable {
 
 	function _transferBidAuction(uint256 _bidAuctionId) internal {
 		BidAuction storage bidAuction = bidAuctions[_bidAuctionId];
-		bidAuction.status = false;
 		versionOnAuction[bidAuction.tokenAddress][bidAuction.tokenId][bidAuction.version] = false;
 
 		bool isERC721 = IERC721(bidAuction.tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
@@ -286,19 +287,19 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		uint256 _price,
 		uint256 _version
 	) external payable whenNotPaused returns (uint256 _bidAuctionId) {
-		require(auctions[_auctionId].paymentToken == _paymentToken, 'incorrect-payment-method');
-		require(auctions[_auctionId].owner != msg.sender, 'owner-can-not-bid');
-		require(_price >= auctions[_auctionId].startPrice, 'price-lower-than-start-price');
+		require(auctions[_auctionId].paymentToken == _paymentToken, 'Incorrect-payment-method');
+		require(auctions[_auctionId].owner != msg.sender, 'Owner-can-not-bid');
+		require(_price >= auctions[_auctionId].startPrice, 'Price-lower-than-start-price');
 		Auction storage currentAuction = auctions[_auctionId];
-		require(versionOnAuction[_tokenAddress][_tokenId][_version], 'version-cancelled');
-		require(block.timestamp >= currentAuction.startTime, 'not-in-time-auction');
-		require(block.timestamp <= currentAuction.endTime, 'not-in-time-auction');
-		require(!userJoinAuction[_auctionId][_version][msg.sender], 'user-joined-auction');
+		require(versionOnAuction[_tokenAddress][_tokenId][_version], 'Version-cancelled');
+		require(block.timestamp >= currentAuction.startTime, 'Not-in-time-auction');
+		require(block.timestamp <= currentAuction.endTime, 'Not-in-time-auction');
+		require(!userJoinAuction[_auctionId][_version][msg.sender], 'User-joined-auction');
 
 		require(
 			versionBidCount[_auctionId][_version] == 0 ||
 				_price > bidAuctions[versionHighestBidId[_auctionId][_version]].bidPrice,
-			'price-bid-less-than-max-price'
+			'Price-bid-less-than-max-price'
 		);
 
 		versionBidCount[_auctionId][_version] += 1;
@@ -313,6 +314,8 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		newBidAuction.tokenAddress = _tokenAddress;
 		newBidAuction.version = _version;
 		newBidAuction.status = true;
+		newBidAuction.isOwnerAccepted = false;
+		newBidAuction.isBiderClaimed = false;
 
 		if (msg.value > 0) {
 			require(msg.value >= _price, 'Invalid-amount');
@@ -345,15 +348,15 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		BidAuction storage objEditBidAuction = bidAuctions[_bidAuctionId];
 		Auction storage currentAuction = auctions[objEditBidAuction.auctionId];
 		require(msg.sender == objEditBidAuction.bidder, 'Not-owner-bid-auction');
-		require(block.timestamp >= currentAuction.startTime, 'not-in-time-auction');
-		require(block.timestamp <= currentAuction.endTime, 'not-in-time-auction');
-		require(objEditBidAuction.status, 'bid-cancelled');
+		require(block.timestamp >= currentAuction.startTime, 'Not-in-time-auction');
+		require(block.timestamp <= currentAuction.endTime, 'Not-in-time-auction');
+		require(objEditBidAuction.status, 'Bid-cancelled');
 
-		require(versionBidCount[objEditBidAuction.auctionId][objEditBidAuction.version] > 0, 'invalid-bid');
+		require(versionBidCount[objEditBidAuction.auctionId][objEditBidAuction.version] > 0, 'Invalid-bid');
 
 		require(
 			versionOnAuction[objEditBidAuction.tokenAddress][objEditBidAuction.tokenId][objEditBidAuction.version],
-			'version-cancelled'
+			'Version-cancelled'
 		);
 		require(
 			_price > bidAuctions[versionHighestBidId[objEditBidAuction.auctionId][objEditBidAuction.version]].bidPrice,
@@ -397,17 +400,17 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	}
 
 	function cancelAuction(uint256 _auctionId, uint256 _version) external whenNotPaused returns (uint256) {
-		require(block.timestamp < auctions[_auctionId].startTime, 'auction-started');
+		require(block.timestamp < auctions[_auctionId].startTime, 'Auction-started');
 
 		require(auctions[_auctionId].owner == msg.sender, 'Auction-not-owner');
 
 		bool isERC721 = IERC721(auctions[_auctionId].tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
 		Auction storage currentAuction = auctions[_auctionId];
-		require(versionOnAuction[currentAuction.tokenAddress][currentAuction.tokenId][_version], 'version-cancelled');
+		require(versionOnAuction[currentAuction.tokenAddress][currentAuction.tokenId][_version], 'Version-cancelled');
 
 		require(
 			currentAuction.toVersion >= _version && _version >= currentAuction.fromVersion && _version >= 1,
-			'invalid-version'
+			'Invalid-version'
 		);
 		versionOnAuction[currentAuction.tokenAddress][currentAuction.tokenId][_version] = false;
 
@@ -429,7 +432,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 			require(
 				bidAuctions[versionHighestBidId[currentBid.auctionId][currentBid.version]].bidPrice >
 					currentBid.bidPrice,
-				'price-bid-less-than-max-price'
+				'Price-bid-less-than-max-price'
 			); // the last bid price > this bid price
 		}
 
@@ -455,13 +458,13 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		require(currentAuction.owner == msg.sender, 'Auction-not-owner');
 		require(
 			bidAuctions[highestBidId].bidPrice < currentAuction.reservePrice,
-			'bid-price-greater-than-reserve-price'
+			'Bid-price-greater-than-reserve-price'
 		);
-		require(versionOnAuction[currentAuction.tokenAddress][currentAuction.tokenId][_version], 'version-cancelled');
+		require(versionOnAuction[currentAuction.tokenAddress][currentAuction.tokenId][_version], 'Version-cancelled');
 
 		require(
 			currentAuction.toVersion >= _version && _version >= currentAuction.fromVersion && _version >= 1,
-			'invalid-version'
+			'Invalid-version'
 		);
 
 		_returnBidAuction(_auctionId, _version);
@@ -470,27 +473,37 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	}
 
 	function acceptBidAuction(uint256 _bidAuctionId) external whenNotPaused {
-		BidAuction memory currentBid = bidAuctions[_bidAuctionId];
+		BidAuction storage currentBid = bidAuctions[_bidAuctionId];
 		Auction memory currentAuction = auctions[currentBid.auctionId];
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
 		uint256 highestBidId = versionHighestBidId[currentBid.auctionId][currentBid.version];
-		require(_bidAuctionId == highestBidId, 'not-highest-bid');
+		require(_bidAuctionId == highestBidId, 'Not-highest-bid');
 		require(currentAuction.owner == msg.sender, 'Auction-not-owner');
-		require(currentBid.bidPrice >= currentAuction.reservePrice, 'reserve-price-not-met');
+		require(currentBid.bidPrice >= currentAuction.reservePrice, 'Reserve-price-not-met');
+		require(currentBid.status, 'Bid-cancelled');
+		require(!currentBid.isOwnerAccepted, 'Bid-accepted');
+
 		_payBidAuction(_bidAuctionId);
+
+		currentBid.isOwnerAccepted = true;
 
 		emit BidAuctionAccepted(_bidAuctionId);
 	}
 
 	function claimWinnerAuction(uint256 _bidAuctionId) external whenNotPaused {
-		BidAuction memory currentBid = bidAuctions[_bidAuctionId];
+		BidAuction storage currentBid = bidAuctions[_bidAuctionId];
 		Auction memory currentAuction = auctions[currentBid.auctionId];
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
 		uint256 highestBidId = versionHighestBidId[currentBid.auctionId][currentBid.version];
-		require(_bidAuctionId == highestBidId, 'not-highest-bid');
-		require(msg.sender == bidAuctions[highestBidId].bidder, 'not-winner'); // make sure the sender is the winner
-		require(currentBid.bidPrice >= currentAuction.reservePrice, 'reserve-price-not-met');
+		require(_bidAuctionId == highestBidId, 'Not-highest-bid');
+		require(msg.sender == bidAuctions[highestBidId].bidder, 'Not-winner'); // make sure the sender is the winner
+		require(currentBid.bidPrice >= currentAuction.reservePrice, 'Reserve-price-not-met');
+		require(currentBid.status, 'Bid-cancelled');
+		require(!currentBid.isBiderClaimed, 'Bid-claimed');
+
 		_transferBidAuction(_bidAuctionId);
+
+		currentBid.isBiderClaimed = true;
 
 		emit BidAuctionClaimed(_bidAuctionId);
 	}

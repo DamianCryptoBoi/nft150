@@ -162,19 +162,19 @@ describe('Unit testing - Auction', function () {
 
 			await expect(
 				auctionV3.connect(addr).bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 100, 1)
-			).to.be.revertedWith('incorrect-payment-method');
+			).to.be.revertedWith('Incorrect-payment-method');
 
 			await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
 			const [bidder] = await auctionV3.bidAuctions(0);
 			expect(bidder).to.equal(addr.address);
 			expect(
 				auctionV3.connect(refer).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 10, 1)
-			).to.be.revertedWith('price-lower-than-start-price');
+			).to.be.revertedWith('Price-lower-than-start-price');
 			expect(
 				auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 200, 1)
-			).to.be.revertedWith('user-joined-auction');
+			).to.be.revertedWith('User-joined-auction');
 			expect(auctionV3.bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 200, 1)).to.be.revertedWith(
-				'owner-can-not-bid'
+				'Owner-can-not-bid'
 			);
 		});
 
@@ -194,7 +194,7 @@ describe('Unit testing - Auction', function () {
 
 			expect(
 				auctionV3.connect(refer).bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 10, 1, { value: 10 })
-			).to.be.revertedWith('price-lower-than-start-price');
+			).to.be.revertedWith('Price-lower-than-start-price');
 		});
 
 		it('Edit Bid 721', async function () {
@@ -252,18 +252,18 @@ describe('Unit testing - Auction', function () {
 
 			await expect(
 				auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 99, 1)
-			).to.be.revertedWith('price-lower-than-start-price');
+			).to.be.revertedWith('Price-lower-than-start-price');
 			await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
 			await auctionV3.connect(refer).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 150, 1);
 
 			await network.provider.send('evm_increaseTime', [90000]);
 			await network.provider.send('evm_mine');
 
-			await expect(auctionV3.connect(addr).claimWinnerAuction(1)).to.be.revertedWith('not-winner');
-			await expect(auctionV3.connect(refer).claimWinnerAuction(1)).to.be.revertedWith('reserve-price-not-met');
-			await expect(auctionV3.connect(refer).claimWinnerAuction(0)).to.be.revertedWith('not-highest-bid');
-			await expect(auctionV3.acceptBidAuction(0)).to.be.revertedWith('not-highest-bid');
-			await expect(auctionV3.acceptBidAuction(1)).to.be.revertedWith('reserve-price-not-met');
+			await expect(auctionV3.connect(addr).claimWinnerAuction(1)).to.be.revertedWith('Not-winner');
+			await expect(auctionV3.connect(refer).claimWinnerAuction(1)).to.be.revertedWith('Reserve-price-not-met');
+			await expect(auctionV3.connect(refer).claimWinnerAuction(0)).to.be.revertedWith('Not-highest-bid');
+			await expect(auctionV3.acceptBidAuction(0)).to.be.revertedWith('Not-highest-bid');
+			await expect(auctionV3.acceptBidAuction(1)).to.be.revertedWith('Reserve-price-not-met');
 			await expect(auctionV3.connect(refer).acceptBidAuction(1)).to.be.revertedWith('Auction-not-owner');
 
 			await auctionV3.reclaimAuction(0, 1);
@@ -288,13 +288,14 @@ describe('Unit testing - Auction', function () {
 
 			await expect(
 				auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 99, 1)
-			).to.be.revertedWith('price-lower-than-start-price');
+			).to.be.revertedWith('Price-lower-than-start-price');
 			await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
 			await auctionV3.connect(refer).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 250, 1);
-			await auctionV3.connect(addr).editBidAuction(0, 300);
 
+			await auctionV3.connect(addr).editBidAuction(0, 300);	
 			await network.provider.send('evm_increaseTime', [90000]);
 			await network.provider.send('evm_mine');
+
 			await expect(auctionV3.connect(addr).claimWinnerAuction(2)).to.not.be.reverted;
 			await expect(auctionV3.acceptBidAuction(2)).to.not.be.reverted;
 
@@ -308,7 +309,7 @@ describe('Unit testing - Auction', function () {
 
 			await expect(
 				auctionV3.connect(addr).bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 99, 1, { value: 99 })
-			).to.be.revertedWith('price-lower-than-start-price');
+			).to.be.revertedWith('Price-lower-than-start-price');
 
 			await auctionV3
 				.connect(addr)
@@ -350,6 +351,31 @@ describe('Unit testing - Auction', function () {
 
 			expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 		});
+
+
+		it('After Auction 721 No Winner - no bid', async () => {
+			const latestBlock = await hre.ethers.provider.getBlock('latest');
+			const now = latestBlock.timestamp;
+			await auctionV3.createAuction(
+				polka721General.address,
+				mockPOLKA.address,
+				1,
+				100,
+				200,
+				1,
+				now + 86400,
+				1,
+				1
+			);
+
+			await network.provider.send('evm_increaseTime', [90000]);
+			await network.provider.send('evm_mine');
+
+			await auctionV3.reclaimAuction(0, 1);
+
+			expect(await polka721General.ownerOf(1)).to.equal(owner.address);
+		});
+
 	});
 
 	describe('Auction 1155', () => {
@@ -444,14 +470,14 @@ describe('Unit testing - Auction', function () {
 
 			await expect(
 				auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 100, 1)
-			).to.be.revertedWith('incorrect-payment-method');
+			).to.be.revertedWith('Incorrect-payment-method');
 
 			await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
 			const [bidder] = await auctionV3.bidAuctions(0);
 			expect(bidder).to.equal(addr.address);
 			await expect(
 				auctionV3.connect(refer).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 10, 1)
-			).to.be.revertedWith('price-lower-than-start-price');
+			).to.be.revertedWith('Price-lower-than-start-price');
 
 			// await expect(auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 2)).not.to.be
 			// 	.reverted;
@@ -460,9 +486,9 @@ describe('Unit testing - Auction', function () {
 
 			await expect(
 				auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 200, 1)
-			).to.be.revertedWith('user-joined-auction');
+			).to.be.revertedWith('User-joined-auction');
 			await expect(auctionV3.bidAuction(nft150.address, mockPOLKA.address, 1, 0, 200, 1)).to.be.revertedWith(
-				'owner-can-not-bid'
+				'Owner-can-not-bid'
 			);
 		});
 
@@ -480,7 +506,7 @@ describe('Unit testing - Auction', function () {
 
 			expect(
 				auctionV3.connect(refer).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 10, 1, { value: 10 })
-			).to.be.revertedWith('price-lower-than-start-price');
+			).to.be.revertedWith('Price-lower-than-start-price');
 		});
 
 		it('Edit Bid 1155', async function () {
@@ -529,19 +555,19 @@ describe('Unit testing - Auction', function () {
 
 			await expect(
 				auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 99, 1)
-			).to.be.revertedWith('price-lower-than-start-price');
+			).to.be.revertedWith('Price-lower-than-start-price');
 			await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
 			await auctionV3.connect(refer).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 150, 1);
 
 			await network.provider.send('evm_increaseTime', [90000]);
 			await network.provider.send('evm_mine');
 
-			await expect(auctionV3.connect(addr).claimWinnerAuction(1)).to.be.revertedWith('not-winner');
-			await expect(auctionV3.connect(refer).claimWinnerAuction(1)).to.be.revertedWith('reserve-price-not-met');
-			await expect(auctionV3.connect(refer).claimWinnerAuction(0)).to.be.revertedWith('not-highest-bid');
+			await expect(auctionV3.connect(addr).claimWinnerAuction(1)).to.be.revertedWith('Not-winner');
+			await expect(auctionV3.connect(refer).claimWinnerAuction(1)).to.be.revertedWith('Reserve-price-not-met');
+			await expect(auctionV3.connect(refer).claimWinnerAuction(0)).to.be.revertedWith('Not-highest-bid');
 
-			await expect(auctionV3.acceptBidAuction(0)).to.be.revertedWith('not-highest-bid');
-			await expect(auctionV3.acceptBidAuction(1)).to.be.revertedWith('reserve-price-not-met');
+			await expect(auctionV3.acceptBidAuction(0)).to.be.revertedWith('Not-highest-bid');
+			await expect(auctionV3.acceptBidAuction(1)).to.be.revertedWith('Reserve-price-not-met');
 			await expect(auctionV3.connect(refer).acceptBidAuction(1)).to.be.revertedWith('Auction-not-owner');
 
 			await auctionV3.reclaimAuction(0, 1);
@@ -557,7 +583,7 @@ describe('Unit testing - Auction', function () {
 
 			await expect(
 				auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 99, 1)
-			).to.be.revertedWith('price-lower-than-start-price');
+			).to.be.revertedWith('Price-lower-than-start-price');
 			await auctionV3.connect(addr).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 100, 1);
 			await auctionV3.connect(refer).bidAuction(nft150.address, mockPOLKA.address, 1, 0, 250, 1);
 			await auctionV3.connect(addr).editBidAuction(0, 300);
@@ -582,7 +608,7 @@ describe('Unit testing - Auction', function () {
 
 			await expect(
 				auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 99, 1, { value: 99 })
-			).to.be.revertedWith('price-lower-than-start-price');
+			).to.be.revertedWith('Price-lower-than-start-price');
 			await auctionV3.connect(addr).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 100, 1, { value: 100 });
 			await auctionV3.connect(refer).bidAuction(nft150.address, ZERO_ADDRESS, 1, 0, 250, 1, { value: 250 });
 			await auctionV3.connect(addr).editBidAuction(0, 300, { value: 200 });
@@ -609,5 +635,7 @@ describe('Unit testing - Auction', function () {
 
 			expect((await nft150.balanceOf(owner.address, 1)).toNumber()).to.equal(437);
 		});
+
+
 	});
 });
