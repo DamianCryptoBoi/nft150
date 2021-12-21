@@ -3401,8 +3401,8 @@
       ]
     },
     "/home/sotatek/projects/3nft-smartcontract/contracts/\bAuctionV3.sol": {
-      "lastModificationDate": 1639974304850,
-      "contentHash": "845ae03b388025b6c1494e4abdb0d4f7",
+      "lastModificationDate": 1640090151667,
+      "contentHash": "7d2a4d3c729047b6dc2b4d57736b2e14",
       "sourceName": "contracts/\bAuctionV3.sol",
       "solcConfig": {
         "version": "0.8.6",

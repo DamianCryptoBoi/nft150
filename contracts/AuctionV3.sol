@@ -437,6 +437,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		}
 
 		userJoinAuction[currentBid.auctionId][currentBid.version][msg.sender] = false;
+		adminHoldPayment[currentBid.paymentToken] -= currentBid.bidPrice;
 
 		currentBid.status = false;
 		if (currentBid.paymentToken == address(0)) {
@@ -457,7 +458,8 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
 		require(currentAuction.owner == msg.sender, 'Auction-not-owner');
 		require(
-			bidAuctions[highestBidId].bidPrice < currentAuction.reservePrice,
+			versionBidCount[_auctionId][_version] == 0 ||
+				bidAuctions[highestBidId].bidPrice < currentAuction.reservePrice,
 			'Bid-price-greater-than-reserve-price'
 		);
 		require(versionOnAuction[currentAuction.tokenAddress][currentAuction.tokenId][_version], 'Version-cancelled');
@@ -485,6 +487,7 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 
 		_payBidAuction(_bidAuctionId);
 
+		adminHoldPayment[currentBid.paymentToken] -= currentBid.bidPrice;
 		currentBid.isOwnerAccepted = true;
 
 		emit BidAuctionAccepted(_bidAuctionId);

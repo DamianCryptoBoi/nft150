@@ -292,7 +292,7 @@ describe('Unit testing - Auction', function () {
 			await auctionV3.connect(addr).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 100, 1);
 			await auctionV3.connect(refer).bidAuction(polka721General.address, mockPOLKA.address, 1, 0, 250, 1);
 
-			await auctionV3.connect(addr).editBidAuction(0, 300);	
+			await auctionV3.connect(addr).editBidAuction(0, 300);
 			await network.provider.send('evm_increaseTime', [90000]);
 			await network.provider.send('evm_mine');
 
@@ -329,30 +329,6 @@ describe('Unit testing - Auction', function () {
 			expect(await polka721General.ownerOf(1)).to.equal(addr.address);
 		});
 
-		it('After Auction 721 No Bid', async () => {
-			const latestBlock = await hre.ethers.provider.getBlock('latest');
-			const now = latestBlock.timestamp;
-			await auctionV3.createAuction(
-				polka721General.address,
-				mockPOLKA.address,
-				1,
-				100,
-				200,
-				1,
-				now + 86400,
-				1,
-				1
-			);
-
-			await network.provider.send('evm_increaseTime', [90000]);
-			await network.provider.send('evm_mine');
-
-			await auctionV3.reclaimAuction(0, 1);
-
-			expect(await polka721General.ownerOf(1)).to.equal(owner.address);
-		});
-
-
 		it('After Auction 721 No Winner - no bid', async () => {
 			const latestBlock = await hre.ethers.provider.getBlock('latest');
 			const now = latestBlock.timestamp;
@@ -375,7 +351,6 @@ describe('Unit testing - Auction', function () {
 
 			expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 		});
-
 	});
 
 	describe('Auction 1155', () => {
@@ -635,7 +610,5 @@ describe('Unit testing - Auction', function () {
 
 			expect((await nft150.balanceOf(owner.address, 1)).toNumber()).to.equal(437);
 		});
-
-
 	});
 });
