@@ -50,9 +50,11 @@ module.exports = {
 			url: 'https://rpc-mumbai.maticvigil.com',
 			accounts: [`9b1a1461a714724dbf4e8d2345cf5008545e1140f54914a0c1a62eb1bf1c88a0`],
 			gas: 12000000,
-			blockGasLimit: 0x1fffffffffffff,
+			//blockGasLimit: 0x1fffffffffffff,
 			allowUnlimitedContractSize: true,
 			timeout: 1800000,
+			// gasPrice: 10000000000,
+			//gasLimit: 1000000,		
 		},
 		testbnb: {
 			url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
@@ -74,7 +76,10 @@ module.exports = {
 
 	etherscan: {
 		//  apiKey: process.env.ETHERSCAN_APIKEY
-		apiKey: 'UVE477915DMJIFSVTM5V3FI9Z17WUBGE2M',
+		//apiKey: 'UVE477915DMJIFSVTM5V3FI9Z17WUBGE2M', //eth
+		// apiKey: '9E36GDSJK15GYXXN85186T5GDQI32B29MF', //bsc
+		apiKey: '7A5TAKHWI24BHVT5V8CSUDRPVAEM5KUWWP', //polygon
+
 	},
 
 	mocha: {

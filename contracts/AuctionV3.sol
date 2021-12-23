@@ -289,9 +289,13 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 	) external payable whenNotPaused returns (uint256 _bidAuctionId) {
 		require(auctions[_auctionId].paymentToken == _paymentToken, 'Incorrect-payment-method');
 		require(auctions[_auctionId].owner != msg.sender, 'Owner-can-not-bid');
-		require(_price >= auctions[_auctionId].startPrice, 'Price-lower-than-start-price');
-		Auction storage currentAuction = auctions[_auctionId];
+
+		uint256 loyaltyFee = IPOLKANFT(_tokenAddress).getLoyaltyFee(_tokenId);
+		uint256 nftXUserFee = IPOLKANFT(_tokenAddress).getXUserFee(_tokenId);
+		require(_price >= auctions[_auctionId].startPrice * (ZOOM_FEE + loyaltyFee + nftXUserFee) / ZOOM_FEE, 'Price-lower-than-start-price');
 		require(versionOnAuction[_tokenAddress][_tokenId][_version], 'Version-cancelled');
+
+		Auction storage currentAuction = auctions[_auctionId];
 		require(block.timestamp >= currentAuction.startTime, 'Not-in-time-auction');
 		require(block.timestamp <= currentAuction.endTime, 'Not-in-time-auction');
 		require(!userJoinAuction[_auctionId][_version][msg.sender], 'User-joined-auction');
@@ -427,8 +431,10 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		require(msg.sender == currentBid.bidder, 'Not-owner-bid-auction');
 
 		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
+		uint256 loyaltyFee = IPOLKANFT(currentAuction.tokenAddress).getLoyaltyFee(currentAuction.tokenId);	
+		uint256 nftXUserFee = IPOLKANFT(currentAuction.tokenAddress).getXUserFee(currentAuction.tokenId);
 
-		if (bidAuctions[_bidAuctionId].bidPrice >= currentAuction.reservePrice) {
+		if (bidAuctions[_bidAuctionId].bidPrice >= currentAuction.reservePrice * (ZOOM_FEE + loyaltyFee + nftXUserFee) / ZOOM_FEE) {
 			require(
 				bidAuctions[versionHighestBidId[currentBid.auctionId][currentBid.version]].bidPrice >
 					currentBid.bidPrice,
@@ -457,9 +463,12 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
 		require(currentAuction.owner == msg.sender, 'Auction-not-owner');
+
+		uint256 loyaltyFee = IPOLKANFT(currentAuction.tokenAddress).getLoyaltyFee(currentAuction.tokenId);	
+		uint256 nftXUserFee = IPOLKANFT(currentAuction.tokenAddress).getXUserFee(currentAuction.tokenId);
 		require(
 			versionBidCount[_auctionId][_version] == 0 ||
-				bidAuctions[highestBidId].bidPrice < currentAuction.reservePrice,
+			bidAuctions[highestBidId].bidPrice < currentAuction.reservePrice * (ZOOM_FEE + loyaltyFee + nftXUserFee) / ZOOM_FEE,
 			'Bid-price-greater-than-reserve-price'
 		);
 		require(versionOnAuction[currentAuction.tokenAddress][currentAuction.tokenId][_version], 'Version-cancelled');
@@ -481,7 +490,10 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		uint256 highestBidId = versionHighestBidId[currentBid.auctionId][currentBid.version];
 		require(_bidAuctionId == highestBidId, 'Not-highest-bid');
 		require(currentAuction.owner == msg.sender, 'Auction-not-owner');
-		require(currentBid.bidPrice >= currentAuction.reservePrice, 'Reserve-price-not-met');
+
+		uint256 loyaltyFee = IPOLKANFT(currentAuction.tokenAddress).getLoyaltyFee(currentAuction.tokenId);	
+		uint256 nftXUserFee = IPOLKANFT(currentAuction.tokenAddress).getXUserFee(currentAuction.tokenId);
+		require(currentBid.bidPrice >= currentAuction.reservePrice * (ZOOM_FEE + loyaltyFee + nftXUserFee) / ZOOM_FEE, 'Reserve-price-not-met');
 		require(currentBid.status, 'Bid-cancelled');
 		require(!currentBid.isOwnerAccepted, 'Bid-accepted');
 
@@ -500,7 +512,10 @@ contract AuctionV3 is ManagerAuction, ERC1155Holder, ERC721Holder {
 		uint256 highestBidId = versionHighestBidId[currentBid.auctionId][currentBid.version];
 		require(_bidAuctionId == highestBidId, 'Not-highest-bid');
 		require(msg.sender == bidAuctions[highestBidId].bidder, 'Not-winner'); // make sure the sender is the winner
-		require(currentBid.bidPrice >= currentAuction.reservePrice, 'Reserve-price-not-met');
+
+		uint256 loyaltyFee = IPOLKANFT(currentAuction.tokenAddress).getLoyaltyFee(currentAuction.tokenId);	
+		uint256 nftXUserFee = IPOLKANFT(currentAuction.tokenAddress).getXUserFee(currentAuction.tokenId);
+		require(currentBid.bidPrice >= currentAuction.reservePrice * (ZOOM_FEE + loyaltyFee + nftXUserFee) / ZOOM_FEE, 'Reserve-price-not-met');
 		require(currentBid.status, 'Bid-cancelled');
 		require(!currentBid.isBiderClaimed, 'Bid-claimed');
 
