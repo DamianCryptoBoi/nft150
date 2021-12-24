@@ -1,7 +1,7 @@
 const hre = require("hardhat")
 
 const main = async () => {
-      console.log("--- Start update DEV and STG ethereum ---");
+      console.log("--- Start update DEV and STG BSC ---");
       const [admin] = await hre.ethers.getSigners();
 
       const AuctionV3 = await hre.ethers.getContractFactory("AuctionV3");
@@ -9,9 +9,8 @@ const main = async () => {
       await auctionV3.deployed();
       console.log("AUCTION_CONTRACT deployed at: ", auctionV3.address);
 
-      await auctionV3.setPaymentMethod("0xd35d2e839d888d1cDBAdef7dE118b87DfefeD20e", true); // usdt
-      await auctionV3.setPaymentMethod("0x0000000000000000000000000000000000000000", true); //eth
-      await auctionV3.setPaymentMethod("0xbec758b709075141c71e1011b3E5ecea9c3cbc0b", true); //xp
+      await auctionV3.setPaymentMethod("0x4Af96f000b0Df70E99dd06ea6cE759aFCd331cC1", true); // usdt
+      await auctionV3.setPaymentMethod("0x0000000000000000000000000000000000000000", true); // bnb
       console.log("Finish!!!");
 }
 
