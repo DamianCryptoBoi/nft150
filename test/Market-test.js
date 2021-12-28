@@ -419,9 +419,9 @@ describe('Unit testing - Market', function () {
 			//            await marketV3.setApproveForAll(nft150.address, marketV3New.address);  //need for Deploy
 			//            await marketV3.setApproveForAllERC721(polka721General.address, marketV3New.address); //need for Deploy
 
-			await marketV3New.adminMigrateOrders(marketV3.address);
-			await marketV3.adminMigratePushNFT(marketV3New.address);
-			await marketV3New.adminMigrateBids(marketV3.address);
+			await marketV3New.adminMigrateOrders(marketV3.address, 0,2);
+			await marketV3.adminMigratePushNFT(marketV3New.address, 0,2);
+			await marketV3New.adminMigrateBids(marketV3.address, 0,2);
 
 			expect((await marketV3New.totalOrders()).toNumber()).to.equal(3);
 			expect((await marketV3New.totalBids()).toNumber()).to.equal(3);

@@ -30,7 +30,7 @@ module.exports = {
 		],
 	},
 
-	defaultNetwork: 'mumbai',
+	defaultNetwork: 'mumbai4',
 	networks: {
 		hardhat: {
 			gas: 120000000,
@@ -69,8 +69,17 @@ module.exports = {
 		mumbai3: {
 			url: 'https://rpc-mumbai.maticvigil.com',
 			accounts: [`2a7b162564c6ca43e6289d48757bc12261339baa0b7a96271f0e0f99ed52e7a0`], //0x34B7E52B8b590cc1C5896687019dc12843471536
-			gas: 12000000,
-			blockGasLimit: 0x1fffffffffffff,
+			gas: 'auto',
+			//blockGasLimit: 0x1fffffffffffff,
+			allowUnlimitedContractSize: true,
+			timeout: 1800000,		
+			// gasPrice: 30000000000,
+		},
+		mumbai4: {
+			url: 'https://polygon-mumbai.g.alchemy.com/v2/lntlkFVPzednplmSvNl2t51-kVXPpcvb',
+			accounts: [`2a7b162564c6ca43e6289d48757bc12261339baa0b7a96271f0e0f99ed52e7a0`],
+			gas: 'auto',
+			//blockGasLimit: 0x1fffffffffffff,
 			allowUnlimitedContractSize: true,
 			timeout: 1800000,		
 			// gasPrice: 30000000000,
