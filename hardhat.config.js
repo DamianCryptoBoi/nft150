@@ -7,7 +7,7 @@ require('@nomiclabs/hardhat-etherscan');
 require('hardhat-abi-exporter');
 require('dotenv').config();
 require('hardhat-contract-sizer');
-require('hardhat-gas-reporter');
+// require('hardhat-gas-reporter');
 require('@openzeppelin/hardhat-upgrades');
 
 module.exports = {
@@ -31,7 +31,7 @@ module.exports = {
 		],
 	},
 
-	defaultNetwork: 'mumbai4',
+	defaultNetwork: 'hardhat',
 	networks: {
 		hardhat: {
 			gas: 120000000,
@@ -55,7 +55,7 @@ module.exports = {
 			allowUnlimitedContractSize: true,
 			timeout: 1800000,
 			gasPrice: 'auto',
-		 	// gasLimit: 400000000000,		
+			// gasLimit: 400000000000,
 		},
 		mumbai2: {
 			url: 'https://rpc-mumbai.maticvigil.com',
@@ -65,7 +65,7 @@ module.exports = {
 			allowUnlimitedContractSize: true,
 			timeout: 1800000,
 			gasPrice: 30000000000,
-		 	// gasLimit: 400000000000,		
+			// gasLimit: 400000000000,
 		},
 		mumbai3: {
 			url: 'https://rpc-mumbai.maticvigil.com',
@@ -73,7 +73,7 @@ module.exports = {
 			gas: 'auto',
 			//blockGasLimit: 0x1fffffffffffff,
 			allowUnlimitedContractSize: true,
-			timeout: 1800000,		
+			timeout: 1800000,
 			// gasPrice: 30000000000,
 		},
 		mumbai4: {
@@ -82,7 +82,7 @@ module.exports = {
 			gas: 'auto',
 			//blockGasLimit: 0x1fffffffffffff,
 			allowUnlimitedContractSize: true,
-			timeout: 1800000,		
+			timeout: 1800000,
 			// gasPrice: 30000000000,
 		},
 		testbnb: {
@@ -104,11 +104,10 @@ module.exports = {
 	},
 
 	etherscan: {
-		//  apiKey: process.env.ETHERSCAN_APIKEY
+		// apiKey: process.env.ETHERSCAN_APIKEY,
 		// apiKey: 'UVE477915DMJIFSVTM5V3FI9Z17WUBGE2M', //eth
-		//  apiKey: '9E36GDSJK15GYXXN85186T5GDQI32B29MF', //bsc
+		// apiKey: '9E36GDSJK15GYXXN85186T5GDQI32B29MF', //bsc
 		apiKey: '7A5TAKHWI24BHVT5V8CSUDRPVAEM5KUWWP', //polygon
-
 	},
 
 	mocha: {
