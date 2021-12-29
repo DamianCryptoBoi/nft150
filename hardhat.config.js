@@ -31,7 +31,7 @@ module.exports = {
 		],
 	},
 
-	defaultNetwork: 'hardhat',
+	defaultNetwork: 'mumbai4',
 	networks: {
 		hardhat: {
 			gas: 120000000,
@@ -50,10 +50,40 @@ module.exports = {
 		mumbai: {
 			url: 'https://rpc-mumbai.maticvigil.com',
 			accounts: [`9b1a1461a714724dbf4e8d2345cf5008545e1140f54914a0c1a62eb1bf1c88a0`],
-			gas: 12000000,
-			blockGasLimit: 0x1fffffffffffff,
+			gas: 'auto',
+			// blockGasLimit: 'auto',
 			allowUnlimitedContractSize: true,
 			timeout: 1800000,
+			gasPrice: 'auto',
+		 	// gasLimit: 400000000000,		
+		},
+		mumbai2: {
+			url: 'https://rpc-mumbai.maticvigil.com',
+			accounts: [`c5f4ffe418d0ce5a33fdb6444d66484feed262d099f83dd404f9b8f8ac36c016`], //0x9446c056EdF00EdB86CDC8c0319a63971aD15090
+			gas: 'auto',
+			// blockGasLimit: 'auto',
+			allowUnlimitedContractSize: true,
+			timeout: 1800000,
+			gasPrice: 30000000000,
+		 	// gasLimit: 400000000000,		
+		},
+		mumbai3: {
+			url: 'https://rpc-mumbai.maticvigil.com',
+			accounts: [`2a7b162564c6ca43e6289d48757bc12261339baa0b7a96271f0e0f99ed52e7a0`], //0x34B7E52B8b590cc1C5896687019dc12843471536
+			gas: 'auto',
+			//blockGasLimit: 0x1fffffffffffff,
+			allowUnlimitedContractSize: true,
+			timeout: 1800000,		
+			// gasPrice: 30000000000,
+		},
+		mumbai4: {
+			url: 'https://polygon-mumbai.g.alchemy.com/v2/lntlkFVPzednplmSvNl2t51-kVXPpcvb',
+			accounts: [`2a7b162564c6ca43e6289d48757bc12261339baa0b7a96271f0e0f99ed52e7a0`],
+			gas: 'auto',
+			//blockGasLimit: 0x1fffffffffffff,
+			allowUnlimitedContractSize: true,
+			timeout: 1800000,		
+			// gasPrice: 30000000000,
 		},
 		testbnb: {
 			url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
@@ -75,7 +105,10 @@ module.exports = {
 
 	etherscan: {
 		//  apiKey: process.env.ETHERSCAN_APIKEY
-		apiKey: 'UVE477915DMJIFSVTM5V3FI9Z17WUBGE2M',
+		// apiKey: 'UVE477915DMJIFSVTM5V3FI9Z17WUBGE2M', //eth
+		//  apiKey: '9E36GDSJK15GYXXN85186T5GDQI32B29MF', //bsc
+		apiKey: '7A5TAKHWI24BHVT5V8CSUDRPVAEM5KUWWP', //polygon
+
 	},
 
 	mocha: {

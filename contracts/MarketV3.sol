@@ -24,9 +24,9 @@ contract Manager is Ownable, Pausable {
 
 	// FEE
 	//uint256 public xUser = 250; // 2.5%
-	uint256 public xCreator = 1500;
+	// uint256 public xCreator = 1500;
 	uint256 public yRefRate = 5000; // 50%
-	uint256 public zProfitToCreator = 5000; // 10% profit
+	// uint256 public zProfitToCreator = 5000; // 10% profit
 
 	mapping(address => bool) public paymentMethod;
 	mapping(address => bool) public isPOLKANFTs;
@@ -61,21 +61,15 @@ contract Manager is Ownable, Pausable {
 	}
 
 	function setSystemFee(
-		uint256 _xCreator,
-		uint256 _yRefRate,
-		uint256 _zProfitToCreator
+		uint256 _yRefRate
 	) external onlyOwner {
-		_setSystemFee(_xCreator, _yRefRate, _zProfitToCreator);
+		_setSystemFee(_yRefRate);
 	}
 
 	function _setSystemFee(
-		uint256 _xCreator,
-		uint256 _yRefRate,
-		uint256 _zProfitToCreator
+		uint256 _yRefRate
 	) internal {
-		xCreator = _xCreator;
 		yRefRate = _yRefRate;
-		zProfitToCreator = _zProfitToCreator;
 	}
 
 	function addPOLKANFTs(
@@ -363,6 +357,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		Order memory order = orders[_orderId];
 		require(order.owner != address(0), 'Invalid-order-id');
 		require(paymentMethod[_paymentToken], 'Payment-method-does-not-support');
+		require(_paymentToken == order.paymentToken, 'Payment-token-invalid');
 		require(order.isOnsale && order.quantity >= _quantity, 'Not-available-to-buy');
 
 		if (!order.isERC721) {
@@ -375,12 +370,8 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
 		uint256 nftXUserFee = IPOLKANFT(order.tokenAddress).getXUserFee(order.tokenId);
 
-		if (_paymentToken == order.paymentToken) {
-			exactPaymentAmount = orderAmount.mul(ZOOM_FEE + nftXUserFee + loyaltyFee).div(ZOOM_FEE);
-		} else {
-			//Not Cover in version
-		}
-
+		exactPaymentAmount = orderAmount.mul(ZOOM_FEE + nftXUserFee + loyaltyFee).div(ZOOM_FEE);
+		
 		if (_paymentToken == address(0) && msg.value > 0) {
 			require(msg.value >= exactPaymentAmount, 'Payment-value-invalid');
 		} else {
@@ -441,6 +432,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 			require(IERC1155(bid.tokenAddress).nftOnSaleVersion(bid.tokenId, bid.version), 'Version-not-on-sale');
 			require(IERC1155(bid.tokenAddress).nftOwnVersion(bid.tokenId, bid.version) == order.owner, 'Version-not-of-saler');
 		}
+		require(bid.paymentToken == order.paymentToken, 'Payment-token-invalid');
 
 		uint256 orderAmount = bid.bidPrice.mul(_quantity);
 		uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
