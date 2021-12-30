@@ -2013,6 +2013,305 @@
           }
         }
       }
+    },
+    "2a3ad504239db941d09c207cd75d5c11d1dbbc8ca30f0b47ba82677a4b4b1a5b": {
+      "address": "0xd3B03815c31112f055abFAdD73B1C2c0f9ddD7F5",
+      "txHash": "0xed769258f2f9dc9548870557f296901b539227becb898a04d22f846d4e085bf1",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:31"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:82"
+          },
+          {
+            "contract": "PausableUpgradeable",
+            "label": "_paused",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "contract": "PausableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:97"
+          },
+          {
+            "contract": "ERC165Upgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:36"
+          },
+          {
+            "contract": "ERC1155ReceiverUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155ReceiverUpgradeable.sol:27"
+          },
+          {
+            "contract": "ERC1155HolderUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol:40"
+          },
+          {
+            "contract": "ERC721HolderUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol:35"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "referralContract",
+            "type": "t_address",
+            "src": "contracts/AuctionV3.sol:27"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "yRefRate",
+            "type": "t_uint256",
+            "src": "contracts/AuctionV3.sol:32"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "paymentMethod",
+            "type": "t_mapping(t_address,t_bool)",
+            "src": "contracts/AuctionV3.sol:34"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "isPOLKANFTs",
+            "type": "t_mapping(t_address,t_bool)",
+            "src": "contracts/AuctionV3.sol:35"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "totalAuctions",
+            "type": "t_uint256",
+            "src": "contracts/AuctionV3.sol:40"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "totalBidAuctions",
+            "type": "t_uint256",
+            "src": "contracts/AuctionV3.sol:41"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "auctions",
+            "type": "t_mapping(t_uint256,t_struct(Auction)4979_storage)",
+            "src": "contracts/AuctionV3.sol:73"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "bidAuctions",
+            "type": "t_mapping(t_uint256,t_struct(BidAuction)5000_storage)",
+            "src": "contracts/AuctionV3.sol:74"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "adminHoldPayment",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/AuctionV3.sol:77"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "userJoinAuction",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_mapping(t_address,t_bool)))",
+            "src": "contracts/AuctionV3.sol:79"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "versionOnAuction",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_mapping(t_uint256,t_bool)))",
+            "src": "contracts/AuctionV3.sol:81"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "versionHighestBidId",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_uint256))",
+            "src": "contracts/AuctionV3.sol:83"
+          },
+          {
+            "contract": "ManagerAuction",
+            "label": "versionBidCount",
+            "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_uint256))",
+            "src": "contracts/AuctionV3.sol:85"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_uint256,t_struct(Auction)4979_storage)": {
+            "label": "mapping(uint256 => struct ManagerAuction.Auction)"
+          },
+          "t_struct(Auction)4979_storage": {
+            "label": "struct ManagerAuction.Auction",
+            "members": [
+              {
+                "label": "owner",
+                "type": "t_address"
+              },
+              {
+                "label": "tokenAddress",
+                "type": "t_address"
+              },
+              {
+                "label": "paymentToken",
+                "type": "t_address"
+              },
+              {
+                "label": "tokenId",
+                "type": "t_uint256"
+              },
+              {
+                "label": "startPrice",
+                "type": "t_uint256"
+              },
+              {
+                "label": "reservePrice",
+                "type": "t_uint256"
+              },
+              {
+                "label": "startTime",
+                "type": "t_uint256"
+              },
+              {
+                "label": "endTime",
+                "type": "t_uint256"
+              },
+              {
+                "label": "fromVersion",
+                "type": "t_uint256"
+              },
+              {
+                "label": "toVersion",
+                "type": "t_uint256"
+              },
+              {
+                "label": "listBidId",
+                "type": "t_array(t_uint256)dyn_storage"
+              }
+            ]
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_mapping(t_uint256,t_struct(BidAuction)5000_storage)": {
+            "label": "mapping(uint256 => struct ManagerAuction.BidAuction)"
+          },
+          "t_struct(BidAuction)5000_storage": {
+            "label": "struct ManagerAuction.BidAuction",
+            "members": [
+              {
+                "label": "bidder",
+                "type": "t_address"
+              },
+              {
+                "label": "paymentToken",
+                "type": "t_address"
+              },
+              {
+                "label": "tokenAddress",
+                "type": "t_address"
+              },
+              {
+                "label": "tokenId",
+                "type": "t_uint256"
+              },
+              {
+                "label": "auctionId",
+                "type": "t_uint256"
+              },
+              {
+                "label": "bidPrice",
+                "type": "t_uint256"
+              },
+              {
+                "label": "status",
+                "type": "t_bool"
+              },
+              {
+                "label": "isOwnerAccepted",
+                "type": "t_bool"
+              },
+              {
+                "label": "isBiderClaimed",
+                "type": "t_bool"
+              },
+              {
+                "label": "version",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_mapping(t_address,t_bool)))": {
+            "label": "mapping(uint256 => mapping(uint256 => mapping(address => bool)))"
+          },
+          "t_mapping(t_uint256,t_mapping(t_address,t_bool))": {
+            "label": "mapping(uint256 => mapping(address => bool))"
+          },
+          "t_mapping(t_address,t_mapping(t_uint256,t_mapping(t_uint256,t_bool)))": {
+            "label": "mapping(address => mapping(uint256 => mapping(uint256 => bool)))"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_bool))": {
+            "label": "mapping(uint256 => mapping(uint256 => bool))"
+          },
+          "t_mapping(t_uint256,t_bool)": {
+            "label": "mapping(uint256 => bool)"
+          },
+          "t_mapping(t_uint256,t_mapping(t_uint256,t_uint256))": {
+            "label": "mapping(uint256 => mapping(uint256 => uint256))"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          }
+        }
+      }
     }
   }
 }

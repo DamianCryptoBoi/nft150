@@ -232,6 +232,10 @@ contract AuctionV3 is ManagerAuction {
 		ManagerAuction.initialize();
 	}
 
+	function isUpgraded() public pure returns (bool) {
+		return true;
+	}
+
 	function createAuction(
 		address _tokenAddress,
 		address _paymentToken,
