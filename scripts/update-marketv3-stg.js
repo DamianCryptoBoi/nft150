@@ -4,7 +4,7 @@ const main = async () => {
       const [admin] = await hre.ethers.getSigners();
 
       // let oldMarket = "0xA90da68CEDb626514df8236f35B17A2763B53c16";
-      let oldMarket = "0xcEcd0487f7409753f4EE251499692cd03E0e1433";
+      let oldMarket = "0xD9c75bE064047841347341041b6C1E6521E9c0ef";
       const oldMarketContract = await hre.ethers.getContractAt("MarketV3", oldMarket, admin);
       await oldMarketContract.pause();
       console.log("oldMarketContract paused");
@@ -16,8 +16,8 @@ const main = async () => {
       console.log("MARKET_CONTRACT deployed at: ", polkaMarketV3.address);
 
       await polkaMarketV3.setReferralContract("0x54eDEaFF620AC9e6295df132d381883d033e784C");
-      await polkaMarketV3.addPOLKANFTs("0xfBdd4448A593D316eD995E7507A0C1C24ED20772", true, false);
-      await polkaMarketV3.addPOLKANFTs("0xDA174A9A304f6003F8D3181d3e68D5DCF3031065", true, false);
+      // await polkaMarketV3.addPOLKANFTs("0xfBdd4448A593D316eD995E7507A0C1C24ED20772", true, false);
+      // await polkaMarketV3.addPOLKANFTs("0xDA174A9A304f6003F8D3181d3e68D5DCF3031065", true, false);
 
       await polkaMarketV3.setPaymentMethod(
             "0xd35d2e839d888d1cDBAdef7dE118b87DfefeD20e", // usdt

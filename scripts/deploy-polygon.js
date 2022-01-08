@@ -1,6 +1,7 @@
 const hre = require("hardhat")
 
 const main = async () => {
+      console.log("--- Start Deploy DEV and STG Polygon ---");
       const [admin] = await hre.ethers.getSigners();
 
       const PolkaURI = await hre.ethers.getContractFactory("PolkaURI");
@@ -26,23 +27,33 @@ const main = async () => {
       await marketV3.deployed();
       console.log("MARKET_CONTRACT deployed at: ", marketV3.address);
 
+      //AuctionV3
+      const AuctionV3 = await hre.ethers.getContractFactory("AuctionV3");
+      const auctionV3 = await AuctionV3.deploy();
+      await auctionV3.deployed();
+      console.log("AUCTION_CONTRACT deployed at: ", auctionV3.address);
+
       //PolkaReferral
       const PolkaReferral = await hre.ethers.getContractFactory("PolkaReferral");
       const polkaReferral = await PolkaReferral.deploy();
       await polkaReferral.deployed();
       console.log("REFERRAL_CONTRACT deployed at: ", polkaReferral.address);
 
+      console.log("Setting market");
       await marketV3.setReferralContract(polkaReferral.address);
-      await marketV3.addPOLKANFTs(polka721General.address, true, false);
-      await marketV3.addPOLKANFTs(nft150.address, true, false);
+      // await marketV3.addPOLKANFTs(polka721General.address, true, false);
+      // await marketV3.addPOLKANFTs(nft150.address, true, false);
+      await marketV3.setPaymentMethod("0xc592b11915e3f8F963F3aE2170b530E38319b388", true); // usdt
+      await marketV3.setPaymentMethod("0xDcf1f7Dd2d11Be84C63cFd452B9d62520855a7F6", true); //eth
 
-      await marketV3.setPaymentMethod(
-            "0x0c3f4125B9f7600CfE2f556C0767D2A117EDdb4d", // usdt
-            true);
+      console.log("Setting Auction");
+      // await auctionV3.setReferralContract(polkaReferral.address);
+      // await auctionV3.addPOLKANFTs(polka721General.address, true);
+      // await auctionV3.addPOLKANFTs(nft150.address, true);
+      await auctionV3.setPaymentMethod("0xc592b11915e3f8F963F3aE2170b530E38319b388", true); // usdt
+      await auctionV3.setPaymentMethod("0xDcf1f7Dd2d11Be84C63cFd452B9d62520855a7F6", true); //eth
 
-      await marketV3.setPaymentMethod(
-            "0x40bc286d3D2F8B44D28863B12DA18b553Ea1a4bB", // wETH (https://mumbai.polygonscan.com/token/0x2d7882bedcbfddce29ba99965dd3cdf7fcb10a1e)
-            true);
+      console.log("Setting Finish");
 }
 
 main()

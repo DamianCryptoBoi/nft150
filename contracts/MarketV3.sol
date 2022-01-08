@@ -17,16 +17,17 @@ import '@openzeppelin/contracts/security/Pausable.sol';
 import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts/utils/Address.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
-import "hardhat/console.sol";
+import 'hardhat/console.sol';
+
 contract Manager is Ownable, Pausable {
 	using SafeERC20 for IERC20;
 	address public referralContract;
 
 	// FEE
 	//uint256 public xUser = 250; // 2.5%
-	uint256 public xCreator = 1500;
+	// uint256 public xCreator = 1500;
 	uint256 public yRefRate = 5000; // 50%
-	uint256 public zProfitToCreator = 5000; // 10% profit
+	// uint256 public zProfitToCreator = 5000; // 10% profit
 
 	mapping(address => bool) public paymentMethod;
 	mapping(address => bool) public isPOLKANFTs;
@@ -41,14 +42,16 @@ contract Manager is Ownable, Pausable {
 
 	constructor() {
 		isOperator[msg.sender] = true;
-//		oldMarket = _oldMarket;
+		//		oldMarket = _oldMarket;
 	}
 
-	function whiteListOperator(address _operator, bool _whitelist) external onlyOwner() {
+	receive() external payable {}
+
+	function whiteListOperator(address _operator, bool _whitelist) external onlyOwner {
 		isOperator[_operator] = _whitelist;
 	}
 
-	function whiteListRetailer(address _retailer, bool _whitelist) external onlyOwner() {
+	function whiteListRetailer(address _retailer, bool _whitelist) external onlyOwner {
 		isRetailer[_retailer] = _whitelist;
 	}
 
@@ -60,29 +63,19 @@ contract Manager is Ownable, Pausable {
 		_unpause();
 	}
 
-	function setSystemFee(
-		uint256 _xCreator,
-		uint256 _yRefRate,
-		uint256 _zProfitToCreator
-	) external onlyOwner {
-		_setSystemFee(_xCreator, _yRefRate, _zProfitToCreator);
+	function setSystemFee(uint256 _yRefRate) external onlyOwner {
+		_setSystemFee(_yRefRate);
 	}
 
-	function _setSystemFee(
-		uint256 _xCreator,
-		uint256 _yRefRate,
-		uint256 _zProfitToCreator
-	) internal {
-		xCreator = _xCreator;
+	function _setSystemFee(uint256 _yRefRate) internal {
 		yRefRate = _yRefRate;
-		zProfitToCreator = _zProfitToCreator;
 	}
 
 	function addPOLKANFTs(
 		address _polkaNFT,
 		bool _isPOLKANFT,
 		bool _isFarming
-	) external onlyOperator() returns (bool) {
+	) external onlyOperator returns (bool) {
 		isPOLKANFTs[_polkaNFT] = _isPOLKANFT;
 		if (_isFarming) {
 			isFarmingNFTs[_polkaNFT] = true;
@@ -107,7 +100,7 @@ contract Manager is Ownable, Pausable {
 	/**
 	 * @notice withdrawFunds
 	 */
-	function withdrawFunds(address payable _beneficiary, address _tokenAddress) external onlyOwner() whenPaused() {
+	function withdrawFunds(address payable _beneficiary, address _tokenAddress) external onlyOwner whenPaused {
 		uint256 _withdrawAmount;
 		if (_tokenAddress == address(0)) {
 			_beneficiary.transfer(address(this).balance);
@@ -124,7 +117,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	using SafeERC20 for IERC20;
 	using Address for address payable;
 
-//	uint256 public constant ZOOM_POLKA = 10**18;
+	//	uint256 public constant ZOOM_POLKA = 10**18;
 	uint256 public constant ZOOM_USDT = 10**6;
 	uint256 public constant ZOOM_FEE = 10**4;
 	uint256 public totalOrders;
@@ -178,7 +171,15 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	event Buy(uint256 _itemId, uint256 _quantity, address _paymentToken, uint256 _paymentAmount, uint256 _version);
 	event OrderCancelled(uint256 indexed _orderId, uint256 _version);
 	event OrderUpdated(uint256 indexed _orderId, uint256 _version);
-	event BidCreated(uint256 indexed _bidId, address _tokenAddress, uint256 indexed _tokenId, uint256 indexed _quantity, uint256 _price, address _paymentToken, uint256 _version);
+	event BidCreated(
+		uint256 indexed _bidId,
+		address _tokenAddress,
+		uint256 indexed _tokenId,
+		uint256 indexed _quantity,
+		uint256 _price,
+		address _paymentToken,
+		uint256 _version
+	);
 	event AcceptBid(uint256 indexed _bidId);
 	event BidUpdated(uint256 indexed _bidId);
 	event BidCancelled(uint256 indexed _bidId);
@@ -231,11 +232,11 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 			IERC721(order.tokenAddress).safeTransferFrom(address(this), _buyer, order.tokenId);
 		} else {
 			IERC1155(order.tokenAddress).safeTransferFrom(
-					address(this),
-					_buyer,
-					order.tokenId,
-					_quantity,
-					abi.encodePacked(keccak256('onERC1155Received(address,address,uint256,uint256,bytes)'))
+				address(this),
+				_buyer,
+				order.tokenId,
+				_quantity,
+				abi.encodePacked(keccak256('onERC1155Received(address,address,uint256,uint256,bytes)'))
 			);
 			IERC1155(order.tokenAddress).setNftOwnVersion(order.tokenId, _version, _buyer);
 			IERC1155(order.tokenAddress).setNftOnSaleVersion(order.tokenId, _version, false);
@@ -284,7 +285,15 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 
 		_paid(_paymentToken, order.owner, orderAmount);
 
-		return _updateOrder(_buyer, _paymentToken, _orderId, _quantity, keccak256(abi.encodePacked(order.tokenAddress, order.tokenId)), _version);
+		return
+			_updateOrder(
+				_buyer,
+				_paymentToken,
+				_orderId,
+				_quantity,
+				keccak256(abi.encodePacked(order.tokenAddress, order.tokenId)),
+				_version
+			);
 	}
 
 	/**
@@ -304,7 +313,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		uint256 _price,
 		uint256 _fromVersion,
 		uint256 _toVersion
-	) external whenNotPaused() returns (uint256 _orderId) {
+	) external whenNotPaused returns (uint256 _orderId) {
 		require(_quantity > 0 && (_toVersion - _fromVersion + 1) == _quantity, 'Invalid-quantity');
 		require(paymentMethod[_paymentToken], 'Payment-method-does-not-support');
 		bool isERC721 = IERC721(_tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
@@ -359,15 +368,19 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		uint256 _quantity,
 		address _paymentToken,
 		uint256 _version
-	) external payable whenNotPaused() returns (bool) {
+	) external payable whenNotPaused returns (bool) {
 		Order memory order = orders[_orderId];
 		require(order.owner != address(0), 'Invalid-order-id');
 		require(paymentMethod[_paymentToken], 'Payment-method-does-not-support');
+		require(_paymentToken == order.paymentToken, 'Payment-token-invalid');
 		require(order.isOnsale && order.quantity >= _quantity, 'Not-available-to-buy');
 
 		if (!order.isERC721) {
-			require( IERC1155(order.tokenAddress).nftOnSaleVersion(order.tokenId, _version), 'Version-not-on-sale');
-			require( IERC1155(order.tokenAddress).nftOwnVersion(order.tokenId, _version) == order.owner, 'Version-not-of-saler');
+			require(IERC1155(order.tokenAddress).nftOnSaleVersion(order.tokenId, _version), 'Version-not-on-sale');
+			require(
+				IERC1155(order.tokenAddress).nftOwnVersion(order.tokenId, _version) == order.owner,
+				'Version-not-of-saler'
+			);
 		}
 
 		uint256 orderAmount = order.price.mul(_quantity);
@@ -375,11 +388,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
 		uint256 nftXUserFee = IPOLKANFT(order.tokenAddress).getXUserFee(order.tokenId);
 
-		if (_paymentToken == order.paymentToken) {
-			exactPaymentAmount = orderAmount.mul(ZOOM_FEE + nftXUserFee + loyaltyFee).div(ZOOM_FEE);
-		} else {
-			//Not Cover in version
-		}
+		exactPaymentAmount = orderAmount.mul(ZOOM_FEE + nftXUserFee + loyaltyFee).div(ZOOM_FEE);
 
 		if (_paymentToken == address(0) && msg.value > 0) {
 			require(msg.value >= exactPaymentAmount, 'Payment-value-invalid');
@@ -387,7 +396,17 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 			IERC20(_paymentToken).safeTransferFrom(msg.sender, address(this), exactPaymentAmount);
 		}
 		emit Buy(_orderId, _quantity, _paymentToken, exactPaymentAmount, _version);
-		return _match(msg.sender, _paymentToken, _orderId, _quantity, orderAmount, getRefData(order.owner), getRefData(msg.sender), _version);
+		return
+			_match(
+				msg.sender,
+				_paymentToken,
+				_orderId,
+				_quantity,
+				orderAmount,
+				getRefData(order.owner),
+				getRefData(msg.sender),
+				_version
+			);
 	}
 
 	function createBid(
@@ -398,7 +417,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		uint256 _price, // price of 1 nft
 		uint256 _expTime,
 		uint256 _version
-	) external payable whenNotPaused() returns (uint256 _bidId) {
+	) external payable whenNotPaused returns (uint256 _bidId) {
 		require(_quantity > 0, 'Invalid-quantity');
 		require(paymentMethod[_paymentToken], 'Payment-method-does-not-support');
 
@@ -430,17 +449,24 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		return _bidId;
 	}
 
-	function acceptBid(uint256 _bidId, uint256 _quantity) external whenNotPaused() returns (bool) {
+	function acceptBid(uint256 _bidId, uint256 _quantity) external whenNotPaused returns (bool) {
 		Bid memory bid = bids[_bidId];
 		uint256 _orderId = orderIdByVersion[bid.tokenAddress][bid.tokenId][bid.version];
 		Order memory order = orders[_orderId];
 		require(order.owner == msg.sender && order.isOnsale, 'Oops!Wrong-order-owner-or-cancelled');
-		require(order.quantity >= _quantity && _quantity <= bid.quantity && bid.status, 'Invalid-quantity-or-bid-cancelled');
+		require(
+			order.quantity >= _quantity && _quantity <= bid.quantity && bid.status,
+			'Invalid-quantity-or-bid-cancelled'
+		);
 
 		if (!order.isERC721) {
 			require(IERC1155(bid.tokenAddress).nftOnSaleVersion(bid.tokenId, bid.version), 'Version-not-on-sale');
-			require(IERC1155(bid.tokenAddress).nftOwnVersion(bid.tokenId, bid.version) == order.owner, 'Version-not-of-saler');
+			require(
+				IERC1155(bid.tokenAddress).nftOwnVersion(bid.tokenId, bid.version) == order.owner,
+				'Version-not-of-saler'
+			);
 		}
+		require(bid.paymentToken == order.paymentToken, 'Payment-token-invalid');
 
 		uint256 orderAmount = bid.bidPrice.mul(_quantity);
 		uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
@@ -462,10 +488,9 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		return _updateBid(_bidId, _quantity);
 	}
 
-	function cancelOrder(uint256 _orderId, uint256 _version) external whenNotPaused() {
+	function cancelOrder(uint256 _orderId, uint256 _version) external whenNotPaused {
 		Order memory order = orders[_orderId];
 		require(order.owner == msg.sender && order.isOnsale, 'Oops!Wrong-order-owner-or-cancelled');
-
 
 		if (order.isERC721) {
 			IERC721(order.tokenAddress).safeTransferFrom(address(this), order.owner, order.tokenId);
@@ -492,7 +517,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		emit OrderCancelled(_orderId, _version);
 	}
 
-	function cancelBid(uint256 _bidId) external whenNotPaused() nonReentrant() {
+	function cancelBid(uint256 _bidId) external whenNotPaused nonReentrant {
 		Bid memory bid = bids[_bidId];
 		require(bid.bidder == msg.sender && bid.status, 'Invalid-bidder');
 		if (bid.paymentToken == address(0)) {
@@ -510,8 +535,13 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		emit BidCancelled(_bidId);
 	}
 
-	function adminMigrateOrders(address oldMarket, uint256 startId, uint256 endId) external onlyOwner() {
+	function adminMigrateOrders(
+		address oldMarket,
+		uint256 startId,
+		uint256 endId
+	) external onlyOwner {
 		totalOrders = IPolkaMarket(oldMarket).totalOrders();
+
 		require(startId < totalOrders, 'StartId-more-than-maxid');
 		if (endId > totalOrders - 1) {
 			endId = totalOrders - 1;
@@ -528,9 +558,8 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 				bool isERC721,
 				uint256 fromVersion,
 				uint256 toVersion
-				) = IPolkaMarket(oldMarket).orders(i);
+			) = IPolkaMarket(oldMarket).orders(i);
 			if (quantity > 0) {
-
 				Order memory newOrder;
 				newOrder.isOnsale = isOnsale;
 				newOrder.isERC721 = isERC721;
@@ -545,20 +574,27 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 				orders[i] = newOrder;
 
 				for (uint256 j = fromVersion; j <= toVersion; j++) {
-					orderIdByVersion[tokenAddress][tokenId][j] = IPolkaMarket(oldMarket).orderIdByVersion(tokenAddress, tokenId, j);
+					orderIdByVersion[tokenAddress][tokenId][j] = IPolkaMarket(oldMarket).orderIdByVersion(
+						tokenAddress,
+						tokenId,
+						j
+					);
 				}
 			}
 		}
 	}
 
-	function adminMigratePushNFT(address newMarket, uint256 startId, uint256 endId) external onlyOwner() {
+	function adminMigratePushNFT(
+		address newMarket,
+		uint256 startId,
+		uint256 endId
+	) external onlyOwner {
 		//totalOrders = IPolkaMarket(oldMarket).totalOrders();
 		require(startId < totalOrders, 'StartId-more-than-maxid');
 		if (endId > totalOrders - 1) {
 			endId = totalOrders - 1;
 		}
 		for (uint256 i = startId; i <= endId; i++) {
-
 			Order memory order = orders[i];
 
 			if (order.quantity > 0) {
@@ -578,12 +614,15 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 						);
 					}
 				}
-
 			}
 		}
 	}
 
-	function adminMigrateBids(address oldMarket, uint256 startId, uint256 endId) external onlyOwner() {
+	function adminMigrateBids(
+		address oldMarket,
+		uint256 startId,
+		uint256 endId
+	) external onlyOwner {
 		totalBids = IPolkaMarket(oldMarket).totalBids();
 
 		require(startId < totalBids, 'StartId-more-than-maxid');
@@ -602,7 +641,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 				uint256 expTime,
 				bool status,
 				uint256 version
-				) = IPolkaMarket(oldMarket).bids(j);
+			) = IPolkaMarket(oldMarket).bids(j);
 			if (quantity > 0) {
 				Bid memory newBid;
 				newBid.bidder = bidder;
@@ -623,10 +662,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		}
 	}
 
-	function sendPaymentToNewContract(
-		address _token,
-		address _newContract
-	) external onlyOwner() {
+	function sendPaymentToNewContract(address _token, address _newContract) external onlyOwner {
 		require(_newContract != address(0), 'Invalid-address');
 		if (_token == address(0)) {
 			payable(_newContract).sendValue(adminHoldPayment[_token]);
@@ -635,11 +671,11 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		}
 	}
 
-	function setApproveForAll(address _token, address _spender) external onlyOwner() {
+	function setApproveForAll(address _token, address _spender) external onlyOwner {
 		IERC1155(_token).setApprovalForAll(_spender, true);
 	}
 
-	function setApproveForAllERC721(address _token, address _spender) external onlyOwner() {
+	function setApproveForAllERC721(address _token, address _spender) external onlyOwner {
 		IERC721(_token).setApprovalForAll(_spender, true);
 	}
 }

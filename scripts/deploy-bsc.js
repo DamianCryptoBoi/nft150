@@ -1,6 +1,7 @@
 const hre = require("hardhat")
 
 const main = async () => {
+      console.log("--- Start Deploy DEV and STG BSC ---");
       const [admin] = await hre.ethers.getSigners();
 
       const PolkaURI = await hre.ethers.getContractFactory("PolkaURI");
@@ -26,27 +27,31 @@ const main = async () => {
       await marketV3.deployed();
       console.log("MARKET_CONTRACT deployed at: ", marketV3.address);
 
+      //AuctionV3
+      const AuctionV3 = await hre.ethers.getContractFactory("AuctionV3");
+      const auctionV3 = await AuctionV3.deploy();
+      await auctionV3.deployed();
+      console.log("AUCTION_CONTRACT deployed at: ", auctionV3.address);
+
       //PolkaReferral
       const PolkaReferral = await hre.ethers.getContractFactory("PolkaReferral");
       const polkaReferral = await PolkaReferral.deploy();
       await polkaReferral.deployed();
       console.log("REFERRAL_CONTRACT deployed at: ", polkaReferral.address);
 
+      console.log("Setting market");
       await marketV3.setReferralContract(polkaReferral.address);
-      await marketV3.addPOLKANFTs(polka721General.address, true, false);
-      await marketV3.addPOLKANFTs(nft150.address, true, false);
+      // await marketV3.addPOLKANFTs(polka721General.address, true, false);
+      // await marketV3.addPOLKANFTs(nft150.address, true, false);
+      await marketV3.setPaymentMethod("0x4Af96f000b0Df70E99dd06ea6cE759aFCd331cC1", true); // usdt
+      await marketV3.setPaymentMethod("0x0000000000000000000000000000000000000000", true); // bnb
 
-      await marketV3.setPaymentMethod(
-            "0x8c9aB1ffa133B60FA38215D94032b23Caf431C4F", // usdt
-            true);
-
-      await marketV3.setPaymentMethod(
-            "0x832161Faaff82A3af9f978F3b0c48915E89b8ea2", // wETH (https://mumbai.polygonscan.com/token/0x2d7882bedcbfddce29ba99965dd3cdf7fcb10a1e)
-            true);
-
-      await marketV3.setPaymentMethod(
-            "0x0000000000000000000000000000000000000000", // native
-            true);
+      console.log("Setting Auction");
+      // await auctionV3.setReferralContract(polkaReferral.address);
+      // await auctionV3.addPOLKANFTs(polka721General.address, true);
+      // await auctionV3.addPOLKANFTs(nft150.address, true);
+      await auctionV3.setPaymentMethod("0x4Af96f000b0Df70E99dd06ea6cE759aFCd331cC1", true); // usdt
+      await auctionV3.setPaymentMethod("0x0000000000000000000000000000000000000000", true); // bnb
 }
 
 main()
