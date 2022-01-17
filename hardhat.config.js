@@ -106,8 +106,8 @@ module.exports = {
 	etherscan: {
 		// apiKey: process.env.ETHERSCAN_APIKEY,
 		// apiKey: 'UVE477915DMJIFSVTM5V3FI9Z17WUBGE2M', //eth
-		apiKey: '9E36GDSJK15GYXXN85186T5GDQI32B29MF', //bsc
-		// apiKey: '7A5TAKHWI24BHVT5V8CSUDRPVAEM5KUWWP', //polygon
+		// apiKey: 'Z93HMY8XSZFE8VECJKBTTABDG6XJA69A59', //bsc
+		apiKey: '7A5TAKHWI24BHVT5V8CSUDRPVAEM5KUWWP', //polygon
 	},
 
 	mocha: {

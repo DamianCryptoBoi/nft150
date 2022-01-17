@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-interface IPolkaMarket {
+interface IPolkaMarketVersion {
 	function orders(uint256 id)
 		external
 		view
@@ -13,9 +13,9 @@ interface IPolkaMarket {
 			uint256,
 			uint256,
 			bool,
-			bool
-			// uint256,
-			// uint256
+			bool,
+			uint256,
+			uint256
 		);
 
 	function bids(uint256 id)
@@ -29,8 +29,8 @@ interface IPolkaMarket {
 			uint256,
 			uint256,
 			uint256,
-			bool
-			// uint256
+			bool,
+			uint256
 		);
 
 	function totalOrders() external view returns (uint256);

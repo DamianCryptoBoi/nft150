@@ -1,5 +1,6 @@
 const { expect, assert, use } = require('chai');
 const { solidity } = require('ethereum-waffle');
+const { ZERO_ADDRESS } = require('openzeppelin-test-helpers/src/constants');
 use(solidity); //to user revertedWith
 
 describe('Unit testing - Market', function () {
@@ -36,8 +37,24 @@ describe('Unit testing - Market', function () {
 		polkaReferral = await PolkaReferral.deploy();
 		await polkaReferral.deployed();
 
+		//old market with nft version
+		MarketVersion = await hre.ethers.getContractFactory('MarketVersion');
+		marketVersion = await MarketVersion.deploy();
+		await marketVersion.deployed();
+
+		//old erc1155 with version
+		NFT150Version = await hre.ethers.getContractFactory('NFT150Version');
+		nft150Version = await NFT150Version.deploy(polkaURI.address);
+		await nft150Version.deployed();
+
 		await marketV3.setReferralContract(polkaReferral.address);
 		await marketV3.setPaymentMethod(mockPOLKA.address, true);
+		await marketV3.setPaymentMethod(ZERO_ADDRESS, true);
+
+		await marketVersion.setReferralContract(polkaReferral.address);
+		await marketVersion.setPaymentMethod(mockPOLKA.address, true);
+		await marketVersion.setPaymentMethod(ZERO_ADDRESS, true);
+
 		await marketV3.addPOLKANFTs(polka721General.address, true, false);
 		await marketV3.addPOLKANFTs(nft150.address, true, false);
 	});
@@ -80,7 +97,16 @@ describe('Unit testing - Market', function () {
 
 			//create _tokenId 1
 			expect((await marketV3.totalOrders()).toNumber()).to.equal(0);
+
+			await expect(marketV3.createOrder(polka721General.address, owner.address, 1, 1, 10000)).to.be.revertedWith(
+				'Payment-method-does-not-support'
+			);
+
 			await marketV3.createOrder(polka721General.address, mockPOLKA.address, 1, 1, 10000);
+
+			await expect(
+				marketV3.createOrder(polka721General.address, mockPOLKA.address, 1, 1, 10000)
+			).to.be.revertedWith('Insufficient-token-balance');
 
 			expect((await marketV3.totalOrders()).toNumber()).to.equal(1);
 
@@ -97,10 +123,19 @@ describe('Unit testing - Market', function () {
 			await nft150.setApprovalForAll(marketV3.address, true);
 			expect((await nft150.getXUserFee(1)).toNumber()).to.equal(250);
 			expect((await marketV3.totalOrders()).toNumber()).to.equal(0);
-			await marketV3.createOrder(nft150.address, mockPOLKA.address, 1, 1, 100);
 
-			expect((await marketV3.totalOrders()).toNumber()).to.equal(1);
-			expect((await nft150.balanceOf(marketV3.address, 1)).toNumber()).to.equal(1);
+			await marketV3.createOrder(nft150.address, mockPOLKA.address, 1, 1, 100);
+			await marketV3.createOrder(nft150.address, mockPOLKA.address, 1, 1, 100);
+			await marketV3.createOrder(nft150.address, mockPOLKA.address, 1, 1, 100);
+			await marketV3.createOrder(nft150.address, mockPOLKA.address, 1, 1, 100);
+			await marketV3.createOrder(nft150.address, mockPOLKA.address, 1, 1, 100);
+			await expect(marketV3.createOrder(nft150.address, mockPOLKA.address, 1, 100, 100)).to.be.revertedWith(
+				'Insufficient-token-balance'
+			);
+
+			expect((await marketV3.totalOrders()).toNumber()).to.equal(5);
+
+			expect((await nft150.balanceOf(marketV3.address, 1)).toNumber()).to.equal(5);
 		});
 
 		it('Buy 721', async function () {
@@ -121,6 +156,10 @@ describe('Unit testing - Market', function () {
 			//            )
 			await mockPOLKA.mint(addr.address, 1000000000);
 			await mockPOLKA.connect(addr).approve(marketV3.address, 1000000000);
+
+			await expect(marketV3.connect(addr).buy(0, 2, mockPOLKA.address)).to.be.revertedWith(
+				'Not-available-to-buy'
+			);
 
 			await marketV3.connect(addr).buy(0, 1, mockPOLKA.address);
 			expect(await polka721General.ownerOf(1)).to.equal(addr.address);
@@ -173,15 +212,41 @@ describe('Unit testing - Market', function () {
 			//                uint256 _expTime
 			//            )
 			expect((await marketV3.totalBids()).toNumber()).to.equal(0);
-			await marketV3.connect(addr).createBid(
-				polka721General.address,
-				mockPOLKA.address,
-				1,
-				1,
-				100,
-				3, //days
-				orderId.value
-			);
+			await marketV3.connect(addr).createBid(polka721General.address, mockPOLKA.address, 1, 1, 100, 9999999999);
+			await expect(
+				marketV3.connect(addr).createBid(polka721General.address, mockPOLKA.address, 1, 1, 100, 1)
+			).to.be.revertedWith('Invalid-expire-time');
+			expect((await marketV3.totalBids()).toNumber()).to.equal(1);
+		});
+
+		it('createBid 721 ETH', async function () {
+			await polka721General.create('urltest', 100, 250);
+			await polka721General.setApprovalForAll(marketV3.address, true);
+			expect(await polka721General.ownerOf(1)).to.equal(owner.address);
+
+			//createOrder
+			await marketV3.createOrder(polka721General.address, ZERO_ADDRESS, 1, 1, 100);
+
+			//            createBid(
+			//                address _tokenAddress,
+			//                address _paymentToken, // payment method
+			//                uint256 _tokenId,
+			//                uint256 _quantity, // total amount want to buy
+			//                uint256 _price, // price of 1 nft
+			//                uint256 _expTime
+			//            )
+			expect((await marketV3.totalBids()).toNumber()).to.equal(0);
+
+			await expect(
+				marketV3
+					.connect(addr)
+					.createBid(polka721General.address, ZERO_ADDRESS, 1, 1, 100, 9999999999, { value: 1 })
+			).to.be.revertedWith('Invalid-amount');
+
+			await marketV3
+				.connect(addr)
+				.createBid(polka721General.address, ZERO_ADDRESS, 1, 1, 100, 9999999999, { value: 100 });
+
 			expect((await marketV3.totalBids()).toNumber()).to.equal(1);
 		});
 
@@ -200,15 +265,30 @@ describe('Unit testing - Market', function () {
 			await mockPOLKA.connect(addr).approve(marketV3.address, 1000000);
 
 			expect((await marketV3.totalBids()).toNumber()).to.equal(0);
-			await marketV3.connect(addr).createBid(
-				nft150.address,
-				mockPOLKA.address,
-				1,
-				1,
-				30,
-				3, //days
-				orderId.value
-			);
+			await marketV3.connect(addr).createBid(nft150.address, mockPOLKA.address, 1, 1, 30, 9999999999);
+			expect((await marketV3.totalBids()).toNumber()).to.equal(1);
+		});
+
+		it('createBid 1155 ETH', async function () {
+			//mint
+			//mint
+			await nft150.create(1000, 100, 200, '_uritest', 1, 250);
+			await nft150.setApprovalForAll(marketV3.address, true);
+			expect((await marketV3.totalOrders()).toNumber()).to.equal(0);
+			orderId = await marketV3.createOrder(nft150.address, ZERO_ADDRESS, 1, 5, 100);
+
+			expect((await marketV3.totalOrders()).toNumber()).to.equal(1);
+			expect((await nft150.balanceOf(marketV3.address, 1)).toNumber()).to.equal(5);
+
+			expect((await marketV3.totalBids()).toNumber()).to.equal(0);
+
+			await expect(
+				marketV3.connect(addr).createBid(nft150.address, mockPOLKA.address, 1, 2, 30, 9999999999, { value: 30 })
+			).to.be.revertedWith('Invalid-amount');
+
+			await marketV3
+				.connect(addr)
+				.createBid(nft150.address, mockPOLKA.address, 1, 1, 30, 9999999999, { value: 30 });
 			expect((await marketV3.totalBids()).toNumber()).to.equal(1);
 		});
 
@@ -241,20 +321,13 @@ describe('Unit testing - Market', function () {
 			await mockPOLKA.mint(addr.address, 1000000);
 			await mockPOLKA.connect(addr).approve(marketV3.address, 1000000);
 
-			await marketV3.connect(addr).createBid(
-				polka721General.address,
-				mockPOLKA.address,
-				1,
-				1,
-				10000,
-				3, //days
-				orderId.value
-			);
+			await marketV3.connect(addr).createBid(polka721General.address, mockPOLKA.address, 1, 1, 10000, 9999999999);
 			expect((await marketV3.totalBids()).toNumber()).to.equal(1);
 
 			await marketV3.acceptBid(
-				0, //bỉdid
-				1 //quality
+				0, //bidid
+				1, //quality
+				[orderId.value]
 			);
 			let amontNotFee = Math.floor(10000 / (1 + 0.025 + 0.2));
 
@@ -264,7 +337,89 @@ describe('Unit testing - Market', function () {
 			);
 		});
 
-		it('cancelOrder', async function () {
+		it('acceptBid 1155', async function () {
+			//mint
+			await nft150.create(1000, 200, 2000, '_uritest', 1, 250);
+			await nft150.setApprovalForAll(marketV3.address, true);
+			expect(await nft150.balanceOf(owner.address, 1)).to.equal(200);
+
+			//createOrder
+			await marketV3.createOrder(
+				nft150.address,
+				mockPOLKA.address,
+				1,
+				30,
+				10000 //prime
+			);
+			const [, , , , q1] = await marketV3.orders(0);
+
+			expect(q1).equal(30);
+
+			await marketV3.createOrder(
+				nft150.address,
+				mockPOLKA.address,
+				1,
+				40,
+				10000 //prime
+			);
+
+			const [, , , , q2] = await marketV3.orders(1);
+
+			expect(q2).equal(40);
+
+			await marketV3.createOrder(
+				nft150.address,
+				mockPOLKA.address,
+				1,
+				50,
+				10000 //prime
+			);
+
+			const [, , , , q3] = await marketV3.orders(2);
+
+			expect(q3).equal(50);
+
+			expect(await nft150.balanceOf(owner.address, 1)).to.equal(80);
+
+			//            createBid(
+			//                address _tokenAddress,
+			//                address _paymentToken, // payment method
+			//                uint256 _tokenId,
+			//                uint256 _quantity, // total amount want to buy
+			//                uint256 _price, // price of 1 nft
+			//                uint256 _expTime
+			//            )
+
+			expect((await marketV3.totalBids()).toNumber()).to.equal(0);
+
+			await mockPOLKA.mint(addr.address, 1000000);
+			await mockPOLKA.connect(addr).approve(marketV3.address, 1000000);
+
+			await marketV3.connect(addr).createBid(
+				nft150.address,
+				mockPOLKA.address,
+				1,
+				100,
+				10000,
+				9999999999 //days
+			);
+			expect((await marketV3.totalBids()).toNumber()).to.equal(1);
+
+			await marketV3.acceptBid(
+				0, //bidid
+				100, //quantity
+				[0, 1, 2]
+			);
+			//
+			const [, , , , q31] = await marketV3.orders(2);
+
+			expect(q31).equal(20);
+
+			expect((await mockPOLKA.balanceOf(addr.address)).toNumber()).to.equal(0);
+			expect(await nft150.balanceOf(addr.address, 1)).to.equal(100);
+		});
+
+		it('cancelOrder 721', async function () {
 			await polka721General.create('urltest', 100, 250);
 			await polka721General.setApprovalForAll(marketV3.address, true);
 			expect(await polka721General.ownerOf(1)).to.equal(owner.address);
@@ -319,7 +474,7 @@ describe('Unit testing - Market', function () {
 			await expect(marketV3.cancelOrder(0)).to.be.revertedWith('Order-sold-out');
 		});
 
-		it('cancelBid', async function () {
+		it('cancelBid 721', async function () {
 			//mint
 			await nft150.create(1000, 100, 200, '_uritest', 1, 250);
 			await nft150.setApprovalForAll(marketV3.address, true);
@@ -329,15 +484,7 @@ describe('Unit testing - Market', function () {
 			await mockPOLKA.mint(addr.address, 1000000);
 			await mockPOLKA.connect(addr).approve(marketV3.address, 1000000);
 
-			await marketV3.connect(addr).createBid(
-				nft150.address,
-				mockPOLKA.address,
-				1,
-				1,
-				30,
-				3, //days
-				orderId.value
-			);
+			await marketV3.connect(addr).createBid(nft150.address, mockPOLKA.address, 1, 1, 30, 9999999999);
 
 			expect((await mockPOLKA.balanceOf(addr.address)).toNumber()).to.equal(1000000 - 30);
 
@@ -359,20 +506,13 @@ describe('Unit testing - Market', function () {
 			await mockPOLKA.mint(addr.address, 1000000);
 			await mockPOLKA.connect(addr).approve(marketV3.address, 1000000);
 
-			await marketV3.connect(addr).createBid(
-				nft150.address,
-				mockPOLKA.address,
-				1,
-				1,
-				30,
-				3, //days
-				orderId.value
-			);
+			await marketV3.connect(addr).createBid(nft150.address, mockPOLKA.address, 1, 1, 30, 9999999999);
 
 			expect((await mockPOLKA.balanceOf(addr.address)).toNumber()).to.equal(1000000 - 30);
 			await marketV3.acceptBid(
 				0, //bỉdid
-				1 //quality
+				1, //quality,
+				[orderId.value]
 			);
 			await expect(marketV3.connect(addr).cancelBid(0)).to.be.revertedWith('Invalid-bidder');
 		});
@@ -382,16 +522,16 @@ describe('Unit testing - Market', function () {
 		// 	await nft150.setApprovalForAll(marketV3.address, true);
 
 		// 	expect((await marketV3.totalOrders()).toNumber()).to.equal(0);
-		// 	await marketV3.createOrder(nft150.address, mockPOLKA.address, 1, 1, 200, 1, 1);
+		// 	await marketV3.createOrder(nft150.address, mockPOLKA.address, 1, 1, 200);
 
-		// 	await marketV3.createOrder(nft150.address, mockPOLKA.address, 1, 1, 200, 1, 1);
+		// 	await marketV3.createOrder(nft150.address, mockPOLKA.address, 1, 1, 200);
 
 		// 	await mockPOLKA.mint(addr.address, 1000000);
 		// 	await mockPOLKA.connect(addr).approve(marketV3.address, 1000000);
 
-		// 	await marketV3.connect(addr).createBid(nft150.address, mockPOLKA.address, 1, 1, 30, 3, 1);
+		// 	await marketV3.connect(addr).createBid(nft150.address, mockPOLKA.address, 1, 1, 30, 9999999999);
 
-		// 	await marketV3.connect(addr).createBid(nft150.address, mockPOLKA.address, 1, 1, 40, 3, 1);
+		// 	await marketV3.connect(addr).createBid(nft150.address, mockPOLKA.address, 1, 1, 40, 9999999999);
 
 		// 	//721
 		// 	await polka721General.create('urltest', 100, 250);
@@ -399,9 +539,9 @@ describe('Unit testing - Market', function () {
 		// 	expect(await polka721General.ownerOf(1)).to.equal(owner.address);
 
 		// 	//createOrder
-		// 	let orderId = await marketV3.createOrder(polka721General.address, mockPOLKA.address, 1, 1, 100, 1, 1);
+		// 	let orderId = await marketV3.createOrder(polka721General.address, mockPOLKA.address, 1, 1, 100);
 
-		// 	await marketV3.connect(addr).createBid(polka721General.address, mockPOLKA.address, 1, 1, 100, 3, 1);
+		// 	await marketV3.connect(addr).createBid(polka721General.address, mockPOLKA.address, 1, 1, 100, 9999999999);
 
 		// 	MarketV3New = await hre.ethers.getContractFactory('MarketV3');
 		// 	marketV3New = await MarketV3New.deploy();
@@ -420,6 +560,49 @@ describe('Unit testing - Market', function () {
 		// 	expect(await polka721General.ownerOf(1)).to.equal(marketV3New.address);
 		// 	expect((await nft150.balanceOf(marketV3New.address, 1)).toNumber()).to.equal(2);
 		// });
+
+		it('adminMigrateData from market with version', async function () {
+			await nft150Version.create(1000, 100, 200, '_uritest', 1, 250);
+			await nft150Version.setApprovalForAll(marketVersion.address, true);
+
+			expect((await marketVersion.totalOrders()).toNumber()).to.equal(0);
+			await marketVersion.createOrder(nft150Version.address, mockPOLKA.address, 1, 1, 200, 1, 1);
+
+			await marketVersion.createOrder(nft150Version.address, mockPOLKA.address, 1, 1, 200, 1, 1);
+
+			await mockPOLKA.mint(addr.address, 1000000);
+			await mockPOLKA.connect(addr).approve(marketVersion.address, 1000000);
+
+			await marketVersion.connect(addr).createBid(nft150Version.address, mockPOLKA.address, 1, 1, 30, 3, 1);
+
+			await marketVersion.connect(addr).createBid(nft150Version.address, mockPOLKA.address, 1, 1, 40, 3, 1);
+
+			//721
+			await polka721General.create('urltest', 100, 250);
+			await polka721General.setApprovalForAll(marketVersion.address, true);
+			expect(await polka721General.ownerOf(1)).to.equal(owner.address);
+
+			//createOrder
+			let orderId = await marketVersion.createOrder(polka721General.address, mockPOLKA.address, 1, 1, 100, 1, 1);
+
+			await marketVersion.connect(addr).createBid(polka721General.address, mockPOLKA.address, 1, 1, 100, 3, 1);
+
+			MarketV3New = await hre.ethers.getContractFactory('MarketV3');
+			marketV3New = await MarketV3New.deploy();
+			await marketV3New.deployed();
+			// await marketVersion.setApproveForAll(nft150Version.address, marketV3New.address); //need for Deploy
+			// await marketVersion.setApproveForAllERC721(polka721General.address, marketV3New.address); //need for Deploy
+
+			await marketV3New.adminMigrateOrders(marketVersion.address, 0, 2);
+			await marketVersion.adminMigratePushNFT(marketV3New.address, 0, 2);
+			await marketV3New.adminMigrateBids(marketVersion.address, 0, 2);
+
+			expect((await marketV3New.totalOrders()).toNumber()).to.equal(3);
+			expect((await marketV3New.totalBids()).toNumber()).to.equal(3);
+
+			expect(await polka721General.ownerOf(1)).to.equal(marketV3New.address);
+			expect((await nft150Version.balanceOf(marketV3New.address, 1)).toNumber()).to.equal(2);
+		});
 	});
 
 	after(async function () {});
