@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import './interfaces/IReferral.sol';
 import './interfaces/IPOLKANFT.sol';
 import './interfaces/IWBNB.sol';
-import './interfaces/IPolkaMarket.sol';
+// import './interfaces/IPolkaMarket.sol';
 import './interfaces/IPolkaMarketVersion.sol';
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
@@ -492,9 +492,10 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	function adminMigrateOrders(
 		address oldMarket,
 		uint256 startId,
-		uint256 endId
+		uint256 endId,
+		address newERC1155Address
 	) external onlyOwner {
-		totalOrders = IPolkaMarket(oldMarket).totalOrders();
+		totalOrders = IPolkaMarketVersion(oldMarket).totalOrders();
 
 		require(startId < totalOrders, 'StartId-more-than-maxid');
 		if (endId > totalOrders - 1) {
@@ -509,11 +510,10 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 				uint256 quantity,
 				uint256 price,
 				bool isOnsale,
-				bool isERC721,
+				bool isERC721, // ) = IPolkaMarket(oldMarket).orders(i);
 				,
 
-			) = // ) = IPolkaMarket(oldMarket).orders(i);
-				IPolkaMarketVersion(oldMarket).orders(i);
+			) = IPolkaMarketVersion(oldMarket).orders(i);
 
 			if (quantity > 0) {
 				Order memory newOrder;
@@ -523,7 +523,11 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 				newOrder.price = price;
 				newOrder.quantity = quantity;
 				newOrder.tokenId = tokenId;
-				newOrder.tokenAddress = tokenAddress;
+				if (!isERC721) {
+					newOrder.tokenAddress = newERC1155Address; //change erc1155 address on market
+				} else {
+					newOrder.tokenAddress = tokenAddress;
+				}
 				newOrder.paymentToken = paymentToken;
 				orders[i] = newOrder;
 			}
@@ -567,9 +571,11 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	function adminMigrateBids(
 		address oldMarket,
 		uint256 startId,
-		uint256 endId
+		uint256 endId,
+		address oldERC1155Address,
+		address newERC1155Address
 	) external onlyOwner {
-		totalBids = IPolkaMarket(oldMarket).totalBids();
+		totalBids = IPolkaMarketVersion(oldMarket).totalBids();
 
 		require(startId < totalBids, 'StartId-more-than-maxid');
 		if (endId > totalBids - 1) {
@@ -585,16 +591,20 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 				uint256 bidPrice,
 				uint256 quantity,
 				uint256 expTime,
-				bool status,
+				bool status, // ) = IPolkaMarket(oldMarket).bids(j);
 
-			) = // ) = IPolkaMarket(oldMarket).bids(j);
-				IPolkaMarketVersion(oldMarket).bids(j);
+			) = IPolkaMarketVersion(oldMarket).bids(j);
 
 			if (quantity > 0) {
 				Bid memory newBid;
 				newBid.bidder = bidder;
 				newBid.paymentToken = paymentToken;
-				newBid.tokenAddress = tokenAddress;
+				if (tokenAddress == oldERC1155Address) {
+					newBid.tokenAddress = newERC1155Address;
+				} else {
+					newBid.tokenAddress = tokenAddress;
+				}
+
 				newBid.tokenId = tokenId;
 				newBid.bidPrice = bidPrice;
 				newBid.quantity = quantity;

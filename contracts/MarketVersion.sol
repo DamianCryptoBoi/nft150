@@ -7,7 +7,7 @@ import './interfaces/IWBNB.sol';
 import './interfaces/IPolkaMarketVersion.sol';
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import './interfaces/IERC1155.sol';
+import './interfaces/IERC1155Version.sol';
 import '@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol';
 import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 import '@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol';
@@ -212,8 +212,8 @@ contract MarketVersion is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard 
 
 		bool isERC721 = IERC721(bid.tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
 		if (!isERC721) {
-			IERC1155(bid.tokenAddress).setNftOwnVersion(bid.tokenId, bid.version, bid.bidder);
-			IERC1155(bid.tokenAddress).setNftOnSaleVersion(bid.tokenId, bid.version, false);
+			IERC1155Version(bid.tokenAddress).setNftOwnVersion(bid.tokenId, bid.version, bid.bidder);
+			IERC1155Version(bid.tokenAddress).setNftOnSaleVersion(bid.tokenId, bid.version, false);
 		}
 
 		return true;
@@ -231,15 +231,15 @@ contract MarketVersion is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard 
 		if (order.isERC721) {
 			IERC721(order.tokenAddress).safeTransferFrom(address(this), _buyer, order.tokenId);
 		} else {
-			IERC1155(order.tokenAddress).safeTransferFrom(
+			IERC1155Version(order.tokenAddress).safeTransferFrom(
 				address(this),
 				_buyer,
 				order.tokenId,
 				_quantity,
 				abi.encodePacked(keccak256('onERC1155Received(address,address,uint256,uint256,bytes)'))
 			);
-			IERC1155(order.tokenAddress).setNftOwnVersion(order.tokenId, _version, _buyer);
-			IERC1155(order.tokenAddress).setNftOnSaleVersion(order.tokenId, _version, false);
+			IERC1155Version(order.tokenAddress).setNftOwnVersion(order.tokenId, _version, _buyer);
+			IERC1155Version(order.tokenAddress).setNftOnSaleVersion(order.tokenId, _version, false);
 		}
 		order.quantity = order.quantity.sub(_quantity);
 		orders[_orderId].quantity = order.quantity;
@@ -325,7 +325,7 @@ contract MarketVersion is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard 
 			balance = (IERC721(_tokenAddress).ownerOf(_tokenId) == msg.sender) ? 1 : 0;
 			require(balance >= _quantity, 'Insufficient-token-balance');
 		} else {
-			balance = IERC1155(_tokenAddress).balanceOf(msg.sender, _tokenId);
+			balance = IERC1155Version(_tokenAddress).balanceOf(msg.sender, _tokenId);
 			require(balance >= _quantity, 'Insufficient-token-balance');
 		}
 
@@ -333,11 +333,11 @@ contract MarketVersion is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard 
 			IERC721(_tokenAddress).safeTransferFrom(msg.sender, address(this), _tokenId);
 			orderIdByVersion[_tokenAddress][_tokenId][1] = _orderId;
 		} else {
-			IERC1155(_tokenAddress).safeTransferFrom(msg.sender, address(this), _tokenId, _quantity, '0x');
+			IERC1155Version(_tokenAddress).safeTransferFrom(msg.sender, address(this), _tokenId, _quantity, '0x');
 
 			for (uint256 i = _fromVersion; i <= _toVersion; i++) {
-				IERC1155(_tokenAddress).setNftOwnVersion(_tokenId, i, msg.sender);
-				IERC1155(_tokenAddress).setNftOnSaleVersion(_tokenId, i, true);
+				IERC1155Version(_tokenAddress).setNftOwnVersion(_tokenId, i, msg.sender);
+				IERC1155Version(_tokenAddress).setNftOnSaleVersion(_tokenId, i, true);
 				orderIdByVersion[_tokenAddress][_tokenId][i] = _orderId;
 			}
 		}
@@ -376,9 +376,12 @@ contract MarketVersion is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard 
 		require(order.isOnsale && order.quantity >= _quantity, 'Not-available-to-buy');
 
 		if (!order.isERC721) {
-			require(IERC1155(order.tokenAddress).nftOnSaleVersion(order.tokenId, _version), 'Version-not-on-sale');
 			require(
-				IERC1155(order.tokenAddress).nftOwnVersion(order.tokenId, _version) == order.owner,
+				IERC1155Version(order.tokenAddress).nftOnSaleVersion(order.tokenId, _version),
+				'Version-not-on-sale'
+			);
+			require(
+				IERC1155Version(order.tokenAddress).nftOwnVersion(order.tokenId, _version) == order.owner,
 				'Version-not-of-saler'
 			);
 		}
@@ -460,9 +463,12 @@ contract MarketVersion is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard 
 		);
 
 		if (!order.isERC721) {
-			require(IERC1155(bid.tokenAddress).nftOnSaleVersion(bid.tokenId, bid.version), 'Version-not-on-sale');
 			require(
-				IERC1155(bid.tokenAddress).nftOwnVersion(bid.tokenId, bid.version) == order.owner,
+				IERC1155Version(bid.tokenAddress).nftOnSaleVersion(bid.tokenId, bid.version),
+				'Version-not-on-sale'
+			);
+			require(
+				IERC1155Version(bid.tokenAddress).nftOwnVersion(bid.tokenId, bid.version) == order.owner,
 				'Version-not-of-saler'
 			);
 		}
@@ -497,8 +503,11 @@ contract MarketVersion is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard 
 			order.isOnsale = false;
 			order.quantity = 0;
 		} else {
-			require(IERC1155(order.tokenAddress).nftOnSaleVersion(order.tokenId, _version), 'Version-not-on-sale');
-			IERC1155(order.tokenAddress).safeTransferFrom(
+			require(
+				IERC1155Version(order.tokenAddress).nftOnSaleVersion(order.tokenId, _version),
+				'Version-not-on-sale'
+			);
+			IERC1155Version(order.tokenAddress).safeTransferFrom(
 				address(this),
 				order.owner,
 				order.tokenId,
@@ -510,8 +519,10 @@ contract MarketVersion is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard 
 
 		orders[_orderId] = order;
 
-		if (!order.isERC721 && IERC1155(order.tokenAddress).nftOwnVersion(order.tokenId, _version) == msg.sender) {
-			IERC1155(order.tokenAddress).setNftOnSaleVersion(order.tokenId, _version, false);
+		if (
+			!order.isERC721 && IERC1155Version(order.tokenAddress).nftOwnVersion(order.tokenId, _version) == msg.sender
+		) {
+			IERC1155Version(order.tokenAddress).setNftOnSaleVersion(order.tokenId, _version, false);
 		}
 
 		emit OrderCancelled(_orderId, _version);
@@ -603,9 +614,9 @@ contract MarketVersion is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard 
 						IERC721(order.tokenAddress).safeTransferFrom(address(this), newMarket, order.tokenId);
 					}
 				} else {
-					uint256 quantityOf = IERC1155(order.tokenAddress).balanceOf(address(this), order.tokenId);
+					uint256 quantityOf = IERC1155Version(order.tokenAddress).balanceOf(address(this), order.tokenId);
 					if (quantityOf > 0) {
-						IERC1155(order.tokenAddress).safeTransferFrom(
+						IERC1155Version(order.tokenAddress).safeTransferFrom(
 							address(this),
 							newMarket,
 							order.tokenId,
@@ -672,7 +683,7 @@ contract MarketVersion is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard 
 	}
 
 	function setApproveForAll(address _token, address _spender) external onlyOwner {
-		IERC1155(_token).setApprovalForAll(_spender, true);
+		IERC1155Version(_token).setApprovalForAll(_spender, true);
 	}
 
 	function setApproveForAllERC721(address _token, address _spender) external onlyOwner {

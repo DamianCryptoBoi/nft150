@@ -9,7 +9,7 @@ import '@openzeppelin/contracts/utils/introspection/IERC165.sol';
  *
  * _Available since v3.1._
  */
-interface IERC1155 is IERC165 {
+interface IERC1155Version is IERC165 {
 	/**
 	 * @dev Emitted when `value` tokens of token type `id` are transferred from `from` to `to` by `operator`.
 	 */
@@ -125,8 +125,19 @@ interface IERC1155 is IERC165 {
 
 	function getLoyaltyFee(uint256 _id) external view returns (uint256);
 
-	// function nftOwnVersion(uint256 _tokenId, uint256 _version) external view returns (address);
-	// function nftOnSaleVersion(uint256 _tokenId, uint256 _version) external view returns (bool);
-	// function setNftOwnVersion(uint256 _tokenId, uint256 _version, address _owner) external;
-	// function setNftOnSaleVersion(uint256 _tokenId, uint256 _version, bool _isOnSale) external;
+	function nftOwnVersion(uint256 _tokenId, uint256 _version) external view returns (address);
+
+	function nftOnSaleVersion(uint256 _tokenId, uint256 _version) external view returns (bool);
+
+	function setNftOwnVersion(
+		uint256 _tokenId,
+		uint256 _version,
+		address _owner
+	) external;
+
+	function setNftOnSaleVersion(
+		uint256 _tokenId,
+		uint256 _version,
+		bool _isOnSale
+	) external;
 }
