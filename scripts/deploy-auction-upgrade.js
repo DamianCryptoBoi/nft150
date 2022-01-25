@@ -1,6 +1,6 @@
 const { ethers, upgrades } = require('hardhat');
 
-AUCTION_PROXY_ADDRESS = '0x8e0B8A47e5B35DB6B469654555CF5177BE84a4aB';
+AUCTION_PROXY_ADDRESS = '0xebfC3616A9DFC8Cd3DB60a2316711e3E6D987fE1';
 
 async function main() {
 	const AuctionV3x = await ethers.getContractFactory('AuctionV3');

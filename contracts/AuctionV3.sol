@@ -459,6 +459,8 @@ contract AuctionV3 is ManagerAuction {
 		emit BidAuctionAccepted(_bidAuctionId);
 	}
 
+	receive() external payable {}
+
 	function claimWinnerAuction(uint256 _bidAuctionId) external whenNotPaused {
 		BidAuction storage currentBid = bidAuctions[_bidAuctionId];
 		Auction memory currentAuction = auctions[currentBid.auctionId];
