@@ -42,6 +42,7 @@ module.exports = {
 		rinkeby: {
 			url: process.env.PROVIDER_URL,
 			accounts: ['9b1a1461a714724dbf4e8d2345cf5008545e1140f54914a0c1a62eb1bf1c88a0'],
+			// accounts: [process.env.PRIVATE_KEY],
 			gas: 12000000,
 			blockGasLimit: 0x1fffffffffffff,
 			allowUnlimitedContractSize: true,
@@ -107,7 +108,7 @@ module.exports = {
 	},
 
 	etherscan: {
-		// apiKey: process.env.ETHERSCAN_APIKEY,
+		apiKey: process.env.ETHERSCAN_APIKEY,
 		// apiKey: 'UVE477915DMJIFSVTM5V3FI9Z17WUBGE2M', //eth
 		// apiKey: 'Z93HMY8XSZFE8VECJKBTTABDG6XJA69A59', //bsc
 		// apiKey: '7A5TAKHWI24BHVT5V8CSUDRPVAEM5KUWWP', //polygon
