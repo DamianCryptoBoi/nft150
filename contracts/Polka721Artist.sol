@@ -1,9 +1,12 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import './token/Polka721.sol';
+import './token/ERC721Artist.sol';
 
-contract Polka721Artist is Polka721 {
-	constructor(string memory _name, string memory _symbol, address _polkaUriAddress) Polka721(_name, _symbol, _polkaUriAddress) {
-	}
+contract Polka721Artist is ERC721Artist {
+	constructor(
+		string memory _name,
+		string memory _symbol,
+		address _polkaUriAddress
+	) ERC721Artist(_name, _symbol, _polkaUriAddress) {}
 }
