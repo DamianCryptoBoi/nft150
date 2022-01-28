@@ -59,7 +59,7 @@ module.exports = {
 			gas: 12000000,
 			blockGasLimit: 0x1fffffffffffff,
 		},
-		testbsc: {
+		testBSC: {
 			url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
 			accounts: ['2a7b162564c6ca43e6289d48757bc12261339baa0b7a96271f0e0f99ed52e7a0'],
 			gas: 12000000,
@@ -67,9 +67,27 @@ module.exports = {
 			allowUnlimitedContractSize: true,
 			timeout: 1800000,
 		},
-		mainnet: {
+		mainnetETH: {
 			url: process.env.PROVIDER_URL,
 			accounts: [process.env.PRIVATE_KEY],
+			gas: 12000000,
+			blockGasLimit: 0x1fffffffffffff,
+			allowUnlimitedContractSize: true,
+			timeout: 1800000,
+		},
+
+		mainnetPolygon: {
+			url: 'https://polygon-mainnet.g.alchemy.com/v2/VdMy98z4rRSAGeHErw4hqbROkzZhmJT3',
+			accounts: [process.env.PRIVATE_KEY],
+			gas: 12000000,
+			blockGasLimit: 0x1fffffffffffff,
+			allowUnlimitedContractSize: true,
+			timeout: 1800000,
+		},
+
+		mainnetBSC: {
+			url: 'https://bsc-dataseed.binance.org/',
+			accounts: ['2a7b162564c6ca43e6289d48757bc12261339baa0b7a96271f0e0f99ed52e7a0'],
 			gas: 12000000,
 			blockGasLimit: 0x1fffffffffffff,
 			allowUnlimitedContractSize: true,
