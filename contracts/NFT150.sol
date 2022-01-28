@@ -30,11 +30,6 @@ contract NFT150 is ERC1155Tradeble {
 			tokenMaxSupply[i] = v1.tokenMaxSupply(i);
 			tokenURI[i] = v1.tokenURI(i);
 			migratedTokenId[i] = true;
-
-			// for (uint256 j = 1; j <= v1.tokenSupply(i); j++) {
-			// 	address versionOwner = v1.nftOwnVersion(i, j);
-			// 	balances[versionOwner][i] += 1;
-			// }
 		}
 	}
 

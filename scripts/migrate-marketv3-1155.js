@@ -55,27 +55,14 @@ const users = [
 	'0x0e315d6b311d871259013bb66dc7c4e69636054b',
 ]; //stg
 
-// Ethereum:
-// market: 0xc0dbB219BB9e5F5695a52482F6b38d20116a6D6f
-// 1155: 0xDA174A9A304f6003F8D3181d3e68D5DCF3031065
-// auction: 0xB7b5398279497f1592C55523A5F13Df1e5171439
-
-// Polygon:
-// market: 0x948F4f68AF9ef31ec97867b8c4BDfe435Df00CA5
-// 1155: 0xE5911f4D0Bc114F33056B70D03eD2A4e216c61bf
-// auction: 0x15B2a247F9c881Ec35aB9ed31DC01d8fF6634450
-
-// BSC:
-// market: 0x8754651a5Ca7D7AEdf759235a0deF73E0E9be7Bd
-// 1155: 0xbc32D38A17236341c2A4dC0AFa9Ac2FFEB0D9E35
-//// auction: 0xcAFbA3fDF27a44Cee5b5186975DE7f7D770fDA92
-
 const main = async () => {
 	const [admin] = await hre.ethers.getSigners();
 
-	let oldMarket = '0x948F4f68AF9ef31ec97867b8c4BDfe435Df00CA5';
-	let old1155 = '0xE5911f4D0Bc114F33056B70D03eD2A4e216c61bf';
-	let uri = '0xF5C68C2FBAb7bC61ec32E8d57efE1D7B02EBa4b1';
+	let oldMarket = '';
+	let old1155 = '';
+	let uri = '';
+	let marketV3 = '';
+	let NFT150 = '';
 
 	const oldMarketContract = await hre.ethers.getContractAt('MarketVersion', oldMarket, admin);
 	await oldMarketContract.pause();
@@ -83,27 +70,31 @@ const main = async () => {
 
 	const old1155Contract = await hre.ethers.getContractAt('NFT150Version', old1155, admin);
 
+	const polkaMarketV3 = await hre.ethers.getContractAt('MarketV3', marketV3, admin);
+
+	const nft150 = await hre.ethers.getContractAt('NFT150', NFT150, admin);
+
 	//PolkaMarketV3
-	const PolkaMarketV3 = await hre.ethers.getContractFactory('MarketV3');
-	const polkaMarketV3 = await PolkaMarketV3.deploy();
-	await polkaMarketV3.deployed();
-	console.log('MARKET_CONTRACT deployed at: ', polkaMarketV3.address);
+	// const PolkaMarketV3 = await hre.ethers.getContractFactory('MarketV3');
+	// const polkaMarketV3 = await PolkaMarketV3.deploy();
+	// await polkaMarketV3.deployed();
+	// console.log('MARKET_CONTRACT deployed at: ', polkaMarketV3.address);
 
-	users.push(oldMarket);
-	users.push(polkaMarketV3.address);
+	// users.push(oldMarket);
+	// users.push(polkaMarketV3.address);
 
-	//NFT150
-	const NFT150 = await hre.ethers.getContractFactory('NFT150');
-	const nft150 = await NFT150.deploy('0xF5C68C2FBAb7bC61ec32E8d57efE1D7B02EBa4b1');
-	await nft150.deployed(uri);
-	console.log('ERC1155_CONTRACT deployed at: ', nft150.address);
+	// //NFT150
+	// const NFT150 = await hre.ethers.getContractFactory('NFT150');
+	// const nft150 = await NFT150.deploy('0xF5C68C2FBAb7bC61ec32E8d57efE1D7B02EBa4b1');
+	// await nft150.deployed();
+	// console.log('ERC1155_CONTRACT deployed at: ', nft150.address);
 
-	await polkaMarketV3.setReferralContract('0xEC2808464Eb32cf413C288F33d1d45b3766B178e');
-	// await polkaMarketV3.addPOLKANFTs("0xfBdd4448A593D316eD995E7507A0C1C24ED20772", true, false);
-	// await polkaMarketV3.addPOLKANFTs("0xDA174A9A304f6003F8D3181d3e68D5DCF3031065", true, false);
+	// await polkaMarketV3.setReferralContract('0xEC2808464Eb32cf413C288F33d1d45b3766B178e');
+	// // await polkaMarketV3.addPOLKANFTs("0xfBdd4448A593D316eD995E7507A0C1C24ED20772", true, false);
+	// // await polkaMarketV3.addPOLKANFTs("0xDA174A9A304f6003F8D3181d3e68D5DCF3031065", true, false);
 
-	await polkaMarketV3.setPaymentMethod('0xc592b11915e3f8F963F3aE2170b530E38319b388', true); // usdt
-	await polkaMarketV3.setPaymentMethod('0xDcf1f7Dd2d11Be84C63cFd452B9d62520855a7F6', true); //eth
+	// await polkaMarketV3.setPaymentMethod('0xc592b11915e3f8F963F3aE2170b530E38319b388', true); // usdt
+	// await polkaMarketV3.setPaymentMethod('0xDcf1f7Dd2d11Be84C63cFd452B9d62520855a7F6', true); //eth
 
 	//Migrate Data
 
@@ -144,6 +135,13 @@ const main = async () => {
 	}
 	console.log('---Finish adminMigratePushNFT---');
 
+	console.log('Move payment tokens');
+
+	//ETH
+	old1155Contract.withdrawFunds(polkaMarketV3.address, '0xd35d2e839d888d1cDBAdef7dE118b87DfefeD20e'); // usdt
+	old1155Contract.withdrawFunds(polkaMarketV3.address, '0x0000000000000000000000000000000000000000'); //eth
+	old1155Contract.withdrawFunds(polkaMarketV3.address, '0xbec758b709075141c71e1011b3E5ecea9c3cbc0b'); //xp
+
 	console.log('migrating to new 1155');
 
 	const totalNft = await old1155Contract._currentTokenID();
@@ -153,20 +151,18 @@ const main = async () => {
 	console.log('migrating balances');
 
 	for (i = 0; i < users.length; i++) {
-		await nft150.migrateBalancesFromV1(users[i], 1, totalNft, old1155);
-		console.log(i);
-		// for (j = 1; j <= totalNft; j++) {
-		// 	console.log(i, j);
-		// 	const currentBalance = await old1155Contract.balanceOf(users[i], j);
-		// 	if (currentBalance > 0) {
-		// 		console.log(`user: ${users[i]} token: ${j}`);
-		// 		try {
-		// 			await nft150.migrateBalancesFromV1(users[i], j, j, old1155);
-		// 		} catch {
-		// 			console.log(`err at user ${users[i]} token ${j}`);
-		// 		}
-		// 	}
-		// }
+		for (j = 1; j <= totalNft; j++) {
+			console.log(`checking ${users[i]} with token id ${j}`);
+			const currentBalance = await old1155Contract.balanceOf(users[i], j);
+			if (currentBalance > 0) {
+				console.log(`user: ${users[i]} token: ${j} balance: ${currentBalance}`);
+				try {
+					await nft150.migrateBalancesFromV1(users[i], j, j, old1155);
+				} catch {
+					console.log(`err at user ${users[i]} token ${j}`);
+				}
+			}
+		}
 	}
 
 	console.log('done');
