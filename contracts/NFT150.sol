@@ -42,7 +42,8 @@ contract NFT150 is ERC1155Tradeble {
 		INft150V1 v1 = INft150V1(_v1Address);
 		for (uint256 i = _fromTokenId; i <= _toTokenId; i++) {
 			require(!migratedBalance[_user][i], 'already migrated');
-			balances[_user][i] = v1.balanceOf(_user, i);
+			balances[_user][i] = v1.balanceOf(_user, i); // to save gas, will not emit transfer event
+			//_mint(_user, i, v1.balanceOf(_user, i), '0x'); //will emit transfer event
 			migratedBalance[_user][i] = true;
 		}
 	}
