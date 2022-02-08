@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import './token/ERC1155Tradeble.sol';
 import './interfaces/INft150V1.sol';
-import 'hardhat/console.sol';
 
 /**
  * @title 1155 General
@@ -21,6 +20,7 @@ contract NFT150 is ERC1155Tradeble {
 		address _v1Address
 	) public onlyOwner {
 		INft150V1 v1 = INft150V1(_v1Address);
+		_currentTokenID = v1._currentTokenID();
 		for (uint256 i = _fromTokenId; i <= _toTokenId; i++) {
 			require(!migratedTokenId[i], 'already migrated');
 			creators[i] = v1.creators(i);

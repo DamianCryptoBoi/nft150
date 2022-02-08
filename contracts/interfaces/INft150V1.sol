@@ -16,4 +16,6 @@ interface INft150V1 {
 	function tokenURI(uint256 _id) external returns (string memory);
 
 	function nftOwnVersion(uint256 _id, uint256 _version) external returns (address);
+
+	function _currentTokenID() external returns (uint256);
 }
