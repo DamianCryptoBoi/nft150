@@ -1,25 +1,9 @@
 const hre = require('hardhat');
 
-const users = [
-	'0xd1ffa45fb5d3c450c9522c750ae17b9ce1d29a40',
-	'0xa4ced30258b5692fe7946893770ae7c293e6e4cc',
-	'0x2764e8fdce22cd634fba788a2cdc13f03eda93aa',
-	'0xa593af0961caef34996f13205d67a076902f0ab4',
-	'0xed3dd625f72595f706860b9b52585e9f5d1d6055',
-	'0x9c42a6f8f5737609a0d77cc21cdb80660174de26',
-	'0xcf083c586409b20be200c9ed1911f3db59d87d30',
-	'0xa53947e63d1b113e0cc1d711344785c7cd1b116f',
-	'0x7ed08888af87989bc48009aeeb2ab0df68f13a1f',
-];
+const users = [];
 
 const main = async () => {
 	const [admin] = await hre.ethers.getSigners();
-
-	// let oldMarket = '0x655D071D6cb029Ce3d6c3631e283F42dADaa1993';
-	// let old1155 = '0x6fc631224f67CDa385C6CA14CFfEF23895D232E2';
-	// let uri = '0xAC8e5512Fa9FE34645585b33ED5A85cfAf8911b6';
-	// let marketV3 = '0x2ee7deBB256899Cb6B028219d9606d277d13fEa0';
-	// let NFT150 = '0x07e1D17C917Fd51668cC0c14FF0bE833f49bCA26';
 
 	let oldMarket = '0x979929a447971353d2a2014124Eb4e4ba975436e';
 	let old1155 = '0xeFF2b1201f0137Dbed3bA5c27674f1238F851ae1';

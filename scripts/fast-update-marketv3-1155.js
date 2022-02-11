@@ -1,24 +1,31 @@
 const hre = require('hardhat');
 
 const users = [
-	'0xd1ffa45fb5d3c450c9522c750ae17b9ce1d29a40',
 	'0xa4ced30258b5692fe7946893770ae7c293e6e4cc',
 	'0x2764e8fdce22cd634fba788a2cdc13f03eda93aa',
-	'0xa593af0961caef34996f13205d67a076902f0ab4',
 	'0xed3dd625f72595f706860b9b52585e9f5d1d6055',
+	'0xa629bc518d7528b406b0d05e7d36d5173ccb182a',
+	'0x7828bf53e0030f75bdb25369c1b405a834ee6b13',
 	'0x9c42a6f8f5737609a0d77cc21cdb80660174de26',
+	'0xa593af0961caef34996f13205d67a076902f0ab4',
+	'0x0c582004302ccd2b1eeb7074392189a1a2247cb0',
+	'0xd1ffa45fb5d3c450c9522c750ae17b9ce1d29a40',
 	'0xcf083c586409b20be200c9ed1911f3db59d87d30',
-	'0xa53947e63d1b113e0cc1d711344785c7cd1b116f',
-	'0x7ed08888af87989bc48009aeeb2ab0df68f13a1f',
+	'0xe1bf9515af3f0f46f785ce317da8c30f94f93db3',
+	'0x86ea72400d30c48e40b3c35357fc79a4fac3aebf',
+	'0x7e426921b7a63cfc1c5bbbb9d75593068647c4ea',
+	'0x420f8e0b241c54983d9a585317892c78d591fc33',
+	'0x83079362e0fbc63dab42808d5f23c174a65ca412',
+	'0x334131bb7548f366521885426a537593cfaf8ac6',
 ];
 
 const main = async () => {
 	const [admin] = await hre.ethers.getSigners();
 
-	let oldMarket = '0x979929a447971353d2a2014124Eb4e4ba975436e';
-	let old1155 = '0xeFF2b1201f0137Dbed3bA5c27674f1238F851ae1';
-	let uri = '0x4dC381C74beF4E6fb4E17F0483dec2C62892d817';
-	let referral = '0x20E9b8fdAd0d9767E6ebE6ccd25b23193aca69D7';
+	let oldMarket = '0xb6F9E7CF997087B2b1DE75aAd73120D012337BA6';
+	let old1155 = '0x45fFFaa2A4b809AA2B1D9357f3a9fd3b03218284';
+	let uri = '0xd4aD321ad9D135Fea14B21248916107705323Dce';
+	let referral = '0xA19dc16e53eb0d9fDE3d4f3d58c73F9b91E5b39D';
 
 	const oldMarketContract = await hre.ethers.getContractAt('MarketVersion', oldMarket, admin);
 	await oldMarketContract.pause();

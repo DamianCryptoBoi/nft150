@@ -24,7 +24,7 @@ contract ERC1155Tradeble is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, 
 	mapping(uint256 => uint256) public xUserFee;
 	mapping(uint256 => uint256) public tokenSupply;
 	mapping(uint256 => uint256) public tokenMaxSupply;
-	mapping(uint256 => string) public tokenURI;
+	mapping(uint256 => string) public dataURIs;
 	address public polkaUriAddress;
 
 	// Contract name
@@ -53,7 +53,12 @@ contract ERC1155Tradeble is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, 
 
 	function uri(uint256 _id) public view returns (string memory) {
 		require(_exists(_id), 'ERC721Tradable#uri: NONEXISTENT_TOKEN');
-		return Strings.strConcat(IPolkaURI(polkaUriAddress).baseMetadataURI(), tokenURI[_id]);
+		return string(abi.encodePacked(IPolkaURI(polkaUriAddress).baseMetadataURI(), dataURIs[_id]));
+	}
+
+	function tokenURI(uint256 _id) public view returns (string memory) {
+		require(_exists(_id), 'ERC721Tradable#uri: NONEXISTENT_TOKEN');
+		return string(abi.encodePacked(IPolkaURI(polkaUriAddress).baseMetadataURI(), dataURIs[_id]));
 	}
 
 	function setPolkaUriAddress(address _polkaUriAddress) external onlyOwner {
@@ -115,7 +120,7 @@ contract ERC1155Tradeble is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, 
 		creators[_id] = msg.sender;
 		loyaltyFee[_id] = _loyaltyFee;
 		xUserFee[_id] = _xUserFee;
-		tokenURI[_id] = _uri;
+		dataURIs[_id] = _uri;
 
 		if (_initialSupply != 0) _mint(msg.sender, _id, _initialSupply, _data);
 		tokenSupply[_id] = _initialSupply;
@@ -140,7 +145,7 @@ contract ERC1155Tradeble is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, 
 	) public {
 		uint256 tokenId = _id;
 		require(creators[tokenId] == msg.sender, 'Only-creator-can-mint');
-		require(tokenSupply[tokenId] < tokenMaxSupply[tokenId], 'Max supply reached');
+		require(tokenSupply[tokenId] + _quantity < tokenMaxSupply[tokenId], 'Max supply reached');
 		_mint(_to, _id, _quantity, _data);
 		tokenSupply[_id] = tokenSupply[_id].add(_quantity);
 	}
