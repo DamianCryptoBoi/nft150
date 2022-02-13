@@ -112,20 +112,6 @@ const main = async () => {
 	}
 	console.log('---Finish adminMigratePushNFT---');
 
-	console.log('Move payment tokens');
-
-	// try {
-	// 	//ETH
-	// 	// old1155Contract.withdrawFunds(polkaMarketV3.address, '0xd35d2e839d888d1cDBAdef7dE118b87DfefeD20e'); // usdt
-	// 	// old1155Contract.withdrawFunds(polkaMarketV3.address, '0x0000000000000000000000000000000000000000'); //eth
-	// 	// old1155Contract.withdrawFunds(polkaMarketV3.address, '0xbec758b709075141c71e1011b3E5ecea9c3cbc0b'); //xp
-	// 	//BSC
-	// 	await old1155Contract.withdrawFunds(polkaMarketV3.address, '0x0000000000000000000000000000000000000000');
-	// 	await old1155Contract.withdrawFunds(polkaMarketV3.address, '0x4Af96f000b0Df70E99dd06ea6cE759aFCd331cC1');
-	// } catch {
-	// 	console.log('Move payment tokens FAILED!');
-	// }
-
 	console.log('migrating to new 1155');
 
 	const totalNft = await old1155Contract._currentTokenID();

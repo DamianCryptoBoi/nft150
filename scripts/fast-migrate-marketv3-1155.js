@@ -26,49 +26,42 @@ const main = async () => {
 
 	//Migrate Data
 
-	// console.log('---adminMigrateOrders---');
-	// const totalOrder = await oldMarketContract.totalOrders();
-	// console.log('---totalorder--- ', totalOrder.toNumber());
-	// let stepMigrate = 10;
-	// let blockLoop = Math.ceil(totalOrder / stepMigrate);
-	// for (i = 0; i < blockLoop; i++) {
-	// 	await polkaMarketV3.adminMigrateOrders(
-	// 		oldMarket,
-	// 		i * stepMigrate,
-	// 		i * stepMigrate + stepMigrate - 1,
-	// 		nft150.address
-	// 	);
-	// 	console.log('---Order id migrated to: --- ', (i + 1) * stepMigrate);
-	// }
-	// console.log('---Finish adminMigrateOrders---');
+	console.log('---adminMigrateOrders---');
+	const totalOrder = await oldMarketContract.totalOrders();
+	console.log('---totalorder--- ', totalOrder.toNumber());
+	let stepMigrate = 10;
+	let blockLoop = Math.ceil(totalOrder / stepMigrate);
+	for (i = 0; i < blockLoop; i++) {
+		await polkaMarketV3.adminMigrateOrders(
+			oldMarket,
+			i * stepMigrate,
+			i * stepMigrate + stepMigrate - 1,
+			nft150.address
+		);
+		console.log('---Order id migrated to: --- ', (i + 1) * stepMigrate);
+	}
+	console.log('---Finish adminMigrateOrders---');
 
-	// console.log('---adminMigrateBids---');
-	// const totalBid = await oldMarketContract.totalBids();
-	// let blockLoopBid = Math.ceil(totalBid / 10);
-	// console.log('---totalBid--- ', totalBid.toNumber());
-	// for (i = 0; i < blockLoopBid; i++) {
-	// 	await polkaMarketV3.adminMigrateBids(oldMarket, i * 10, i * 10 + 10 - 1, old1155, nft150.address);
-	// }
-	// console.log('---Finish adminMigrateBids---');
+	console.log('---adminMigrateBids---');
+	const totalBid = await oldMarketContract.totalBids();
+	let blockLoopBid = Math.ceil(totalBid / 10);
+	console.log('---totalBid--- ', totalBid.toNumber());
+	for (i = 0; i < blockLoopBid; i++) {
+		await polkaMarketV3.adminMigrateBids(oldMarket, i * 10, i * 10 + 10 - 1, old1155, nft150.address);
+	}
+	console.log('---Finish adminMigrateBids---');
 
-	// console.log('---adminMigratePushNFT---');
-	// let stepMigrateNFT = 10;
-	// let blockLoopNFT = Math.ceil(totalOrder / stepMigrateNFT);
-	// for (i = 0; i < blockLoopNFT; i++) {
-	// 	await oldMarketContract.adminMigratePushNFT(
-	// 		polkaMarketV3.address,
-	// 		i * stepMigrateNFT,
-	// 		i * stepMigrateNFT + stepMigrateNFT - 1
-	// 	);
-	// }
-	// console.log('---Finish adminMigratePushNFT---');
-
-	// console.log('Move payment tokens');
-
-	//ETH
-	// old1155Contract.withdrawFunds(polkaMarketV3.address, '0xd35d2e839d888d1cDBAdef7dE118b87DfefeD20e'); // usdt
-	// old1155Contract.withdrawFunds(polkaMarketV3.address, '0x0000000000000000000000000000000000000000'); //eth
-	// old1155Contract.withdrawFunds(polkaMarketV3.address, '0xbec758b709075141c71e1011b3E5ecea9c3cbc0b'); //xp
+	console.log('---adminMigratePushNFT---');
+	let stepMigrateNFT = 10;
+	let blockLoopNFT = Math.ceil(totalOrder / stepMigrateNFT);
+	for (i = 0; i < blockLoopNFT; i++) {
+		await oldMarketContract.adminMigratePushNFT(
+			polkaMarketV3.address,
+			i * stepMigrateNFT,
+			i * stepMigrateNFT + stepMigrateNFT - 1
+		);
+	}
+	console.log('---Finish adminMigratePushNFT---');
 
 	console.log('migrating to new 1155');
 
