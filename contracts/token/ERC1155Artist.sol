@@ -24,7 +24,7 @@ contract ERC1155Artist is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, Mi
 	mapping(uint256 => uint256) public xUserFee;
 	mapping(uint256 => uint256) public tokenSupply;
 	mapping(uint256 => uint256) public tokenMaxSupply;
-	mapping(uint256 => string) public tokenURI;
+	mapping(uint256 => string) public dataURIs;
 	address public polkaUriAddress;
 
 	// Contract name
@@ -53,7 +53,12 @@ contract ERC1155Artist is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, Mi
 
 	function uri(uint256 _id) public view returns (string memory) {
 		require(_exists(_id), 'ERC721Tradable#uri: NONEXISTENT_TOKEN');
-		return Strings.strConcat(IPolkaURI(polkaUriAddress).baseMetadataURI(), tokenURI[_id]);
+		return Strings.strConcat(IPolkaURI(polkaUriAddress).baseMetadataURI(), dataURIs[_id]);
+	}
+
+	function tokenURI(uint256 _id) public view returns (string memory) {
+		require(_exists(_id), 'ERC721Tradable#uri: NONEXISTENT_TOKEN');
+		return string(abi.encodePacked(IPolkaURI(polkaUriAddress).baseMetadataURI(), dataURIs[_id]));
 	}
 
 	function setPolkaUriAddress(address _polkaUriAddress) external onlyOwner {
@@ -115,7 +120,7 @@ contract ERC1155Artist is ERC1155, ERC1155MintBurn, ERC1155Metadata, Ownable, Mi
 		creators[_id] = msg.sender;
 		loyaltyFee[_id] = _loyaltyFee;
 		xUserFee[_id] = _xUserFee;
-		tokenURI[_id] = _uri;
+		dataURIs[_id] = _uri;
 
 		if (_initialSupply != 0) _mint(msg.sender, _id, _initialSupply, _data);
 		tokenSupply[_id] = _initialSupply;
