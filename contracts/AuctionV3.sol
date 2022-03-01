@@ -149,14 +149,23 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 	function _payBidAuction(uint256 _bidAuctionId) internal {
 		BidAuction memory bidAuction = bidAuctions[_bidAuctionId];
 		Auction memory aut = auctions[bidAuctions[_bidAuctionId].auctionId];
-		address payable creator = payable(IPOLKANFT(bidAuction.tokenAddress).getCreator(bidAuction.tokenId));
-		uint256 loyaltyFee = IPOLKANFT(bidAuction.tokenAddress).getLoyaltyFee(bidAuction.tokenId);
-		uint256 nftXUserFee = IPOLKANFT(bidAuction.tokenAddress).getXUserFee(bidAuction.tokenId);
+
+		address payable creator = payable(_getCreator(bidAuction.tokenAddress, bidAuction.tokenId));
+
+		uint256 loyaltyFee = _getLoyaltyFee(bidAuction.tokenAddress, bidAuction.tokenId);
+
+		uint256 nftXUserFee = _getXUserFee(bidAuction.tokenAddress, bidAuction.tokenId);
+
 		address _paymentToken = bidAuctions[_bidAuctionId].paymentToken;
 		uint256 _bidPrice = bidAuctions[_bidAuctionId].bidPrice;
-		uint256 _totalEarnings = (_bidPrice * ZOOM_FEE) / (ZOOM_FEE + loyaltyFee + nftXUserFee);
 
-		if (creator != address(0)) {
+		uint256 _totalEarnings = _bidPrice;
+
+		if (loyaltyFee > 0 || nftXUserFee > 0) {
+			_totalEarnings = (_bidPrice * ZOOM_FEE) / (ZOOM_FEE + loyaltyFee + nftXUserFee);
+		}
+
+		if (creator != address(0) && loyaltyFee > 0) {
 			_paid(_paymentToken, creator, (_totalEarnings * loyaltyFee) / ZOOM_FEE);
 		}
 
@@ -179,6 +188,27 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 	function _getRefData(address _user) internal view returns (address payable) {
 		address payable userRef = IReferral(referralContract).getReferral(_user);
 		return userRef;
+	}
+
+	function _getCreator(address _tokenAddress, uint256 _tokenId) internal view returns (address) {
+		try IPOLKANFT(_tokenAddress).getCreator(_tokenId) returns (address _creator) {
+			return _creator;
+		} catch {}
+		return address(0);
+	}
+
+	function _getXUserFee(address _tokenAddress, uint256 _tokenId) internal view returns (uint256) {
+		try IPOLKANFT(_tokenAddress).getXUserFee(_tokenId) returns (uint256 _xUserFee) {
+			return _xUserFee;
+		} catch {}
+		return 0;
+	}
+
+	function _getLoyaltyFee(address _tokenAddress, uint256 _tokenId) internal view returns (uint256) {
+		try IPOLKANFT(_tokenAddress).getLoyaltyFee(_tokenId) returns (uint256 _loyaltyFee) {
+			return _loyaltyFee;
+		} catch {}
+		return 0;
 	}
 }
 
@@ -246,8 +276,8 @@ contract AuctionV3 is ManagerAuction {
 		require(auctions[_auctionId].paymentToken == _paymentToken, 'Incorrect-payment-method');
 		require(auctions[_auctionId].owner != msg.sender, 'Owner-can-not-bid');
 
-		uint256 loyaltyFee = IPOLKANFT(_tokenAddress).getLoyaltyFee(_tokenId);
-		uint256 nftXUserFee = IPOLKANFT(_tokenAddress).getXUserFee(_tokenId);
+		uint256 loyaltyFee = _getLoyaltyFee(_tokenAddress, _tokenId);
+		uint256 nftXUserFee = _getXUserFee(_tokenAddress, _tokenId);
 		require(
 			_price >= (auctions[_auctionId].startPrice * (ZOOM_FEE + loyaltyFee + nftXUserFee)) / ZOOM_FEE,
 			'Price-lower-than-start-price'
@@ -380,8 +410,8 @@ contract AuctionV3 is ManagerAuction {
 		require(msg.sender == currentBid.bidder, 'Not-owner-bid-auction');
 
 		Auction memory currentAuction = auctions[bidAuctions[_bidAuctionId].auctionId];
-		uint256 loyaltyFee = IPOLKANFT(currentAuction.tokenAddress).getLoyaltyFee(currentAuction.tokenId);
-		uint256 nftXUserFee = IPOLKANFT(currentAuction.tokenAddress).getXUserFee(currentAuction.tokenId);
+		uint256 loyaltyFee = _getLoyaltyFee(currentAuction.tokenAddress, currentAuction.tokenId);
+		uint256 nftXUserFee = _getXUserFee(currentAuction.tokenAddress, currentAuction.tokenId);
 
 		if (
 			bidAuctions[_bidAuctionId].bidPrice >=
@@ -419,8 +449,8 @@ contract AuctionV3 is ManagerAuction {
 		require(currentAuction.endTime < block.timestamp, 'Auction-not-end');
 		require(currentAuction.owner == msg.sender, 'Auction-not-owner');
 
-		uint256 loyaltyFee = IPOLKANFT(currentAuction.tokenAddress).getLoyaltyFee(currentAuction.tokenId);
-		uint256 nftXUserFee = IPOLKANFT(currentAuction.tokenAddress).getXUserFee(currentAuction.tokenId);
+		uint256 loyaltyFee = _getLoyaltyFee(currentAuction.tokenAddress, currentAuction.tokenId);
+		uint256 nftXUserFee = _getXUserFee(currentAuction.tokenAddress, currentAuction.tokenId);
 		require(
 			auctionBidCount[_auctionId] == 0 ||
 				bidAuctions[highestBidId].bidPrice <
@@ -442,8 +472,8 @@ contract AuctionV3 is ManagerAuction {
 		require(_bidAuctionId == highestBidId, 'Not-highest-bid');
 		require(currentAuction.owner == msg.sender, 'Auction-not-owner');
 
-		uint256 loyaltyFee = IPOLKANFT(currentAuction.tokenAddress).getLoyaltyFee(currentAuction.tokenId);
-		uint256 nftXUserFee = IPOLKANFT(currentAuction.tokenAddress).getXUserFee(currentAuction.tokenId);
+		uint256 loyaltyFee = _getLoyaltyFee(currentAuction.tokenAddress, currentAuction.tokenId);
+		uint256 nftXUserFee = _getXUserFee(currentAuction.tokenAddress, currentAuction.tokenId);
 		require(
 			currentBid.bidPrice >= (currentAuction.reservePrice * (ZOOM_FEE + loyaltyFee + nftXUserFee)) / ZOOM_FEE,
 			'Reserve-price-not-met'
@@ -469,8 +499,8 @@ contract AuctionV3 is ManagerAuction {
 		require(_bidAuctionId == highestBidId, 'Not-highest-bid');
 		require(msg.sender == bidAuctions[highestBidId].bidder, 'Not-winner'); // make sure the sender is the winner
 
-		uint256 loyaltyFee = IPOLKANFT(currentAuction.tokenAddress).getLoyaltyFee(currentAuction.tokenId);
-		uint256 nftXUserFee = IPOLKANFT(currentAuction.tokenAddress).getXUserFee(currentAuction.tokenId);
+		uint256 loyaltyFee = _getLoyaltyFee(currentAuction.tokenAddress, currentAuction.tokenId);
+		uint256 nftXUserFee = _getXUserFee(currentAuction.tokenAddress, currentAuction.tokenId);
 		require(
 			currentBid.bidPrice >= (currentAuction.reservePrice * (ZOOM_FEE + loyaltyFee + nftXUserFee)) / ZOOM_FEE,
 			'Reserve-price-not-met'

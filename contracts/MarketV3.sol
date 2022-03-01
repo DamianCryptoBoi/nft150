@@ -110,6 +110,27 @@ contract Manager is Ownable, Pausable {
 			IERC20(_tokenAddress).safeTransfer(_beneficiary, _withdrawAmount);
 		}
 	}
+
+	function _getCreator(address _tokenAddress, uint256 _tokenId) internal view returns (address) {
+		try IPOLKANFT(_tokenAddress).getCreator(_tokenId) returns (address _creator) {
+			return _creator;
+		} catch {}
+		return address(0);
+	}
+
+	function _getXUserFee(address _tokenAddress, uint256 _tokenId) internal view returns (uint256) {
+		try IPOLKANFT(_tokenAddress).getXUserFee(_tokenId) returns (uint256 _xUserFee) {
+			return _xUserFee;
+		} catch {}
+		return 0;
+	}
+
+	function _getLoyaltyFee(address _tokenAddress, uint256 _tokenId) internal view returns (uint256) {
+		try IPOLKANFT(_tokenAddress).getLoyaltyFee(_tokenId) returns (uint256 _loyaltyFee) {
+			return _loyaltyFee;
+		} catch {}
+		return 0;
+	}
 }
 
 contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
@@ -244,16 +265,19 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		address payable buyerRef
 	) private returns (bool) {
 		Order memory order = orders[_orderId];
-		address payable creator = payable(IPOLKANFT(order.tokenAddress).getCreator(order.tokenId));
-		uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
-		uint256 nftXUserFee = IPOLKANFT(order.tokenAddress).getXUserFee(order.tokenId);
 
-		if (buyerRef != address(0)) {
+		address payable creator = payable(_getCreator(order.tokenAddress, order.tokenId));
+
+		uint256 loyaltyFee = _getLoyaltyFee(order.tokenAddress, order.tokenId);
+
+		uint256 nftXUserFee = _getXUserFee(order.tokenAddress, order.tokenId);
+
+		if (buyerRef != address(0) && nftXUserFee > 0) {
 			uint256 amountToBuyerRef = orderAmount.mul(nftXUserFee).mul(ZOOM_FEE - yRefRate).div(ZOOM_FEE**2); // 1.25
 			_paid(_paymentToken, buyerRef, amountToBuyerRef);
 		}
 
-		if (creator != address(0)) {
+		if (creator != address(0) && loyaltyFee > 0) {
 			_paid(
 				_paymentToken,
 				creator,
@@ -340,11 +364,14 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		require(order.isOnsale && order.quantity >= _quantity, 'Not-available-to-buy');
 
 		uint256 orderAmount = order.price.mul(_quantity);
-		uint256 exactPaymentAmount;
-		uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
-		uint256 nftXUserFee = IPOLKANFT(order.tokenAddress).getXUserFee(order.tokenId);
+		uint256 exactPaymentAmount = orderAmount;
 
-		exactPaymentAmount = orderAmount.mul(ZOOM_FEE + nftXUserFee + loyaltyFee).div(ZOOM_FEE);
+		uint256 loyaltyFee = _getLoyaltyFee(order.tokenAddress, order.tokenId);
+		uint256 nftXUserFee = _getXUserFee(order.tokenAddress, order.tokenId);
+
+		if (loyaltyFee > 0 || nftXUserFee > 0) {
+			exactPaymentAmount = orderAmount.mul(ZOOM_FEE + nftXUserFee + loyaltyFee).div(ZOOM_FEE);
+		}
 
 		if (_paymentToken == address(0) && msg.value > 0) {
 			require(msg.value >= exactPaymentAmount, 'Payment-value-invalid');
@@ -425,8 +452,8 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 			uint256 matchQuantity = order.quantity > quantityLeft ? quantityLeft : order.quantity;
 
 			uint256 orderAmount = bid.bidPrice.mul(matchQuantity);
-			uint256 loyaltyFee = IPOLKANFT(order.tokenAddress).getLoyaltyFee(order.tokenId);
-			uint256 nftXUserFee = IPOLKANFT(order.tokenAddress).getXUserFee(order.tokenId);
+			uint256 loyaltyFee = _getLoyaltyFee(order.tokenAddress, order.tokenId);
+			uint256 nftXUserFee = _getXUserFee(order.tokenAddress, order.tokenId);
 
 			adminHoldPayment[bid.paymentToken] = adminHoldPayment[bid.paymentToken].sub(orderAmount);
 
