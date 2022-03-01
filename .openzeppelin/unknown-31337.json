@@ -7,7 +7,7 @@
       "hash": "0xc53b7c9525d157b77ca0a0c54f0c2e69c399d554de85b3f62c4795f6b64687ea",
       "type": 2,
       "accessList": [],
-      "blockHash": "0x4911a9068d417c6a217a8b71370d6666c3d4ac2e81096d6e113233ce219ed71f",
+      "blockHash": "0x691d6dc7dfed52f2795ebae97171fa9336d6ffb027bf96c775317526d7a19ea1",
       "blockNumber": 3,
       "transactionIndex": 0,
       "confirmations": 1,
@@ -462,13 +462,13 @@
           {
             "contract": "ManagerAuction",
             "label": "auctions",
-            "type": "t_mapping(t_uint256,t_struct(Auction)7057_storage)",
+            "type": "t_mapping(t_uint256,t_struct(Auction)8290_storage)",
             "src": "contracts/AuctionVersion.sol:73"
           },
           {
             "contract": "ManagerAuction",
             "label": "bidAuctions",
-            "type": "t_mapping(t_uint256,t_struct(BidAuction)7078_storage)",
+            "type": "t_mapping(t_uint256,t_struct(BidAuction)8311_storage)",
             "src": "contracts/AuctionVersion.sol:74"
           },
           {
@@ -515,10 +515,10 @@
           "t_bool": {
             "label": "bool"
           },
-          "t_mapping(t_uint256,t_struct(Auction)7057_storage)": {
+          "t_mapping(t_uint256,t_struct(Auction)8290_storage)": {
             "label": "mapping(uint256 => struct ManagerAuction.Auction)"
           },
-          "t_struct(Auction)7057_storage": {
+          "t_struct(Auction)8290_storage": {
             "label": "struct ManagerAuction.Auction",
             "members": [
               {
@@ -570,10 +570,10 @@
           "t_array(t_uint256)dyn_storage": {
             "label": "uint256[]"
           },
-          "t_mapping(t_uint256,t_struct(BidAuction)7078_storage)": {
+          "t_mapping(t_uint256,t_struct(BidAuction)8311_storage)": {
             "label": "mapping(uint256 => struct ManagerAuction.BidAuction)"
           },
-          "t_struct(BidAuction)7078_storage": {
+          "t_struct(BidAuction)8311_storage": {
             "label": "struct ManagerAuction.BidAuction",
             "members": [
               {

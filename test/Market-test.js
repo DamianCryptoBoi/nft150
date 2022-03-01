@@ -32,9 +32,17 @@ describe('Unit testing - Market', function () {
 		nft150 = await NFT150.deploy(polkaURI.address);
 		await nft150.deployed();
 
+		//random imported erc721
+
 		Import721 = await hre.ethers.getContractFactory('Import721');
 		import721 = await Import721.deploy();
 		await import721.deployed();
+
+		//random imported ERC1155
+
+		Import1155 = await hre.ethers.getContractFactory('Import1155');
+		import1155 = await Import1155.deploy();
+		await import1155.deployed();
 
 		//PolkaReferral
 		PolkaReferral = await hre.ethers.getContractFactory('PolkaReferral');
@@ -175,7 +183,7 @@ describe('Unit testing - Market', function () {
 			expect((await mockPOLKA.balanceOf(refer.address)).toNumber()).to.equal(Math.floor(10000 * 0.025 * 0.5));
 		});
 
-		it('Buy 721 Import', async function () {
+		it('Buy 721 Imported', async function () {
 			await polkaReferral.setReferral([addr.address], [refer.address]);
 
 			//mint
@@ -225,6 +233,27 @@ describe('Unit testing - Market', function () {
 				1000000 - 10000 - 10000 * 0.025 - 10000 * 0.2
 			);
 			expect((await mockPOLKA.balanceOf(owner.address)).toNumber()).to.equal(12000);
+		});
+
+		it('Buy 1155 Imported', async function () {
+			//mint
+			await import1155.mint(owner.address, 1, 100, '0x');
+			expect((await import1155.balanceOf(owner.address, 1)).toNumber()).to.equal(100);
+
+			await import1155.setApprovalForAll(marketV3.address, true);
+
+			await marketV3.createOrder(import1155.address, mockPOLKA.address, 1, 10, 10000);
+
+			await mockPOLKA.mint(addr.address, 1000000);
+			await mockPOLKA.connect(addr).approve(marketV3.address, 1000000);
+
+			// buy(uint256 _orderId, uint256 _quantity, address _paymentToken)
+			await marketV3.connect(addr).buy(0, 10, mockPOLKA.address);
+			expect((await import1155.balanceOf(addr.address, 1)).toNumber()).to.equal(10);
+			expect((await import1155.balanceOf(owner.address, 1)).toNumber()).to.equal(90);
+
+			expect((await mockPOLKA.balanceOf(addr.address)).toNumber()).to.equal(1000000 - 100000);
+			expect((await mockPOLKA.balanceOf(owner.address)).toNumber()).to.equal(100000);
 		});
 
 		it('createBid 721', async function () {
