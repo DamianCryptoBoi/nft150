@@ -1,11 +1,13 @@
 const hre = require('hardhat');
 
+//PLEASE PROVIDE BASE URI FOR THE URI CONTRACT
+const BASE_URI = ''; //EX: https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/
+
 const main = async () => {
-	console.log('--- Start Deploy DEV and STG BSC ---');
-	const [admin] = await hre.ethers.getSigners();
+	console.log('--- Start Deploy  BSC ---');
 
 	const PolkaURI = await hre.ethers.getContractFactory('PolkaURI');
-	const polkaURI = await PolkaURI.deploy('https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/');
+	const polkaURI = await PolkaURI.deploy(BASE_URI);
 	await polkaURI.deployed();
 	console.log('PolkaURI deployed at: ', polkaURI.address);
 
@@ -41,16 +43,15 @@ const main = async () => {
 
 	console.log('Setting market');
 	await marketV3.setReferralContract(polkaReferral.address);
-	// await marketV3.addPOLKANFTs(polka721General.address, true, false);
-	// await marketV3.addPOLKANFTs(nft150.address, true, false);
-	await marketV3.setPaymentMethod('0x4Af96f000b0Df70E99dd06ea6cE759aFCd331cC1', true); // usdt
+
+	// PLEASE CHANGE THESE TOKEN ADDRESSES, keep 0X00...000 ONLY BECAUSE IT STAND FOR THE NATIVE COIN (IN THIS CASE, BNB)
+
+	// await marketV3.setPaymentMethod('0x4Af96f000b0Df70E99dd06ea6cE759aFCd331cC1', true); // usdt
 	await marketV3.setPaymentMethod('0x0000000000000000000000000000000000000000', true); // bnb
 
 	console.log('Setting Auction');
-	// await auctionV3.setReferralContract(polkaReferral.address);
-	// await auctionV3.addPOLKANFTs(polka721General.address, true);
-	// await auctionV3.addPOLKANFTs(nft150.address, true);
-	await auctionV3.setPaymentMethod('0x4Af96f000b0Df70E99dd06ea6cE759aFCd331cC1', true); // usdt
+
+	// await auctionV3.setPaymentMethod('0x4Af96f000b0Df70E99dd06ea6cE759aFCd331cC1', true); // usdt
 	await auctionV3.setPaymentMethod('0x0000000000000000000000000000000000000000', true); // bnb
 };
 

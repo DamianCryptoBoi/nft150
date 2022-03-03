@@ -1,11 +1,14 @@
 const hre = require('hardhat');
 
+//PLEASE PROVIDE BASE URI FOR THE URI CONTRACT
+const BASE_URI = ''; //EX: https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/
+
 const main = async () => {
-	console.log('--- Start Deploy DEV and STG Polygon ---');
+	console.log('--- Start Deploy Polygon ---');
 	const [admin] = await hre.ethers.getSigners();
 
 	const PolkaURI = await hre.ethers.getContractFactory('PolkaURI');
-	const polkaURI = await PolkaURI.deploy('https://yng30mk417.execute-api.ap-southeast-1.amazonaws.com/v1/');
+	const polkaURI = await PolkaURI.deploy(BASE_URI);
 	await polkaURI.deployed();
 	console.log('PolkaURI deployed at: ', polkaURI.address);
 
@@ -41,17 +44,16 @@ const main = async () => {
 
 	console.log('Setting market');
 	await marketV3.setReferralContract(polkaReferral.address);
-	// await marketV3.addPOLKANFTs(polka721General.address, true, false);
-	// await marketV3.addPOLKANFTs(nft150.address, true, false);
-	await marketV3.setPaymentMethod('0xc592b11915e3f8F963F3aE2170b530E38319b388', true); // usdt
-	await marketV3.setPaymentMethod('0xDcf1f7Dd2d11Be84C63cFd452B9d62520855a7F6', true); //eth
+
+	// PLEASE CHANGE THESE TOKEN ADDRESSES
+
+	// await marketV3.setPaymentMethod('0xc592b11915e3f8F963F3aE2170b530E38319b388', true); // usdt
+	// await marketV3.setPaymentMethod('0xDcf1f7Dd2d11Be84C63cFd452B9d62520855a7F6', true); //eth
 
 	console.log('Setting Auction');
-	// await auctionV3.setReferralContract(polkaReferral.address);
-	// await auctionV3.addPOLKANFTs(polka721General.address, true);
-	// await auctionV3.addPOLKANFTs(nft150.address, true);
-	await auctionV3.setPaymentMethod('0xc592b11915e3f8F963F3aE2170b530E38319b388', true); // usdt
-	await auctionV3.setPaymentMethod('0xDcf1f7Dd2d11Be84C63cFd452B9d62520855a7F6', true); //eth
+
+	// await auctionV3.setPaymentMethod('0xc592b11915e3f8F963F3aE2170b530E38319b388', true); // usdt
+	// await auctionV3.setPaymentMethod('0xDcf1f7Dd2d11Be84C63cFd452B9d62520855a7F6', true); //eth
 
 	console.log('Setting Finish');
 };
