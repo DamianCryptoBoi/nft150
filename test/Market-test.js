@@ -305,6 +305,12 @@ describe('Unit testing - Market', function () {
 					.createBid(polka721General.address, ZERO_ADDRESS, 1, 1, 100, 9999999999, { value: 1 })
 			).to.be.revertedWith('Invalid-amount');
 
+			await expect(
+				marketV3
+					.connect(addr)
+					.createBid(polka721General.address, ZERO_ADDRESS, 1, 1, 100, 9999999999, { value: 0 })
+			).to.be.revertedWith('Invalid-amount');
+
 			await marketV3
 				.connect(addr)
 				.createBid(polka721General.address, ZERO_ADDRESS, 1, 1, 100, 9999999999, { value: 100 });
@@ -345,12 +351,14 @@ describe('Unit testing - Market', function () {
 			expect((await marketV3.totalBids()).toNumber()).to.equal(0);
 
 			await expect(
-				marketV3.connect(addr).createBid(nft150.address, mockPOLKA.address, 1, 2, 30, 9999999999, { value: 30 })
+				marketV3.connect(addr).createBid(nft150.address, ZERO_ADDRESS, 1, 2, 30, 9999999999, { value: 0 })
 			).to.be.revertedWith('Invalid-amount');
 
-			await marketV3
-				.connect(addr)
-				.createBid(nft150.address, mockPOLKA.address, 1, 1, 30, 9999999999, { value: 30 });
+			await expect(
+				marketV3.connect(addr).createBid(nft150.address, ZERO_ADDRESS, 1, 2, 30, 9999999999, { value: 30 })
+			).to.be.revertedWith('Invalid-amount');
+
+			await marketV3.connect(addr).createBid(nft150.address, ZERO_ADDRESS, 1, 1, 30, 9999999999, { value: 30 });
 			expect((await marketV3.totalBids()).toNumber()).to.equal(1);
 		});
 

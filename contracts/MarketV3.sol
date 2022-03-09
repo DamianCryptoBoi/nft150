@@ -374,16 +374,14 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		newBid.tokenId = _tokenId;
 		newBid.tokenAddress = _tokenAddress;
 
-		if (msg.value > 0) {
-			require(msg.value >= _quantity * _price, 'Invalid-amount');
-			newBid.paymentToken = address(0);
-		} else {
-			newBid.paymentToken = _paymentToken;
-		}
+		newBid.paymentToken = _paymentToken;
 
-		if (newBid.paymentToken != address(0)) {
+		if (_paymentToken == address(0)) {
+			require(msg.value >= _quantity * _price, 'Invalid-amount');
+		} else {
 			IERC20(newBid.paymentToken).safeTransferFrom(newBid.bidder, address(this), _quantity * _price);
 		}
+
 		adminHoldPayment[_paymentToken] += _quantity * _price;
 
 		newBid.status = true;
