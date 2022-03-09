@@ -1,6 +1,6 @@
 const { expect, assert, use } = require('chai');
 const { solidity } = require('ethereum-waffle');
-use(solidity); //to user revertedWith
+use(solidity); //to use revertedWith
 const { ethers, upgrades } = require('hardhat');
 
 const { ZERO_ADDRESS } = require('openzeppelin-test-helpers/src/constants');
@@ -8,7 +8,6 @@ const { ZERO_ADDRESS } = require('openzeppelin-test-helpers/src/constants');
 describe('Unit testing - Auction', function () {
 	let MarketV3;
 	let marketV3;
-	let nft150;
 	let polka721General;
 
 	beforeEach(async function () {
@@ -45,31 +44,11 @@ describe('Unit testing - Auction', function () {
 		});
 	});
 
-	describe('Upgrade', function () {
-		it('Should keep the changed fee when upgrade', async function () {
-			await auctionV3.setSystemFee(1000);
-
-			const AuctionV3x = await hre.ethers.getContractFactory('AuctionV3');
-			const auctionV3x = await upgrades.upgradeProxy(auctionV3.address, AuctionV3x);
-			await auctionV3x.deployed();
-
-			expect((await auctionV3x.yRefRate()).toNumber()).to.equal(1000);
-			await auctionV3x.setSystemFee(5000);
-			expect((await auctionV3.yRefRate()).toNumber()).to.equal(5000);
-
-			expect(auctionV3.address).to.equal(auctionV3x.address);
-		});
-	});
-
 	describe('Auction 721', () => {
 		beforeEach(async () => {
 			Polka721General = await hre.ethers.getContractFactory('Polka721General');
 			polka721General = await Polka721General.deploy(polkaURI.address);
 			await polka721General.deployed();
-
-			await marketV3.addPOLKANFTs(polka721General.address, true, false);
-
-			await auctionV3.addPOLKANFTs(polka721General.address, true);
 
 			//create _tokenId 1
 			await polka721General.create('urltest', 100, 250);
@@ -188,6 +167,12 @@ describe('Unit testing - Auction', function () {
 				auctionV3
 					.connect(addr)
 					.bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 100 * 1.08, { value: 10 })
+			).to.be.revertedWith('Invalid-amount');
+
+			await expect(
+				auctionV3
+					.connect(addr)
+					.bidAuction(polka721General.address, ZERO_ADDRESS, 1, 0, 100 * 1.08, { value: 0 })
 			).to.be.revertedWith('Invalid-amount');
 
 			await auctionV3

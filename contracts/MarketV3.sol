@@ -15,45 +15,24 @@ import '@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/security/Pausable.sol';
-import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts/utils/Address.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 
 contract Manager is Ownable, Pausable {
 	using SafeERC20 for IERC20;
 	address public referralContract;
-
-	// FEE
-	//uint256 public xUser = 250; // 2.5%
-	// uint256 public xCreator = 1500;
 	uint256 public yRefRate = 5000; // 50%
-	// uint256 public zProfitToCreator = 5000; // 10% profit
 
 	mapping(address => bool) public paymentMethod;
-	mapping(address => bool) public isPOLKANFTs;
-	mapping(address => bool) public isFarmingNFTs;
-	mapping(address => bool) public isOperator;
-	mapping(address => bool) public isRetailer;
 
-	modifier onlyOperator() {
-		require(isOperator[msg.sender], 'Only-operator');
-		_;
-	}
+	event SystemFeeChanged(uint256 _systemFee);
+	event PaymentMethodChanged(address _paymentToken, bool _accepted);
+	event ReferralContractChanged(address _referralContract);
+	event FundsWithdrawed(address _tokenAddress, uint256 _amount);
 
-	constructor() {
-		isOperator[msg.sender] = true;
-		//		oldMarket = _oldMarket;
-	}
+	constructor() {}
 
 	receive() external payable {}
-
-	function whiteListOperator(address _operator, bool _whitelist) external onlyOwner {
-		isOperator[_operator] = _whitelist;
-	}
-
-	function whiteListRetailer(address _retailer, bool _whitelist) external onlyOwner {
-		isRetailer[_retailer] = _whitelist;
-	}
 
 	function pause() public onlyOwner {
 		_pause();
@@ -64,27 +43,13 @@ contract Manager is Ownable, Pausable {
 	}
 
 	function setSystemFee(uint256 _yRefRate) external onlyOwner {
-		_setSystemFee(_yRefRate);
-	}
-
-	function _setSystemFee(uint256 _yRefRate) internal {
 		yRefRate = _yRefRate;
-	}
-
-	function addPOLKANFTs(
-		address _polkaNFT,
-		bool _isPOLKANFT,
-		bool _isFarming
-	) external onlyOperator returns (bool) {
-		isPOLKANFTs[_polkaNFT] = _isPOLKANFT;
-		if (_isFarming) {
-			isFarmingNFTs[_polkaNFT] = true;
-		}
-		return true;
+		emit SystemFeeChanged(_yRefRate);
 	}
 
 	function setReferralContract(address _referralContract) public onlyOwner returns (bool) {
 		referralContract = _referralContract;
+		emit ReferralContractChanged(_referralContract);
 		return true;
 	}
 
@@ -94,6 +59,7 @@ contract Manager is Ownable, Pausable {
 			IERC20(_token).safeApprove(msg.sender, (2**256 - 1));
 			IERC20(_token).safeApprove(address(this), (2**256 - 1));
 		}
+		emit PaymentMethodChanged(_token, _status);
 		return true;
 	}
 
@@ -109,6 +75,7 @@ contract Manager is Ownable, Pausable {
 			_withdrawAmount = IERC20(_tokenAddress).balanceOf(address(this));
 			IERC20(_tokenAddress).safeTransfer(_beneficiary, _withdrawAmount);
 		}
+		emit FundsWithdrawed(_tokenAddress, _withdrawAmount);
 	}
 
 	function _getCreator(address _tokenAddress, uint256 _tokenId) internal view returns (address) {
@@ -134,12 +101,9 @@ contract Manager is Ownable, Pausable {
 }
 
 contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
-	using SafeMath for uint256;
 	using SafeERC20 for IERC20;
 	using Address for address payable;
 
-	//	uint256 public constant ZOOM_POLKA = 10**18;
-	uint256 public constant ZOOM_USDT = 10**6;
 	uint256 public constant ZOOM_FEE = 10**4;
 	uint256 public totalOrders;
 	uint256 public totalBids;
@@ -213,7 +177,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 
 	function _updateBid(uint256 _bidId, uint256 _quantity) private returns (bool) {
 		Bid memory bid = bids[_bidId];
-		bid.quantity = bid.quantity.sub(_quantity);
+		bid.quantity -= _quantity;
 		if (bid.quantity == 0) {
 			bid.status = false;
 		}
@@ -241,7 +205,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 				abi.encodePacked(keccak256('onERC1155Received(address,address,uint256,uint256,bytes)'))
 			);
 		}
-		order.quantity = order.quantity.sub(_quantity);
+		order.quantity -= _quantity;
 		orders[_orderId].quantity = order.quantity;
 
 		return true;
@@ -273,7 +237,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		uint256 nftXUserFee = _getXUserFee(order.tokenAddress, order.tokenId);
 
 		if (buyerRef != address(0) && nftXUserFee > 0) {
-			uint256 amountToBuyerRef = orderAmount.mul(nftXUserFee).mul(ZOOM_FEE - yRefRate).div(ZOOM_FEE**2); // 1.25
+			uint256 amountToBuyerRef = (orderAmount * nftXUserFee * (ZOOM_FEE - yRefRate)) / (ZOOM_FEE**2);
 			_paid(_paymentToken, buyerRef, amountToBuyerRef);
 		}
 
@@ -281,7 +245,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 			_paid(
 				_paymentToken,
 				creator,
-				orderAmount.mul(loyaltyFee).div(ZOOM_FEE) // take retailFee for retailer
+				(orderAmount * loyaltyFee) / ZOOM_FEE // take retailFee for retailer
 			);
 		}
 
@@ -345,7 +309,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 
 		orders[_orderId] = newOrder;
 
-		totalOrders = totalOrders.add(1);
+		totalOrders += 1;
 
 		emit OrderCreated(_orderId, _tokenAddress, _tokenId, _quantity, _price);
 
@@ -363,14 +327,14 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		require(_paymentToken == order.paymentToken, 'Payment-token-invalid');
 		require(order.isOnsale && order.quantity >= _quantity, 'Not-available-to-buy');
 
-		uint256 orderAmount = order.price.mul(_quantity);
+		uint256 orderAmount = order.price * _quantity;
 		uint256 exactPaymentAmount = orderAmount;
 
 		uint256 loyaltyFee = _getLoyaltyFee(order.tokenAddress, order.tokenId);
 		uint256 nftXUserFee = _getXUserFee(order.tokenAddress, order.tokenId);
 
 		if (loyaltyFee > 0 || nftXUserFee > 0) {
-			exactPaymentAmount = orderAmount.mul(ZOOM_FEE + nftXUserFee + loyaltyFee).div(ZOOM_FEE);
+			exactPaymentAmount = (orderAmount * (ZOOM_FEE + nftXUserFee + loyaltyFee)) / ZOOM_FEE;
 		}
 
 		if (_paymentToken == address(0) && msg.value > 0) {
@@ -411,23 +375,23 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		newBid.tokenAddress = _tokenAddress;
 
 		if (msg.value > 0) {
-			require(msg.value >= _quantity.mul(_price), 'Invalid-amount');
+			require(msg.value >= _quantity * _price, 'Invalid-amount');
 			newBid.paymentToken = address(0);
 		} else {
 			newBid.paymentToken = _paymentToken;
 		}
 
 		if (newBid.paymentToken != address(0)) {
-			IERC20(newBid.paymentToken).safeTransferFrom(newBid.bidder, address(this), _quantity.mul(_price));
+			IERC20(newBid.paymentToken).safeTransferFrom(newBid.bidder, address(this), _quantity * _price);
 		}
-		adminHoldPayment[_paymentToken] = adminHoldPayment[_paymentToken].add(_quantity.mul(_price));
+		adminHoldPayment[_paymentToken] += _quantity * _price;
 
 		newBid.status = true;
 		newBid.expTime = _expTime;
 		bids[totalBids] = newBid;
 
 		_bidId = totalBids;
-		totalBids = totalBids.add(1);
+		totalBids += 1;
 		emit BidCreated(_bidId, _tokenAddress, _tokenId, _quantity, _price, _paymentToken);
 		return _bidId;
 	}
@@ -451,22 +415,22 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 
 			uint256 matchQuantity = order.quantity > quantityLeft ? quantityLeft : order.quantity;
 
-			uint256 orderAmount = bid.bidPrice.mul(matchQuantity);
+			uint256 orderAmount = bid.bidPrice * matchQuantity;
 			uint256 loyaltyFee = _getLoyaltyFee(order.tokenAddress, order.tokenId);
 			uint256 nftXUserFee = _getXUserFee(order.tokenAddress, order.tokenId);
 
-			adminHoldPayment[bid.paymentToken] = adminHoldPayment[bid.paymentToken].sub(orderAmount);
+			adminHoldPayment[bid.paymentToken] -= orderAmount;
 
 			_match(
 				bid.bidder,
 				bid.paymentToken,
 				_orderIds[i],
 				matchQuantity,
-				orderAmount.mul(ZOOM_FEE).div(ZOOM_FEE.add(nftXUserFee).add(loyaltyFee)),
+				(orderAmount * ZOOM_FEE) / (ZOOM_FEE + nftXUserFee + loyaltyFee),
 				getRefData(msg.sender),
 				getRefData(bid.bidder)
 			);
-			quantityLeft = quantityLeft.sub(matchQuantity);
+			quantityLeft -= matchQuantity;
 		}
 
 		emit AcceptBid(_orderIds, _bidId, _quantity);
@@ -501,14 +465,15 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	function cancelBid(uint256 _bidId) external whenNotPaused nonReentrant {
 		Bid memory bid = bids[_bidId];
 		require(bid.bidder == msg.sender && bid.status, 'Invalid-bidder');
+		uint256 payBackAmount = bid.quantity * bid.bidPrice;
+
 		if (bid.paymentToken == address(0)) {
-			uint256 payBackAmount = bid.quantity.mul(bid.bidPrice);
 			payable(msg.sender).sendValue(payBackAmount);
 		} else {
-			IERC20(bid.paymentToken).safeTransferFrom(address(this), bid.bidder, bid.quantity.mul(bid.bidPrice));
+			IERC20(bid.paymentToken).safeTransferFrom(address(this), bid.bidder, payBackAmount);
 		}
 
-		adminHoldPayment[bid.paymentToken] = adminHoldPayment[bid.paymentToken].sub(bid.quantity.mul(bid.bidPrice));
+		adminHoldPayment[bid.paymentToken] -= payBackAmount;
 
 		bid.status = false;
 		bid.quantity = 0;
@@ -640,7 +605,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 				bids[j] = newBid;
 
 				if (status) {
-					adminHoldPayment[paymentToken] = adminHoldPayment[paymentToken].add(quantity.mul(bidPrice));
+					adminHoldPayment[paymentToken] -= quantity * bidPrice;
 				}
 			}
 		}

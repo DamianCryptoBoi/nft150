@@ -12,21 +12,15 @@ import '@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgra
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol';
 
 contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeable, ERC721HolderUpgradeable {
 	address public referralContract;
-	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 	using AddressUpgradeable for address payable;
 
-	uint256 public yRefRate;
-
 	mapping(address => bool) public paymentMethod;
-	mapping(address => bool) public isPOLKANFTs;
 
-	uint256 public constant ZOOM_USDT = 10**6;
 	uint256 public constant ZOOM_FEE = 10**4;
 
 	uint256 public totalAuctions;
@@ -87,9 +81,11 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 	event BidAuctionAccepted(uint256 indexed _bidAuctionId);
 	event BidAuctionClaimed(uint256 indexed _bidAuctionId);
 	event AuctionReclaimed(uint256 indexed _auctionId);
+	event PaymentMethodChanged(address _paymentToken, bool _accepted);
+	event ReferralContractChanged(address _referralContract);
+	event FundsWithdrawed(address _tokenAddress, uint256 _amount);
 
 	function initialize() public virtual initializer {
-		yRefRate = 5000;
 		OwnableUpgradeable.__Ownable_init();
 		PausableUpgradeable.__Pausable_init();
 		ERC721HolderUpgradeable.__ERC721Holder_init();
@@ -103,17 +99,9 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 		_unpause();
 	}
 
-	function setSystemFee(uint256 _yRefRate) external onlyOwner {
-		yRefRate = _yRefRate;
-	}
-
-	function addPOLKANFTs(address _polkaNFT, bool _isPOLKANFT) external onlyOwner returns (bool) {
-		isPOLKANFTs[_polkaNFT] = _isPOLKANFT;
-		return true;
-	}
-
 	function setReferralContract(address _referralContract) external onlyOwner {
 		referralContract = _referralContract;
+		emit ReferralContractChanged(_referralContract);
 	}
 
 	function setPaymentMethod(address _token, bool _status) external onlyOwner returns (bool) {
@@ -122,7 +110,23 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 			IERC20Upgradeable(_token).safeApprove(msg.sender, (2**256 - 1));
 			IERC20Upgradeable(_token).safeApprove(address(this), (2**256 - 1));
 		}
+		emit PaymentMethodChanged(_token, _status);
 		return true;
+	}
+
+	/**
+	 * @notice withdrawFunds
+	 */
+	function withdrawFunds(address payable _beneficiary, address _tokenAddress) external onlyOwner whenPaused {
+		uint256 _withdrawAmount;
+		if (_tokenAddress == address(0)) {
+			_beneficiary.transfer(address(this).balance);
+			_withdrawAmount = address(this).balance;
+		} else {
+			_withdrawAmount = IERC20Upgradeable(_tokenAddress).balanceOf(address(this));
+			IERC20Upgradeable(_tokenAddress).safeTransfer(_beneficiary, _withdrawAmount);
+		}
+		emit FundsWithdrawed(_tokenAddress, _withdrawAmount);
 	}
 
 	function _paid(
@@ -213,7 +217,6 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 }
 
 contract AuctionV3 is ManagerAuction {
-	using SafeMathUpgradeable for uint256;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 	using AddressUpgradeable for address payable;
 
@@ -259,7 +262,7 @@ contract AuctionV3 is ManagerAuction {
 		newAuction.startTime = _startTime;
 		newAuction.endTime = _endTime;
 
-		totalAuctions = totalAuctions.add(1);
+		totalAuctions += 1;
 
 		emit AuctionCreated(_auctionId, _tokenAddress, _tokenId);
 
@@ -307,19 +310,15 @@ contract AuctionV3 is ManagerAuction {
 		newBidAuction.status = true;
 		newBidAuction.isOwnerAccepted = false;
 		newBidAuction.isBiderClaimed = false;
+		newBidAuction.paymentToken = _paymentToken;
 
-		if (msg.value > 0) {
+		if (_paymentToken == address(0)) {
 			require(msg.value >= _price, 'Invalid-amount');
-			newBidAuction.paymentToken = address(0);
 		} else {
-			newBidAuction.paymentToken = _paymentToken;
-		}
-
-		if (newBidAuction.paymentToken != address(0)) {
 			IERC20Upgradeable(newBidAuction.paymentToken).safeTransferFrom(newBidAuction.bidder, address(this), _price);
 		}
 
-		adminHoldPayment[_paymentToken] = adminHoldPayment[_paymentToken].add(_price);
+		adminHoldPayment[_paymentToken] += _price;
 
 		bidAuctions[totalBidAuctions] = newBidAuction;
 		_bidAuctionId = totalBidAuctions;
@@ -364,9 +363,7 @@ contract AuctionV3 is ManagerAuction {
 				_price - objEditBidAuction.bidPrice
 			);
 		}
-		adminHoldPayment[objEditBidAuction.paymentToken] = adminHoldPayment[objEditBidAuction.paymentToken].add(
-			_price - objEditBidAuction.bidPrice
-		);
+		adminHoldPayment[objEditBidAuction.paymentToken] += _price - objEditBidAuction.bidPrice;
 
 		objEditBidAuction.status = false;
 		uint256 oldBidAuctionId = _bidAuctionId;

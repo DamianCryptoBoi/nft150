@@ -1,7 +1,7 @@
 const { expect, assert, use } = require('chai');
 const { solidity } = require('ethereum-waffle');
 const { ZERO_ADDRESS } = require('openzeppelin-test-helpers/src/constants');
-use(solidity); //to user revertedWith
+use(solidity); //to use revertedWith
 
 describe('Unit testing - Market', function () {
 	let MarketV3;
@@ -66,9 +66,6 @@ describe('Unit testing - Market', function () {
 		await marketVersion.setReferralContract(polkaReferral.address);
 		await marketVersion.setPaymentMethod(mockPOLKA.address, true);
 		await marketVersion.setPaymentMethod(ZERO_ADDRESS, true);
-
-		await marketV3.addPOLKANFTs(polka721General.address, true, false);
-		await marketV3.addPOLKANFTs(nft150.address, true, false);
 	});
 
 	// describe('Deployment', function () {
