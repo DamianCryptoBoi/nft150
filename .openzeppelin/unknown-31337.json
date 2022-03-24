@@ -7,7 +7,7 @@
       "hash": "0xc53b7c9525d157b77ca0a0c54f0c2e69c399d554de85b3f62c4795f6b64687ea",
       "type": 2,
       "accessList": [],
-      "blockHash": "0x94c74fc151973e5d969cb01fcd795973fb2338033c54f2cd3271e1caff06493f",
+      "blockHash": "0xf5ad43a48734491e2abf20c0def907c3dc0954965d63d9bc5d8c988a2a7d172f",
       "blockNumber": 3,
       "transactionIndex": 0,
       "confirmations": 1,
@@ -425,9 +425,9 @@
     }
   ],
   "impls": {
-    "3fc35a7e83d3ab6feedc5d105a1cf507b27a1bb7afa2f25aebe8cad3a7a2be81": {
+    "b571705a4371b3f566b556e21556b57a8eca5b5a359d3c69a836440f0c679d3e": {
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "txHash": "0x7ee5b7c65c62228b0f9f531157ee52833f5bb4f4d0575315842f9d3adfe4f751",
+      "txHash": "0x6cc9f287d51b36a20cbf6a798c329602155d4707e387bcc9509131fb96a0f94f",
       "layout": {
         "storage": [
           {
@@ -482,67 +482,67 @@
             "contract": "ManagerAuction",
             "label": "referralContract",
             "type": "t_address",
-            "src": "contracts/AuctionV3.sol:18"
+            "src": "contracts/AuctionV3.sol:17"
           },
           {
             "contract": "ManagerAuction",
             "label": "paymentMethod",
             "type": "t_mapping(t_address,t_bool)",
-            "src": "contracts/AuctionV3.sol:22"
+            "src": "contracts/AuctionV3.sol:21"
           },
           {
             "contract": "ManagerAuction",
             "label": "totalAuctions",
             "type": "t_uint256",
-            "src": "contracts/AuctionV3.sol:26"
+            "src": "contracts/AuctionV3.sol:25"
           },
           {
             "contract": "ManagerAuction",
             "label": "totalBidAuctions",
             "type": "t_uint256",
-            "src": "contracts/AuctionV3.sol:27"
+            "src": "contracts/AuctionV3.sol:26"
           },
           {
             "contract": "ManagerAuction",
             "label": "auctions",
-            "type": "t_mapping(t_uint256,t_struct(Auction)5727_storage)",
-            "src": "contracts/AuctionV3.sol:56"
+            "type": "t_mapping(t_uint256,t_struct(Auction)5726_storage)",
+            "src": "contracts/AuctionV3.sol:55"
           },
           {
             "contract": "ManagerAuction",
             "label": "bidAuctions",
-            "type": "t_mapping(t_uint256,t_struct(BidAuction)5746_storage)",
-            "src": "contracts/AuctionV3.sol:57"
+            "type": "t_mapping(t_uint256,t_struct(BidAuction)5745_storage)",
+            "src": "contracts/AuctionV3.sol:56"
           },
           {
             "contract": "ManagerAuction",
             "label": "adminHoldPayment",
             "type": "t_mapping(t_address,t_uint256)",
-            "src": "contracts/AuctionV3.sol:60"
+            "src": "contracts/AuctionV3.sol:59"
           },
           {
             "contract": "ManagerAuction",
             "label": "userJoinAuction",
             "type": "t_mapping(t_uint256,t_mapping(t_address,t_bool))",
-            "src": "contracts/AuctionV3.sol:62"
+            "src": "contracts/AuctionV3.sol:61"
           },
           {
             "contract": "ManagerAuction",
             "label": "tokenOnAuction",
             "type": "t_mapping(t_address,t_mapping(t_uint256,t_bool))",
-            "src": "contracts/AuctionV3.sol:64"
+            "src": "contracts/AuctionV3.sol:63"
           },
           {
             "contract": "ManagerAuction",
             "label": "auctionHighestBidId",
             "type": "t_mapping(t_uint256,t_uint256)",
-            "src": "contracts/AuctionV3.sol:66"
+            "src": "contracts/AuctionV3.sol:65"
           },
           {
             "contract": "ManagerAuction",
             "label": "auctionBidCount",
             "type": "t_mapping(t_uint256,t_uint256)",
-            "src": "contracts/AuctionV3.sol:68"
+            "src": "contracts/AuctionV3.sol:67"
           }
         ],
         "types": {
@@ -558,10 +558,10 @@
           "t_uint256": {
             "label": "uint256"
           },
-          "t_mapping(t_uint256,t_struct(Auction)5727_storage)": {
+          "t_mapping(t_uint256,t_struct(Auction)5726_storage)": {
             "label": "mapping(uint256 => struct ManagerAuction.Auction)"
           },
-          "t_struct(Auction)5727_storage": {
+          "t_struct(Auction)5726_storage": {
             "label": "struct ManagerAuction.Auction",
             "members": [
               {
@@ -605,10 +605,10 @@
           "t_array(t_uint256)dyn_storage": {
             "label": "uint256[]"
           },
-          "t_mapping(t_uint256,t_struct(BidAuction)5746_storage)": {
+          "t_mapping(t_uint256,t_struct(BidAuction)5745_storage)": {
             "label": "mapping(uint256 => struct ManagerAuction.BidAuction)"
           },
-          "t_struct(BidAuction)5746_storage": {
+          "t_struct(BidAuction)5745_storage": {
             "label": "struct ManagerAuction.BidAuction",
             "members": [
               {

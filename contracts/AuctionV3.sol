@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import './interfaces/IReferral.sol';
 import './interfaces/IPOLKANFT.sol';
-import './interfaces/IAuctionVersion.sol';
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
@@ -152,7 +151,6 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 
 	function _payBidAuction(uint256 _bidAuctionId) internal {
 		BidAuction memory bidAuction = bidAuctions[_bidAuctionId];
-		Auction memory aut = auctions[bidAuctions[_bidAuctionId].auctionId];
 
 		address payable creator = payable(_getCreator(bidAuction.tokenAddress, bidAuction.tokenId));
 
@@ -160,8 +158,8 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 
 		uint256 nftXUserFee = _getXUserFee(bidAuction.tokenAddress, bidAuction.tokenId);
 
-		address _paymentToken = bidAuctions[_bidAuctionId].paymentToken;
-		uint256 _bidPrice = bidAuctions[_bidAuctionId].bidPrice;
+		address _paymentToken = bidAuction.paymentToken;
+		uint256 _bidPrice = bidAuction.bidPrice;
 
 		uint256 _totalEarnings = _bidPrice;
 
@@ -173,7 +171,7 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 			_paid(_paymentToken, creator, (_totalEarnings * loyaltyFee) / ZOOM_FEE);
 		}
 
-		_paid(_paymentToken, aut.owner, _totalEarnings);
+		_paid(_paymentToken, auctions[bidAuction.auctionId].owner, _totalEarnings);
 	}
 
 	function _transferBidAuction(uint256 _bidAuctionId) internal {
@@ -352,17 +350,16 @@ contract AuctionV3 is ManagerAuction {
 
 		auctionBidCount[objEditBidAuction.auctionId] += 1;
 
-		if (msg.value > 0) {
+		if (objEditBidAuction.paymentToken == address(0)) {
 			require(msg.value >= _price - objEditBidAuction.bidPrice, 'Invalid-amount');
-		}
-
-		if (objEditBidAuction.paymentToken != address(0)) {
+		} else {
 			IERC20Upgradeable(objEditBidAuction.paymentToken).safeTransferFrom(
 				objEditBidAuction.bidder,
 				address(this),
 				_price - objEditBidAuction.bidPrice
 			);
 		}
+
 		adminHoldPayment[objEditBidAuction.paymentToken] += _price - objEditBidAuction.bidPrice;
 
 		objEditBidAuction.status = false;
@@ -416,8 +413,8 @@ contract AuctionV3 is ManagerAuction {
 		) {
 			require(
 				bidAuctions[auctionHighestBidId[currentBid.auctionId]].bidPrice > currentBid.bidPrice,
-				'Price-bid-less-than-max-price'
-			); // the last bid price > this bid price
+				'Can-not-cancel-highest-bid'
+			);
 		}
 
 		userJoinAuction[currentBid.auctionId][msg.sender] = false;
