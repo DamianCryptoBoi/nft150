@@ -214,7 +214,7 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 	}
 }
 
-contract AuctionV3 is ManagerAuction {
+contract AuctionV3 is Initializable, ManagerAuction {
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 	using AddressUpgradeable for address payable;
 
@@ -507,5 +507,18 @@ contract AuctionV3 is ManagerAuction {
 		currentBid.isBiderClaimed = true;
 
 		emit BidAuctionClaimed(_bidAuctionId);
+	}
+
+	function withdrawSystemFee(address _token, address _recipient) external onlyOwner {
+		require(_recipient != address(0), 'Invalid-address');
+		uint256 feeAmount;
+		if (_token == address(0)) {
+			feeAmount = address(this).balance - adminHoldPayment[_token];
+			(bool sent, ) = payable(_recipient).call{ value: feeAmount }('');
+			require(sent, 'Failed to send Ether');
+		} else {
+			feeAmount = IERC20Upgradeable(_token).balanceOf(address(this)) - adminHoldPayment[_token];
+			IERC20Upgradeable(_token).safeTransfer(_recipient, feeAmount);
+		}
 	}
 }

@@ -603,7 +603,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 				bids[j] = newBid;
 
 				if (status) {
-					adminHoldPayment[paymentToken] -= quantity * bidPrice;
+					adminHoldPayment[paymentToken] += quantity * bidPrice;
 				}
 			}
 		}
@@ -612,9 +612,23 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 	function sendPaymentToNewContract(address _token, address _newContract) external onlyOwner {
 		require(_newContract != address(0), 'Invalid-address');
 		if (_token == address(0)) {
-			payable(_newContract).sendValue(adminHoldPayment[_token]);
+			(bool sent, ) = payable(_newContract).call{ value: adminHoldPayment[_token] }('');
+			require(sent, 'Failed to send Ether');
 		} else {
 			IERC20(_token).safeTransfer(_newContract, adminHoldPayment[_token]);
+		}
+	}
+
+	function withdrawSystemFee(address _token, address _recipient) external onlyOwner {
+		require(_recipient != address(0), 'Invalid-address');
+		uint256 feeAmount;
+		if (_token == address(0)) {
+			feeAmount = address(this).balance - adminHoldPayment[_token];
+			(bool sent, ) = payable(_recipient).call{ value: feeAmount }('');
+			require(sent, 'Failed to send Ether');
+		} else {
+			feeAmount = IERC20(_token).balanceOf(address(this)) - adminHoldPayment[_token];
+			IERC20(_token).safeTransfer(_recipient, feeAmount);
 		}
 	}
 
