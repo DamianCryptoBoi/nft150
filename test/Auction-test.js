@@ -6,10 +6,6 @@ const { ethers, upgrades } = require('hardhat');
 const { ZERO_ADDRESS } = require('openzeppelin-test-helpers/src/constants');
 
 describe('Unit testing - Auction', function () {
-	let MarketV3;
-	let marketV3;
-	let polka721General;
-
 	beforeEach(async function () {
 		[owner, addr, refer, toDead] = await ethers.getSigners();
 		MarketV3 = await hre.ethers.getContractFactory('MarketV3');
@@ -41,6 +37,22 @@ describe('Unit testing - Auction', function () {
 	describe('Deployment', function () {
 		it('Should set the right owner', async function () {
 			expect(await auctionV3.owner()).to.equal(owner.address);
+		});
+
+		it('Should upgrade the contract', async function () {
+			const UpgradedAuction = await ethers.getContractFactory('AuctionTestUpgrade');
+			const uAuction = await upgrades.upgradeProxy(auctionV3.address, UpgradedAuction);
+			expect(await uAuction.isUpgraded()).to.be.true;
+			expect((await uAuction.value()).toNumber()).to.be.equal(0);
+			await uAuction.setValue(1);
+			expect((await uAuction.value()).toNumber()).to.be.equal(1);
+
+			const UpgradedAuction2 = await ethers.getContractFactory('AuctionTestUpgrade2');
+			const uAuction2 = await upgrades.upgradeProxy(auctionV3.address, UpgradedAuction2);
+
+			expect(await uAuction2.isUpgraded()).to.be.true;
+			expect(await uAuction2.isUpgradedTwice()).to.be.true;
+			expect((await uAuction2.value()).toNumber()).to.be.equal(1);
 		});
 	});
 

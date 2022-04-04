@@ -214,16 +214,12 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 	}
 }
 
-contract AuctionV3 is Initializable, ManagerAuction {
+contract AuctionV3 is ManagerAuction {
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 	using AddressUpgradeable for address payable;
 
-	function initialize() public override initializer {
+	function initialize() public virtual override initializer {
 		ManagerAuction.initialize();
-	}
-
-	function isUpgraded() public pure returns (bool) {
-		return true;
 	}
 
 	function createAuction(
