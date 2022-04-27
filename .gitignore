@@ -13,3 +13,5 @@ script/
 abi/
 artifacts/
 cache/
+
+coverage/

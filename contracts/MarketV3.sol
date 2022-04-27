@@ -18,6 +18,8 @@ import '@openzeppelin/contracts/security/Pausable.sol';
 import '@openzeppelin/contracts/utils/Address.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 
+import 'hardhat/console.sol';
+
 contract Manager is Ownable, Pausable {
 	using SafeERC20 for IERC20;
 	address public referralContract;
@@ -167,7 +169,6 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		address _to,
 		uint256 _amount
 	) private {
-		require(_to != address(0), 'Invalid-address');
 		if (_token == address(0)) {
 			payable(_to).sendValue(_amount);
 		} else {
@@ -337,7 +338,7 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 			exactPaymentAmount = (orderAmount * (ZOOM_FEE + nftXUserFee + loyaltyFee)) / ZOOM_FEE;
 		}
 
-		if (_paymentToken == address(0) && msg.value > 0) {
+		if (_paymentToken == address(0)) {
 			require(msg.value >= exactPaymentAmount, 'Payment-value-invalid');
 		} else {
 			IERC20(_paymentToken).safeTransferFrom(msg.sender, address(this), exactPaymentAmount);
@@ -400,8 +401,8 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		uint256[] calldata _orderIds
 	) external whenNotPaused returns (bool) {
 		Bid memory bid = bids[_bidId];
-		require(_quantity <= bid.quantity && bid.status, 'Invalid-quantity-or-bid-cancelled');
-		require(block.timestamp < bid.expTime, 'Bid-expired');
+		require(_quantity <= bid.quantity, 'Invalid-quantity');
+		require(block.timestamp < bid.expTime && bid.status, 'Bid-expired-or-cancelled');
 
 		uint256 quantityLeft = _quantity;
 		for (uint256 i = 0; i < _orderIds.length; i++) {
@@ -602,21 +603,25 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 				newBid.status = status;
 				bids[j] = newBid;
 
-				if (status) {
-					adminHoldPayment[paymentToken] += quantity * bidPrice;
-				}
+				// if (status) {
+				// 	adminHoldPayment[paymentToken] += quantity * bidPrice;
+				// }
+				// status is always true when quantity > 0
+				adminHoldPayment[paymentToken] += quantity * bidPrice;
 			}
 		}
 	}
 
 	function sendPaymentToNewContract(address _token, address _newContract) external onlyOwner {
 		require(_newContract != address(0), 'Invalid-address');
+		uint256 amount = adminHoldPayment[_token];
 		if (_token == address(0)) {
-			(bool sent, ) = payable(_newContract).call{ value: adminHoldPayment[_token] }('');
-			require(sent, 'Failed to send Ether');
+			payable(_newContract).sendValue(amount);
 		} else {
-			IERC20(_token).safeTransfer(_newContract, adminHoldPayment[_token]);
+			IERC20(_token).safeTransfer(_newContract, amount);
 		}
+
+		emit FundsWithdrawed(_token, amount);
 	}
 
 	function withdrawSystemFee(address _token, address _recipient) external onlyOwner {
@@ -624,12 +629,13 @@ contract MarketV3 is Manager, ERC1155Holder, ERC721Holder, ReentrancyGuard {
 		uint256 feeAmount;
 		if (_token == address(0)) {
 			feeAmount = address(this).balance - adminHoldPayment[_token];
-			(bool sent, ) = payable(_recipient).call{ value: feeAmount }('');
-			require(sent, 'Failed to send Ether');
+			payable(_recipient).sendValue(feeAmount);
 		} else {
 			feeAmount = IERC20(_token).balanceOf(address(this)) - adminHoldPayment[_token];
 			IERC20(_token).safeTransfer(_recipient, feeAmount);
 		}
+
+		emit FundsWithdrawed(_token, feeAmount);
 	}
 
 	function setApproveForAll(address _token, address _spender) external onlyOwner {

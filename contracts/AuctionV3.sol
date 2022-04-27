@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import './interfaces/IReferral.sol';
 import './interfaces/IPOLKANFT.sol';
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
@@ -14,7 +13,6 @@ import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol';
 
 contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeable, ERC721HolderUpgradeable {
-	address public referralContract;
 	using SafeERC20Upgradeable for IERC20Upgradeable;
 	using AddressUpgradeable for address payable;
 
@@ -81,7 +79,6 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 	event BidAuctionClaimed(uint256 indexed _bidAuctionId);
 	event AuctionReclaimed(uint256 indexed _auctionId);
 	event PaymentMethodChanged(address _paymentToken, bool _accepted);
-	event ReferralContractChanged(address _referralContract);
 	event FundsWithdrawed(address _tokenAddress, uint256 _amount);
 
 	function initialize() public virtual initializer {
@@ -96,11 +93,6 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 
 	function unPause() external onlyOwner {
 		_unpause();
-	}
-
-	function setReferralContract(address _referralContract) external onlyOwner {
-		referralContract = _referralContract;
-		emit ReferralContractChanged(_referralContract);
 	}
 
 	function setPaymentMethod(address _token, bool _status) external onlyOwner returns (bool) {
@@ -133,7 +125,6 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 		address _to,
 		uint256 _amount
 	) internal {
-		require(_to != address(0), 'Invalid-address');
 		if (_token == address(0)) {
 			payable(_to).sendValue(_amount);
 		} else {
@@ -185,11 +176,6 @@ contract ManagerAuction is Initializable, OwnableUpgradeable, PausableUpgradeabl
 		Auction memory currentAuction = auctions[_auctionId];
 		tokenOnAuction[currentAuction.tokenAddress][currentAuction.tokenId] = false;
 		_transferAfterAuction(currentAuction.tokenAddress, currentAuction.tokenId, currentAuction.owner);
-	}
-
-	function _getRefData(address _user) internal view returns (address payable) {
-		address payable userRef = IReferral(referralContract).getReferral(_user);
-		return userRef;
 	}
 
 	function _getCreator(address _tokenAddress, uint256 _tokenId) internal view returns (address) {
@@ -270,20 +256,22 @@ contract AuctionV3 is ManagerAuction {
 		uint256 _auctionId,
 		uint256 _price
 	) external payable whenNotPaused returns (uint256 _bidAuctionId) {
-		require(auctions[_auctionId].paymentToken == _paymentToken, 'Incorrect-payment-method');
-		require(auctions[_auctionId].owner != msg.sender, 'Owner-can-not-bid');
+		Auction storage currentAuction = auctions[_auctionId];
+		require(currentAuction.paymentToken == _paymentToken, 'Incorrect-payment-method');
+		require(currentAuction.owner != msg.sender, 'Owner-can-not-bid');
+		require(
+			block.timestamp >= currentAuction.startTime && block.timestamp <= currentAuction.endTime,
+			'Not-in-time-auction'
+		);
 
 		uint256 loyaltyFee = _getLoyaltyFee(_tokenAddress, _tokenId);
 		uint256 nftXUserFee = _getXUserFee(_tokenAddress, _tokenId);
 		require(
-			_price >= (auctions[_auctionId].startPrice * (ZOOM_FEE + loyaltyFee + nftXUserFee)) / ZOOM_FEE,
+			_price >= (currentAuction.startPrice * (ZOOM_FEE + loyaltyFee + nftXUserFee)) / ZOOM_FEE,
 			'Price-lower-than-start-price'
 		);
 		require(tokenOnAuction[_tokenAddress][_tokenId], 'Auction-closed');
 
-		Auction storage currentAuction = auctions[_auctionId];
-		require(block.timestamp >= currentAuction.startTime, 'Not-in-time-auction');
-		require(block.timestamp <= currentAuction.endTime, 'Not-in-time-auction');
 		require(!userJoinAuction[_auctionId][msg.sender], 'User-joined-auction');
 
 		require(
@@ -331,14 +319,16 @@ contract AuctionV3 is ManagerAuction {
 	function editBidAuction(uint256 _bidAuctionId, uint256 _price) external payable whenNotPaused returns (uint256) {
 		BidAuction storage objEditBidAuction = bidAuctions[_bidAuctionId];
 		Auction storage currentAuction = auctions[objEditBidAuction.auctionId];
+		require(auctionBidCount[objEditBidAuction.auctionId] > 0, 'Invalid-bid');
 		require(msg.sender == objEditBidAuction.bidder, 'Not-owner-bid-auction');
-		require(block.timestamp >= currentAuction.startTime, 'Not-in-time-auction');
-		require(block.timestamp <= currentAuction.endTime, 'Not-in-time-auction');
+		require(
+			block.timestamp >= currentAuction.startTime && block.timestamp <= currentAuction.endTime,
+			'Not-in-time-auction'
+		);
 		require(objEditBidAuction.status, 'Bid-cancelled');
 
-		require(auctionBidCount[objEditBidAuction.auctionId] > 0, 'Invalid-bid');
-
-		require(tokenOnAuction[objEditBidAuction.tokenAddress][objEditBidAuction.tokenId], 'Auction-closed');
+		// require(tokenOnAuction[objEditBidAuction.tokenAddress][objEditBidAuction.tokenId], 'Auction-closed');
+		// can only cancelAuction before auction started
 		require(
 			_price > bidAuctions[auctionHighestBidId[objEditBidAuction.auctionId]].bidPrice,
 			'price-bid-less-than-max-price'
@@ -468,7 +458,7 @@ contract AuctionV3 is ManagerAuction {
 			currentBid.bidPrice >= (currentAuction.reservePrice * (ZOOM_FEE + loyaltyFee + nftXUserFee)) / ZOOM_FEE,
 			'Reserve-price-not-met'
 		);
-		require(currentBid.status, 'Bid-cancelled');
+		// require(currentBid.status, 'Bid-cancelled'); // can not cancel highest bid
 		require(!currentBid.isOwnerAccepted, 'Bid-accepted');
 
 		_payBidAuction(_bidAuctionId);
@@ -495,7 +485,7 @@ contract AuctionV3 is ManagerAuction {
 			currentBid.bidPrice >= (currentAuction.reservePrice * (ZOOM_FEE + loyaltyFee + nftXUserFee)) / ZOOM_FEE,
 			'Reserve-price-not-met'
 		);
-		require(currentBid.status, 'Bid-cancelled');
+		// require(currentBid.status, 'Bid-cancelled'); // cannot cancel highest bid
 		require(!currentBid.isBiderClaimed, 'Bid-claimed');
 
 		_transferBidAuction(_bidAuctionId);
@@ -510,8 +500,7 @@ contract AuctionV3 is ManagerAuction {
 		uint256 feeAmount;
 		if (_token == address(0)) {
 			feeAmount = address(this).balance - adminHoldPayment[_token];
-			(bool sent, ) = payable(_recipient).call{ value: feeAmount }('');
-			require(sent, 'Failed to send Ether');
+			payable(_recipient).sendValue(feeAmount);
 		} else {
 			feeAmount = IERC20Upgradeable(_token).balanceOf(address(this)) - adminHoldPayment[_token];
 			IERC20Upgradeable(_token).safeTransfer(_recipient, feeAmount);

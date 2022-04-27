@@ -9,6 +9,7 @@ require('dotenv').config();
 require('hardhat-contract-sizer');
 require('hardhat-gas-reporter');
 require('@openzeppelin/hardhat-upgrades');
+require('solidity-coverage');
 
 module.exports = {
 	solidity: {
